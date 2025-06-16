@@ -1,20 +1,71 @@
-# easyrent
+# EasyRent
 
-# EasyRent – мобільний застосунок
+EasyRent — мобільний застосунок для оренди квартир, реалізований з використанням **React Native + React Navigation**. У цьому завданні реалізовано повноцінну **навігаційну систему** з підтримкою:
 
-## 🔍 Компоненти
+- **Stack Navigation** — для переходів між екранами.
+- **Tab Navigation** — для основних розділів.
+- **Drawer Navigation** — для додаткових функцій.
 
-- `Header` – заголовок
-  ![alt text](<img/1 - 3.jpg>)
-- `FilterChips` – фільтри у вигляді кнопок
-  ![alt text](<img/1 - 3.jpg>)
-- `SearchForm` – форма пошуку
-  ![alt text](<img/1 - 3.jpg>)
-- `ApartmentCard` – картка квартири
-  ![alt text](img/4.jpg)
-- `BookingForm` – форма бронювання
-  ![alt text](img/5.jpg)
-- `PaymentForm` – платіжна форма
-  ![alt text](img/6.jpg)
-- `SuccessScreen` – екран підтвердження
-  ![alt text](img/7.jpg)
+## 📂 Структура навігації
+
+RootNavigator (Stack)
+├── TabNavigator (Tab)
+│ ├── LandingScreen
+│ ├── ApartmentsListScreen
+│ ├── SearchScreen
+│ └── ProfileScreen
+├── DetailsScreen (apartmentId)
+├── BookingFormScreen
+├── PaymentScreen
+├── SuccessScreen
+└── DrawerNavigator (Drawer)
+├── SettingsScreen
+├── HelpScreen
+└── AboutScreen
+
+## 🛠️ Технології
+
+- **React Native**
+- **React Navigation v6**
+- `@react-navigation/native`
+- `@react-navigation/native-stack`
+- `@react-navigation/bottom-tabs`
+- `@react-navigation/drawer`
+- `expo`
+- `@expo/vector-icons`
+
+## 🔄 Передача параметрів
+
+Передача apartmentId між екранами:
+
+navigation.navigate('DetailsScreen', { apartmentId: item.id });
+Обробка параметра:
+
+const { apartmentId } = route.params;
+
+💅 Стилізація
+Власний компонент Header.js з назвою екрану та кнопкою "Назад".
+
+Вкладки мають іконки з @expo/vector-icons.
+
+Drawer-меню має стилізацію
+
+Скриншоти
+Головний екран
+Екран деталей
+Drawer меню
+
+📁 Структура проєкту
+
+/components
+Header.js
+/constants
+screens.js
+/navigation
+RootNavigator.js
+StackNavigator.js
+TabNavigator.js
+DrawerNavigator.js
+/screens
+\*.js
+App.js

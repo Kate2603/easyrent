@@ -7,7 +7,7 @@ const Header = ({ title, onBack }) => {
     <View style={styles.container}>
       {onBack && (
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
-          <Icon name="arrow-back" size={24} color="#000" />
+          <Icon name="chevron-back" size={26} color="#006FFD" />
         </TouchableOpacity>
       )}
       <Text style={styles.title}>{title}</Text>
@@ -26,12 +26,14 @@ const styles = StyleSheet.create({
     borderBottomColor: "#eee",
   },
   backButton: {
-    marginRight: 16,
+    marginRight: 12,
+    padding: 6,
+    borderRadius: 20,
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
+    fontWeight: "700",
+    color: "#006FFD",
   },
 });
 

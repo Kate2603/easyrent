@@ -1,44 +1,17 @@
 import React from "react";
-import { ScrollView, View, StyleSheet } from "react-native";
+import "react-native-gesture-handler";
+import { NavigationContainer } from "@react-navigation/native";
+import RootNavigator from "./navigation/RootNavigator";
 
-import Header from "./Header";
-import FilterChips from "./FilterChips";
-import SearchForm from "./SearchForm";
-import ApartmentCard from "./ApartmentCard";
-import BookingForm from "./BookingForm";
-import PaymentForm from "./PaymentForm";
-import SuccessScreen from "./SuccessScreen";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
 
 export default function App() {
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Header title="EasyRent App" />
-
-      <FilterChips
-        filters={["wifi", "pets", "parking"]}
-        onFilterSelect={(f) => console.log("Filter selected:", f)}
-      />
-
-      <SearchForm onSubmit={(data) => console.log("Search submitted:", data)} />
-
-      <ApartmentCard />
-
-      <BookingForm
-        onSubmit={(data) => console.log("Booking submitted:", data)}
-      />
-
-      <PaymentForm
-        onSubmit={(data) => console.log("Payment submitted:", data)}
-      />
-
-      <SuccessScreen onReturn={() => console.log("Return tapped")} />
-    </ScrollView>
+    <Provider store={store}>
+      <NavigationContainer>
+        <RootNavigator />
+      </NavigationContainer>
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    paddingBottom: 64,
-  },
-});

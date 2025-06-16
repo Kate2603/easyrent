@@ -1,12 +1,6 @@
 import React, { useState } from "react";
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  Button,
-  Text,
-  Switch,
-} from "react-native";
+import { View, TextInput, StyleSheet, Text, Switch } from "react-native";
+import CustomButton from "./CustomButton";
 
 const PaymentForm = ({ onSubmit }) => {
   const [cardNumber, setCardNumber] = useState("");
@@ -22,55 +16,80 @@ const PaymentForm = ({ onSubmit }) => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.label}>Номер картки</Text>
       <TextInput
         style={styles.input}
-        placeholder="Номер картки"
+        placeholder="0000 0000 0000 0000"
         keyboardType="numeric"
         value={cardNumber}
         onChangeText={setCardNumber}
       />
+
+      <Text style={styles.label}>Термін дії (MM/YY)</Text>
       <TextInput
         style={styles.input}
-        placeholder="Термін дії (MM/YY)"
+        placeholder="MM/YY"
         value={expiry}
         onChangeText={setExpiry}
       />
+
+      <Text style={styles.label}>CVV</Text>
       <TextInput
         style={styles.input}
-        placeholder="CVV"
+        placeholder="***"
         keyboardType="numeric"
         value={cvv}
         onChangeText={setCvv}
         secureTextEntry
       />
+
       <View style={styles.switchContainer}>
         <Text style={styles.switchLabel}>Безпечна оплата</Text>
-        <Switch value={securePayment} onValueChange={setSecurePayment} />
+        <Switch
+          value={securePayment}
+          onValueChange={setSecurePayment}
+          thumbColor={securePayment ? "#006FFD" : "#ccc"}
+          trackColor={{ true: "#cce0ff", false: "#ddd" }}
+        />
       </View>
-      <Button title="Оплатити" onPress={handlePayment} />
+
+      <CustomButton title="Оплатити" onPress={handlePayment} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    margin: 16,
-    gap: 12,
+    marginHorizontal: 16,
+    paddingVertical: 24,
+    gap: 14,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 4,
+    color: "#333",
   },
   input: {
     backgroundColor: "#fff",
-    padding: 10,
-    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 10,
     borderColor: "#ccc",
     borderWidth: 1,
+    fontSize: 16,
+    color: "#222",
   },
   switchContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    marginTop: 8,
   },
   switchLabel: {
     fontSize: 16,
+    color: "#333",
+    fontWeight: "500",
   },
 });
 

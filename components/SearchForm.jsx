@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { View, TextInput, StyleSheet, Button } from "react-native";
+import { View, TextInput, StyleSheet } from "react-native";
+import CustomButton from "./CustomButton";
 
 const SearchForm = ({ onSubmit }) => {
   const [city, setCity] = useState("");
@@ -19,12 +20,14 @@ const SearchForm = ({ onSubmit }) => {
         placeholder="Місто"
         value={city}
         onChangeText={setCity}
+        placeholderTextColor="#999"
       />
       <TextInput
         style={styles.input}
         placeholder="Дата"
         value={date}
         onChangeText={setDate}
+        placeholderTextColor="#999"
       />
       <TextInput
         style={styles.input}
@@ -32,8 +35,9 @@ const SearchForm = ({ onSubmit }) => {
         keyboardType="numeric"
         value={guests}
         onChangeText={setGuests}
+        placeholderTextColor="#999"
       />
-      <Button title="Знайти" onPress={handleSearch} />
+      <CustomButton title="Знайти" onPress={handleSearch} />
     </View>
   );
 };
@@ -44,11 +48,18 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   input: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 10,
-    backgroundColor: "#fff",
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    color: "#222",
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 1,
   },
 });
 
