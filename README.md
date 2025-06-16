@@ -74,7 +74,7 @@ DetailsScreen (apartmentId)
 ![alt text](img/DrawerNavigation.jpg)
 
 Віде роботи навігації в застосунку
-<video controls src="img/video_2025-06-16_20-00-55.mp4" title="Title"></video>
+[<video controls src="img/video_2025-06-16_20-00-55.mp4" title="Title"></video>](https://drive.google.com/file/d/1lrU0kdDqx6UpJzei3Ab03WWCsllAJBh7/view?usp=sharing)
 
 📁 Структура проєкту
 
