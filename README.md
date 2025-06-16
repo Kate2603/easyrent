@@ -51,9 +51,28 @@ const { apartmentId } = route.params;
 Drawer-меню має стилізацію
 
 Скриншоти
-Головний екран
-Екран деталей
-Drawer меню
+TabNavigator (Tab)
+│ ├── LandingScreen
+│ ├── ApartmentsListScreen
+![alt text](img/ApartmentDetailsScreen.jpg)
+│ ├── SearchScreen
+![alt text](img/FiltersScreen.jpg)
+│ └── ProfileScreen
+![alt text](img/ProfileScreen.jpg)
+
+DetailsScreen (apartmentId)
+![alt text](img/ApartmentDetailsScreen.jpg)
+├── BookingFormScreen
+![alt text](img/BookingFormScreen.jpg)
+├── PaymentScreen
+![alt text](img/PaymentScreen.jpg)
+├── SuccessScreen
+![alt text](img/SuccessScreen.jpg)
+└── DrawerNavigator (Drawer)
+![alt text](img/DrawerNavigation.jpg)
+
+Віде роботи навігації в застосунку
+<video controls src="img/video_2025-06-16_20-00-55.mp4" title="Title"></video>
 
 📁 Структура проєкту
 
