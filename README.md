@@ -52,7 +52,9 @@ Drawer-меню має стилізацію
 
 Скриншоти
 TabNavigator (Tab)
+![alt text](img/HomeScreen.jpg)
 │ ├── LandingScreen
+![alt text](img/LandingScreen.jpg)
 │ ├── ApartmentsListScreen
 ![alt text](img/ApartmentDetailsScreen.jpg)
 │ ├── SearchScreen
