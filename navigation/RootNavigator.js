@@ -55,11 +55,6 @@ export default function RootNavigator() {
       }}
     >
       <Drawer.Screen
-        name={ROUTES.LANDING}
-        component={LandingScreen}
-        options={{ drawerLabel: "Вітаємо" }}
-      />
-      <Drawer.Screen
         name={ROUTES.HOME_TAB}
         component={HomeTabs}
         options={{ drawerLabel: "Головна" }}
@@ -73,6 +68,11 @@ export default function RootNavigator() {
         name={ROUTES.PROFILE}
         component={ProfileScreen}
         options={{ drawerLabel: "Профіль" }}
+      />
+      <Drawer.Screen
+        name={ROUTES.LANDING}
+        component={LandingScreen}
+        options={{ drawerLabel: "Вітаємо" }}
       />
     </Drawer.Navigator>
   );

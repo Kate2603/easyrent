@@ -13,6 +13,7 @@ export default function CustomButton({
       disabled={disabled}
       style={[
         styles.button,
+        { width: "100%" },
         isActive && styles.activeButton,
         disabled && styles.disabledButton,
       ]}

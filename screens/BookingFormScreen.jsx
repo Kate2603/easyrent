@@ -23,7 +23,6 @@ export default function BookingFormScreen() {
   const handleBookingSubmit = (formData) => {
     navigation.navigate(ROUTES.PAYMENT, {
       apartmentId: id,
-      bookingData: formData,
       title: `Оплата за квартиру №${id}`,
     });
   };

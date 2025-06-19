@@ -1,60 +1,98 @@
-import React, { useState } from "react";
-import { View, TextInput, StyleSheet, Text, Switch } from "react-native";
+import React from "react";
+import { View, TextInput, Text, StyleSheet, Switch } from "react-native";
+import { Formik } from "formik";
+import * as Yup from "yup";
 import CustomButton from "./CustomButton";
 
+const validationSchema = Yup.object({
+  cardNumber: Yup.string()
+    .matches(/^\d{16}$/, "Має бути 16 цифр")
+    .required("Це поле має бути заповнене"),
+  expiry: Yup.string()
+    .matches(/^(0[1-9]|1[0-2])\/\d{2}$/, "Формат MM/YY")
+    .required("Це поле має бути заповнене"),
+  cvv: Yup.string()
+    .matches(/^\d{3}$/, "Має бути 3 цифри")
+    .required("Це поле має бути заповнене"),
+});
+
 const PaymentForm = ({ onSubmit }) => {
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiry, setExpiry] = useState("");
-  const [cvv, setCvv] = useState("");
-  const [securePayment, setSecurePayment] = useState(false);
-
-  const handlePayment = () => {
-    if (onSubmit) {
-      onSubmit({ cardNumber, expiry, cvv, securePayment });
-    }
-  };
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Номер картки</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="0000 0000 0000 0000"
-        keyboardType="numeric"
-        value={cardNumber}
-        onChangeText={setCardNumber}
-      />
+    <Formik
+      initialValues={{
+        cardNumber: "",
+        expiry: "",
+        cvv: "",
+        securePayment: false,
+      }}
+      validationSchema={validationSchema}
+      onSubmit={(values) => {
+        if (onSubmit) onSubmit(values);
+      }}
+    >
+      {({
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        values,
+        errors,
+        touched,
+        setFieldValue,
+      }) => (
+        <View style={styles.container}>
+          <Text style={styles.label}>Номер картки</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="0000 0000 0000 0000"
+            keyboardType="numeric"
+            value={values.cardNumber}
+            onChangeText={handleChange("cardNumber")}
+            onBlur={handleBlur("cardNumber")}
+          />
+          {touched.cardNumber && errors.cardNumber && (
+            <Text style={styles.error}>{errors.cardNumber}</Text>
+          )}
 
-      <Text style={styles.label}>Термін дії (MM/YY)</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="MM/YY"
-        value={expiry}
-        onChangeText={setExpiry}
-      />
+          <Text style={styles.label}>Термін дії (MM/YY)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="MM/YY"
+            value={values.expiry}
+            onChangeText={handleChange("expiry")}
+            onBlur={handleBlur("expiry")}
+          />
+          {touched.expiry && errors.expiry && (
+            <Text style={styles.error}>{errors.expiry}</Text>
+          )}
 
-      <Text style={styles.label}>CVV</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="***"
-        keyboardType="numeric"
-        value={cvv}
-        onChangeText={setCvv}
-        secureTextEntry
-      />
+          <Text style={styles.label}>CVV</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="***"
+            keyboardType="numeric"
+            secureTextEntry
+            value={values.cvv}
+            onChangeText={handleChange("cvv")}
+            onBlur={handleBlur("cvv")}
+          />
+          {touched.cvv && errors.cvv && (
+            <Text style={styles.error}>{errors.cvv}</Text>
+          )}
 
-      <View style={styles.switchContainer}>
-        <Text style={styles.switchLabel}>Безпечна оплата</Text>
-        <Switch
-          value={securePayment}
-          onValueChange={setSecurePayment}
-          thumbColor={securePayment ? "#006FFD" : "#ccc"}
-          trackColor={{ true: "#cce0ff", false: "#ddd" }}
-        />
-      </View>
+          <View style={styles.switchContainer}>
+            <Text style={styles.switchLabel}>Безпечна оплата</Text>
+            <Switch
+              value={values.securePayment}
+              onValueChange={(value) => setFieldValue("securePayment", value)}
+              thumbColor={values.securePayment ? "#006FFD" : "#ccc"}
+              trackColor={{ true: "#cce0ff", false: "#ddd" }}
+            />
+          </View>
 
-      <CustomButton title="Оплатити" onPress={handlePayment} />
-    </View>
+          <CustomButton title="Оплатити" onPress={handleSubmit} isActive />
+        </View>
+      )}
+    </Formik>
   );
 };
 
@@ -79,6 +117,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     fontSize: 16,
     color: "#222",
+  },
+  error: {
+    fontSize: 12,
+    color: "red",
+    marginTop: -8,
+    marginBottom: 8,
   },
   switchContainer: {
     flexDirection: "row",

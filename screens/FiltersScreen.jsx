@@ -1,37 +1,36 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
-
-import { setFilter, selectSelectedFilter } from "../redux/filtersSlice";
+import { setFilters, selectFilters } from "../redux/filtersSlice";
+import SearchForm from "../components/SearchForm";
+import FilterChips from "../components/FilterChips";
 import CustomButton from "../components/CustomButton";
-import SectionTitle from "../components/SectionTitle";
-
-const filters = ["Ціна", "Тип", "Рейтинг"];
 
 export default function FiltersScreen() {
   const dispatch = useDispatch();
-  const selected = useSelector(selectSelectedFilter);
-  const navigation = useNavigation();
+  const filters = useSelector(selectFilters);
 
-  const handleSelect = (filter) => {
-    dispatch(setFilter(filter));
-    navigation.goBack();
+  const handleSearchSubmit = (formData) => {
+    dispatch(setFilters({ ...formData, page: 1 }));
   };
 
   return (
     <View style={styles.container}>
-      <SectionTitle>Фільтрувати за:</SectionTitle>
+      <SearchForm
+        initialCity={filters.city}
+        initialAddressLine1={filters.addressLine1}
+        initialPropertyType={filters.propertyType}
+        onSubmit={handleSearchSubmit}
+      />
 
-      {filters.map((filter) => (
-        <View key={filter} style={styles.buttonWrapper}>
-          <CustomButton
-            title={filter}
-            onPress={() => handleSelect(filter)}
-            isActive={selected === filter}
-          />
-        </View>
-      ))}
+      <FilterChips />
+
+      <View style={styles.buttonWrapper}>
+        <CustomButton
+          title="Застосувати"
+          onPress={() => handleSearchSubmit(filters)}
+        />
+      </View>
     </View>
   );
 }
@@ -39,10 +38,11 @@ export default function FiltersScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#fff",
+    padding: 16,
+    justifyContent: "space-between",
   },
   buttonWrapper: {
-    marginBottom: 12,
+    marginTop: 16,
   },
 });

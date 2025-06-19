@@ -1,17 +1,52 @@
-import React from "react";
-import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
+import React, { useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
-
-import { mockApartments } from "../data/apartments";
-import { ROUTES } from "../constants/ROUTES";
 import CustomButton from "../components/CustomButton";
 import SectionTitle from "../components/SectionTitle";
 
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchApartmentById,
+  selectSelectedApartment,
+  selectSelectedApartmentLoading,
+  selectSelectedApartmentError,
+} from "../redux/apartmentsSlice";
+import { ROUTES } from "../constants/ROUTES";
+
 export default function ApartmentDetailsScreen() {
-  const { id } = useRoute().params;
+  const { apartmentId } = useRoute().params;
+  const dispatch = useDispatch();
   const navigation = useNavigation();
-  const apartment = mockApartments.find((apt) => apt.id === id);
+
+  const apartment = useSelector(selectSelectedApartment);
+  const loading = useSelector(selectSelectedApartmentLoading);
+  const error = useSelector(selectSelectedApartmentError);
+
+  useEffect(() => {
+    dispatch(fetchApartmentById(apartmentId));
+  }, [apartmentId]);
+
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.notFoundText}>Помилка завантаження: {error}</Text>
+      </View>
+    );
+  }
 
   if (!apartment) {
     return (
@@ -23,17 +58,29 @@ export default function ApartmentDetailsScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Image source={{ uri: apartment.image }} style={styles.image} />
+      {/* Якщо є фото — вивести, інакше не показувати */}
+      {/* <Image source={{ uri: apartment.image }} style={styles.image} /> */}
 
-      <SectionTitle>{apartment.title}</SectionTitle>
+      <SectionTitle>
+        {apartment.formattedAddress || "Адреса відсутня"}
+      </SectionTitle>
 
       <View style={styles.detailRow}>
-        <Ionicons name={apartment.icon} size={22} color="#007AFF" />
-        <Text style={styles.detailText}>{apartment.type}</Text>
+        {/* Іконку можна замінити на стандартну або прибрати */}
+        <Text style={styles.detailText}>
+          Тип: {apartment.propertyType || "Невідомий"}
+        </Text>
       </View>
 
-      <Text style={styles.price}>Ціна: {apartment.price} ₴ / ніч</Text>
-      <Text style={styles.rating}>⭐ Рейтинг: {apartment.rating}</Text>
+      {apartment.yearBuilt && (
+        <Text style={styles.detailText}>
+          Рік побудови: {apartment.yearBuilt}
+        </Text>
+      )}
+
+      {/* Ціна і рейтинг відсутні — прибрати або додати, якщо будуть */}
+      {/* <Text style={styles.price}>Ціна: {apartment.price} ₴ / ніч</Text> */}
+      {/* <Text style={styles.rating}>⭐ Рейтинг: {apartment.rating}</Text> */}
 
       <View style={styles.buttonWrapper}>
         <CustomButton
@@ -61,12 +108,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#333",
   },
-  image: {
-    width: "100%",
-    height: 200,
-    borderRadius: 10,
-    marginBottom: 20,
-  },
   detailRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -74,19 +115,7 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 16,
-    marginLeft: 8,
     color: "#444",
-  },
-  price: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#007AFF",
-    marginBottom: 8,
-  },
-  rating: {
-    fontSize: 16,
-    color: "#888",
-    marginBottom: 16,
   },
   buttonWrapper: {
     marginTop: 24,

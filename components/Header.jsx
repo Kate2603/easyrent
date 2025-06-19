@@ -17,10 +17,10 @@ const Header = ({ title, onBack }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 60,
+    height: 20,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
+    paddingHorizontal: 5,
     backgroundColor: "#fff",
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
