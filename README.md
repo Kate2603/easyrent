@@ -130,9 +130,9 @@ return response.data;
 - Є екран редагування профілю, де можна оновити ім’я та аватар.
 - Навігація реалізована через React Navigation (Stack, Tab, Drawer).
 
-Скріншоти
+Скріншоти або Відео роботи застосунку
 
-Відео роботи застосунку
+https://drive.google.com/file/d/1VdBzBJgKAv3BrGYVi7KI1eGQv-muiIoN/view?usp=sharing
 
 Запуск
 
