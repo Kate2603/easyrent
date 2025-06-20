@@ -5,6 +5,7 @@ import bookingFormReducer from "./bookingFormSlice";
 
 export const store = configureStore({
   reducer: {
+    user: userReducer,
     bookingForm: bookingFormReducer,
     apartments: apartmentsReducer,
     filters: filtersReducer,

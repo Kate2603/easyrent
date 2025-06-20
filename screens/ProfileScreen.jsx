@@ -1,21 +1,27 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, FlatList, Alert } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { ROUTES } from "../constants/ROUTES";
 import SectionTitle from "../components/SectionTitle";
 import CustomButton from "../components/CustomButton";
+import { logout } from "../redux/userSlice";
+import { useTheme } from "../contexts/ThemeContext";
+import { COLORS } from "../constants/colors";
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const { theme } = useTheme();
 
-  const user = {
-    name: "Катерина Величко",
-    email: "kateryna.velychko@example.com",
-    avatar: "https://i.pravatar.cc/150?img=47",
-  };
+  const { user } = useSelector((state) => state.user);
+
+  const backgroundColor =
+    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
+  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
 
   const handleEditProfile = () => {
-    Alert.alert("Редагування профілю", "Ця функція ще не реалізована");
+    navigation.navigate(ROUTES.EDIT_PROFILE);
   };
 
   const handleLogout = () => {
@@ -23,7 +29,10 @@ export default function ProfileScreen() {
       { text: "Скасувати", style: "cancel" },
       {
         text: "Вийти",
-        onPress: () => navigation.navigate(ROUTES.LANDING),
+        onPress: () => {
+          dispatch(logout());
+          navigation.navigate(ROUTES.LANDING);
+        },
         style: "destructive",
       },
     ]);
@@ -34,9 +43,14 @@ export default function ProfileScreen() {
       key: "header",
       render: () => (
         <View style={styles.header}>
-          <Image source={{ uri: user.avatar }} style={styles.avatar} />
-          <SectionTitle>{user.name}</SectionTitle>
-          <Text style={styles.email}>{user.email}</Text>
+          <Image
+            source={{ uri: user?.avatar || "https://i.pravatar.cc/150" }}
+            style={styles.avatar}
+          />
+          <SectionTitle>{user?.fullName || "Користувач"}</SectionTitle>
+          <Text style={[styles.email, { color: textColor }]}>
+            {user?.email || "no-email@example.com"}
+          </Text>
         </View>
       ),
     },
@@ -56,7 +70,7 @@ export default function ProfileScreen() {
 
   return (
     <FlatList
-      contentContainerStyle={styles.container}
+      contentContainerStyle={[styles.container, { backgroundColor }]}
       data={data}
       renderItem={({ item }) => item.render()}
     />
@@ -67,7 +81,6 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: 24,
     paddingHorizontal: 20,
-    backgroundColor: "#fff",
   },
   header: {
     alignItems: "center",
@@ -83,7 +96,6 @@ const styles = StyleSheet.create({
   },
   email: {
     fontSize: 16,
-    color: "#555",
     marginTop: 8,
   },
 });

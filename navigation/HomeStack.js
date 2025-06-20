@@ -2,12 +2,14 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import HomeScreen from "../screens/HomeScreen";
+import RegisterScreen from "../screens/RegisterScreen";
 import ApartmentListScreen from "../screens/ApartmentListScreen";
 import ApartmentDetailsScreen from "../screens/ApartmentDetailsScreen";
 import BookingFormScreen from "../screens/BookingFormScreen";
 import PaymentScreen from "../screens/PaymentScreen";
 import SuccessScreen from "../screens/SuccessScreen";
 import FiltersScreen from "../screens/FiltersScreen";
+import EditProfileScreen from "../screens/EditProfileScreen";
 
 import { ROUTES } from "../constants/ROUTES";
 
@@ -20,6 +22,11 @@ export default function HomeStack() {
         name={ROUTES.HOME}
         component={HomeScreen}
         options={{ title: "Головна" }}
+      />
+      <Stack.Screen
+        name="Register"
+        component={RegisterScreen}
+        options={{ title: "Реєстрація" }}
       />
       <Stack.Screen
         name={ROUTES.APARTMENT_LIST}
@@ -50,6 +57,11 @@ export default function HomeStack() {
         name={ROUTES.SUCCESS}
         component={SuccessScreen}
         options={{ title: "Успішно", gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name={ROUTES.EDIT_PROFILE}
+        component={EditProfileScreen}
+        options={{ title: "Редагування профілю" }}
       />
     </Stack.Navigator>
   );

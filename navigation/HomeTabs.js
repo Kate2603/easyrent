@@ -1,11 +1,9 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-
 import HomeStack from "./HomeStack";
-import SearchScreen from "../screens/SearchScreen";
 import ProfileScreen from "../screens/ProfileScreen";
-
+import SearchScreen from "../screens/SearchScreen";
 import { ROUTES } from "../constants/ROUTES";
 
 const Tab = createBottomTabNavigator();

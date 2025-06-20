@@ -6,12 +6,15 @@ export const ROUTES = {
   HOME_STACK: "HomeStackNavigator",
 
   HOME: "HomeScreen",
-  SEARCH: "SearchScreen",
+  REGISTER: "Register",
+  EDIT_PROFILE: "EditProfile",
   PROFILE: "ProfileScreen",
-  FILTERS: "FiltersScreen",
 
+  SEARCH: "SearchScreen",
+  FILTERS: "FiltersScreen",
   APARTMENT_LIST: "ApartmentListScreen",
   APARTMENT_DETAILS: "ApartmentDetailsScreen",
+
   BOOKING: "BookingFormScreen",
   PAYMENT: "PaymentScreen",
   SUCCESS: "SuccessScreen",
