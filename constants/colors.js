@@ -12,4 +12,7 @@ export const COLORS = {
   chipActiveTextLight: "#ffffff",
   chipActiveBgDark: "#3399FF",
   chipActiveTextDark: "#ffffff",
+
+  lightAvatarBorder: "#4CAF50",
+  darkAvatarBorder: "#88FF88",
 };

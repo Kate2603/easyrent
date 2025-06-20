@@ -7,6 +7,7 @@ import { ROUTES } from "../constants/ROUTES";
 import { useTheme } from "../contexts/ThemeContext";
 import CustomButton from "../components/CustomButton";
 import SectionTitle from "../components/SectionTitle";
+import { COLORS } from "../constants/colors";
 
 function ThemeToggleButton() {
   const { toggleTheme, theme } = useTheme();

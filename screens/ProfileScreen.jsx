@@ -20,6 +20,8 @@ export default function ProfileScreen() {
     theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
   const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
   const secondaryTextColor = theme === "light" ? "#555" : "#aaa";
+  const avatarBorderColor =
+    theme === "light" ? COLORS.lightAvatarBorder : COLORS.darkAvatarBorder;
 
   const handleEditProfile = () => {
     navigation.navigate(ROUTES.PROFILE_TAB, {
@@ -95,7 +97,6 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     marginBottom: 16,
-    borderColor: "#4CAF50",
     borderWidth: 2,
   },
   email: {

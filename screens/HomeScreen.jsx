@@ -1,4 +1,3 @@
-// HomeScreen.jsx
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -9,7 +8,8 @@ import { useTheme } from "../contexts/ThemeContext";
 import SectionTitle from "../components/SectionTitle";
 import LocationAutoDetect from "../components/LocationAutoDetect";
 import CustomButton from "../components/CustomButton";
-import ThemeToggleButton from "../components/ThemeToggleButton"; // імпорт нового перемикача
+import ThemeToggleButton from "../components/ThemeToggleButton";
+import { COLORS } from "../constants/colors";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
