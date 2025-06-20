@@ -3,11 +3,13 @@ import { Text, StyleSheet } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
 import { COLORS } from "../constants/colors";
 
-export default function SectionTitle({ children }) {
+export default function SectionTitle({ children, style }) {
   const { theme } = useTheme();
   const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
 
-  return <Text style={[styles.title, { color: textColor }]}>{children}</Text>;
+  return (
+    <Text style={[styles.title, { color: textColor }, style]}>{children}</Text>
+  );
 }
 
 const styles = StyleSheet.create({

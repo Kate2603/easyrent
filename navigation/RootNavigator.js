@@ -10,7 +10,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import LandingScreen from "../screens/LandingScreen";
 import FiltersScreen from "../screens/FiltersScreen";
 import HomeTabs from "./HomeTabs";
-import ProfileScreen from "../screens/ProfileScreen";
+import ProfileStack from "./ProfileStack";
 
 import { ROUTES } from "../constants/ROUTES";
 
@@ -26,7 +26,11 @@ function CustomDrawerContent(props) {
     <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1 }}>
       <View style={styles.userInfoSection}>
         <TouchableOpacity
-          onPress={() => props.navigation.navigate(ROUTES.PROFILE)}
+          onPress={() =>
+            props.navigation.navigate(ROUTES.PROFILE_TAB, {
+              screen: ROUTES.PROFILE,
+            })
+          }
         >
           <Image source={{ uri: user.avatar }} style={styles.avatar} />
           <Text style={styles.username}>{user.name}</Text>
@@ -65,8 +69,8 @@ export default function RootNavigator() {
         options={{ drawerLabel: "Фільтри" }}
       />
       <Drawer.Screen
-        name={ROUTES.PROFILE}
-        component={ProfileScreen}
+        name={ROUTES.PROFILE_TAB}
+        component={ProfileStack}
         options={{ drawerLabel: "Профіль" }}
       />
       <Drawer.Screen

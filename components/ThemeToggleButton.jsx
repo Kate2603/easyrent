@@ -1,7 +1,16 @@
+import React from "react";
+import CustomButton from "./CustomButton";
 import { useTheme } from "../contexts/ThemeContext";
-import { Button } from "react-native";
 
 export default function ThemeToggleButton() {
   const { toggleTheme, theme } = useTheme();
-  return <Button title={`Тема: ${theme}`} onPress={toggleTheme} />;
+  const nextTheme = theme === "light" ? "темна" : "світла";
+
+  return (
+    <CustomButton
+      title={`Перемкнути тему: ${nextTheme}`}
+      onPress={toggleTheme}
+      isActive={false}
+    />
+  );
 }

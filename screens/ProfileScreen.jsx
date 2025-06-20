@@ -19,9 +19,12 @@ export default function ProfileScreen() {
   const backgroundColor =
     theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
   const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
+  const secondaryTextColor = theme === "light" ? "#555" : "#aaa";
 
   const handleEditProfile = () => {
-    navigation.navigate(ROUTES.EDIT_PROFILE);
+    navigation.navigate(ROUTES.PROFILE_TAB, {
+      screen: ROUTES.EDIT_PROFILE,
+    });
   };
 
   const handleLogout = () => {
@@ -45,10 +48,10 @@ export default function ProfileScreen() {
         <View style={styles.header}>
           <Image
             source={{ uri: user?.avatar || "https://i.pravatar.cc/150" }}
-            style={styles.avatar}
+            style={[styles.avatar, { borderColor: avatarBorderColor }]}
           />
           <SectionTitle>{user?.fullName || "Користувач"}</SectionTitle>
-          <Text style={[styles.email, { color: textColor }]}>
+          <Text style={[styles.email, { color: secondaryTextColor }]}>
             {user?.email || "no-email@example.com"}
           </Text>
         </View>
@@ -70,6 +73,7 @@ export default function ProfileScreen() {
 
   return (
     <FlatList
+      style={{ backgroundColor }}
       contentContainerStyle={[styles.container, { backgroundColor }]}
       data={data}
       renderItem={({ item }) => item.render()}

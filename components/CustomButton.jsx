@@ -1,31 +1,52 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function CustomButton({
   title,
   onPress,
   isActive = false,
   disabled = false,
+  style,
+  textStyle,
 }) {
+  const { theme } = useTheme();
+
+  const backgroundColor = isActive
+    ? theme === "light"
+      ? "#FFFFFF"
+      : "#333333"
+    : disabled
+    ? theme === "light"
+      ? "#F6F6F6"
+      : "#2a2a2a"
+    : "#006FFD";
+
+  const borderColor = isActive ? "#006FFD" : "transparent";
+
+  const textColor = isActive
+    ? "#006FFD"
+    : disabled
+    ? theme === "light"
+      ? "#AFAFAF"
+      : "#666666"
+    : "#FFFFFF";
+
   return (
     <TouchableOpacity
       onPress={onPress}
       disabled={disabled}
       style={[
         styles.button,
-        { width: "100%" },
-        isActive && styles.activeButton,
-        disabled && styles.disabledButton,
+        {
+          backgroundColor,
+          borderColor,
+        },
+        style,
       ]}
       activeOpacity={0.8}
     >
-      <Text
-        style={[
-          styles.text,
-          isActive && styles.activeText,
-          disabled && styles.disabledText,
-        ]}
-      >
+      <Text style={[styles.text, { color: textColor }, textStyle]}>
         {title}
       </Text>
     </TouchableOpacity>
@@ -34,30 +55,15 @@ export default function CustomButton({
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#006FFD",
     paddingVertical: 14,
     paddingHorizontal: 28,
     borderRadius: 30,
     alignItems: "center",
     justifyContent: "center",
-  },
-  activeButton: {
-    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#006FFD",
-  },
-  disabledButton: {
-    backgroundColor: "#F6F6F6",
   },
   text: {
-    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "700",
-  },
-  activeText: {
-    color: "#006FFD",
-  },
-  disabledText: {
-    color: "#AFAFAF",
   },
 });

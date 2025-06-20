@@ -2,6 +2,7 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import HomeScreen from "../screens/HomeScreen";
+import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import ApartmentListScreen from "../screens/ApartmentListScreen";
 import ApartmentDetailsScreen from "../screens/ApartmentDetailsScreen";
@@ -24,7 +25,12 @@ export default function HomeStack() {
         options={{ title: "Головна" }}
       />
       <Stack.Screen
-        name="Register"
+        name={ROUTES.LOGIN}
+        component={LoginScreen}
+        options={{ title: "Вхід" }}
+      />
+      <Stack.Screen
+        name={ROUTES.REGISTER}
         component={RegisterScreen}
         options={{ title: "Реєстрація" }}
       />

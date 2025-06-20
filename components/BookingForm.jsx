@@ -1,11 +1,21 @@
 import React from "react";
-import { View, Text, TextInput, StyleSheet, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { useDispatch } from "react-redux";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { setBookingData } from "../redux/bookingFormSlice";
 import CustomButton from "./CustomButton";
 import SectionTitle from "./SectionTitle";
+import { useTheme } from "../contexts/ThemeContext";
+import { COLORS } from "../constants/colors";
 
 const fields = [
   { key: "city", placeholder: "Місто" },
@@ -29,77 +39,90 @@ const validationSchema = Yup.object().shape({
 
 export default function BookingForm({ onSubmit }) {
   const dispatch = useDispatch();
+  const { theme } = useTheme();
+
+  const backgroundColor =
+    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
+  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
 
   const initialValues = Object.fromEntries(fields.map(({ key }) => [key, ""]));
 
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={(values) => {
-        dispatch(setBookingData(values));
-        onSubmit?.(values);
-      }}
+    <KeyboardAvoidingView
+      style={[styles.container, { backgroundColor }]}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      {({
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        values,
-        errors,
-        touched,
-      }) => (
-        <View style={styles.container}>
-          <SectionTitle>📝 Форма бронювання</SectionTitle>
+      <ScrollView contentContainerStyle={{ padding: 16 }}>
+        <SectionTitle>📝 Форма бронювання</SectionTitle>
 
-          <FlatList
-            data={fields}
-            keyExtractor={(item) => item.key}
-            renderItem={({ item }) => (
-              <View style={styles.inputWrapper}>
-                <TextInput
-                  placeholder={item.placeholder}
-                  keyboardType={item.keyboardType || "default"}
-                  style={[
-                    styles.input,
-                    touched[item.key] && errors[item.key] && styles.inputError,
-                  ]}
-                  value={values[item.key]}
-                  onChangeText={handleChange(item.key)}
-                  onBlur={handleBlur(item.key)}
-                />
-                {touched[item.key] && errors[item.key] && (
-                  <Text style={styles.errorText}>{errors[item.key]}</Text>
-                )}
-              </View>
-            )}
-          />
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={(values) => {
+            dispatch(setBookingData(values));
+            onSubmit?.(values);
+          }}
+        >
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
+            <>
+              {fields.map(({ key, placeholder, keyboardType }) => (
+                <View key={key} style={styles.inputWrapper}>
+                  <TextInput
+                    placeholder={placeholder}
+                    keyboardType={keyboardType || "default"}
+                    style={[
+                      styles.input,
+                      {
+                        color: textColor,
+                        borderColor: textColor,
+                        backgroundColor:
+                          theme === "light"
+                            ? COLORS.lightCard
+                            : COLORS.darkCard,
+                      },
+                      touched[key] && errors[key] && styles.inputError,
+                    ]}
+                    placeholderTextColor={theme === "light" ? "#999" : "#aaa"}
+                    value={values[key]}
+                    onChangeText={handleChange(key)}
+                    onBlur={handleBlur(key)}
+                  />
+                  {touched[key] && errors[key] && (
+                    <Text style={styles.errorText}>{errors[key]}</Text>
+                  )}
+                </View>
+              ))}
 
-          <CustomButton
-            title="Перейти до оплати"
-            onPress={handleSubmit}
-            isActive
-          />
-        </View>
-      )}
-    </Formik>
+              <CustomButton
+                title="Перейти до оплати"
+                onPress={handleSubmit}
+                isActive
+              />
+            </>
+          )}
+        </Formik>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    margin: 16,
-    gap: 12,
     flex: 1,
   },
   inputWrapper: {
     marginBottom: 12,
   },
   input: {
-    backgroundColor: "#fff",
     padding: 12,
     borderRadius: 8,
-    borderColor: "#ccc",
     borderWidth: 1,
   },
   inputError: {

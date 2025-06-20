@@ -9,17 +9,24 @@ import {
   selectFilters,
   FILTER_SORT_OPTIONS,
 } from "../redux/filtersSlice";
+import { useTheme } from "../contexts/ThemeContext";
+import { COLORS } from "../constants/colors";
 
 export default function FiltersScreen() {
   const dispatch = useDispatch();
   const { filterSort } = useSelector(selectFilters);
+
+  const { theme } = useTheme();
+
+  const backgroundColor =
+    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
 
   const handleSelect = (filter) => {
     dispatch(setFilters({ filterSort: filter, page: 1 }));
   };
 
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, { backgroundColor }]}>
       <SectionTitle>Оберіть місто</SectionTitle>
       <CityAutocompleteInput />
 

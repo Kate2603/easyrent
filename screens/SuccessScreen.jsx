@@ -4,9 +4,17 @@ import { useNavigation, CommonActions } from "@react-navigation/native";
 import { ROUTES } from "../constants/ROUTES";
 import SectionTitle from "../components/SectionTitle";
 import CustomButton from "../components/CustomButton";
+import { useTheme } from "../contexts/ThemeContext";
+import { COLORS } from "../constants/colors";
 
 export default function SuccessScreen() {
   const navigation = useNavigation();
+  const { theme } = useTheme();
+
+  const backgroundColor =
+    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
+  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
+  const secondaryTextColor = theme === "light" ? "#555" : "#aaa";
 
   const handleReturn = () => {
     navigation.dispatch(
@@ -18,11 +26,22 @@ export default function SuccessScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor }]}>
       <SectionTitle>Дякуємо за бронювання!</SectionTitle>
-      <Text style={styles.message}>
-        Ми надіслали вам підтвердження на електронну пошту.
-      </Text>
+
+      <View
+        style={{
+          backgroundColor: theme === "light" ? "#f0f4ff" : "#2a2a2a",
+          padding: 12,
+          borderRadius: 10,
+          marginBottom: 24,
+        }}
+      >
+        <Text style={[styles.message, { color: secondaryTextColor }]}>
+          Ми надіслали вам підтвердження на електронну пошту.
+        </Text>
+      </View>
+
       <CustomButton
         title="Повернутись на головну"
         onPress={handleReturn}
@@ -36,7 +55,6 @@ const styles = StyleSheet.create({
   container: {
     margin: 16,
     padding: 20,
-    backgroundColor: "#e8f5e9",
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
@@ -45,7 +63,6 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 16,
     textAlign: "center",
-    color: "#555",
     marginBottom: 24,
   },
 });

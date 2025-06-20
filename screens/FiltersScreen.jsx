@@ -1,48 +1,70 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { setFilters, selectFilters } from "../redux/filtersSlice";
-import SearchForm from "../components/SearchForm";
-import FilterChips from "../components/FilterChips";
+
+import CityAutocompleteInput from "../components/CityAutocompleteInput";
+import SectionTitle from "../components/SectionTitle";
 import CustomButton from "../components/CustomButton";
+
+import {
+  setFilters,
+  selectFilters,
+  FILTER_SORT_OPTIONS,
+} from "../redux/filtersSlice";
+
+import { useTheme } from "../contexts/ThemeContext";
+import { COLORS } from "../constants/colors";
 
 export default function FiltersScreen() {
   const dispatch = useDispatch();
-  const filters = useSelector(selectFilters);
+  const { filterSort } = useSelector(selectFilters);
+  const { theme } = useTheme();
 
-  const handleSearchSubmit = (formData) => {
-    dispatch(setFilters({ ...formData, page: 1 }));
+  const backgroundColor =
+    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
+  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
+  const secondaryTextColor = theme === "light" ? "#555" : "#aaa";
+
+  const handleSelect = (filter) => {
+    dispatch(setFilters({ filterSort: filter, page: 1 }));
   };
 
   return (
-    <View style={styles.container}>
-      <SearchForm
-        initialCity={filters.city}
-        initialAddressLine1={filters.addressLine1}
-        initialPropertyType={filters.propertyType}
-        onSubmit={handleSearchSubmit}
+    <View style={[styles.wrapper, { backgroundColor }]}>
+      <SectionTitle>Оберіть місто</SectionTitle>
+      <CityAutocompleteInput />
+
+      <SectionTitle>Фільтрувати за:</SectionTitle>
+
+      <FlatList
+        data={FILTER_SORT_OPTIONS}
+        keyExtractor={(item) => item}
+        contentContainerStyle={styles.listContainer}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <View style={styles.chipWrapper}>
+            <CustomButton
+              title={item}
+              onPress={() => handleSelect(item)}
+              isActive={item === filterSort}
+            />
+          </View>
+        )}
       />
-
-      <FilterChips />
-
-      <View style={styles.buttonWrapper}>
-        <CustomButton
-          title="Застосувати"
-          onPress={() => handleSearchSubmit(filters)}
-        />
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
     flex: 1,
-    backgroundColor: "#fff",
-    padding: 16,
-    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    marginBottom: 16,
   },
-  buttonWrapper: {
-    marginTop: 16,
+  listContainer: {
+    paddingVertical: 10,
+  },
+  chipWrapper: {
+    marginBottom: 10,
   },
 });

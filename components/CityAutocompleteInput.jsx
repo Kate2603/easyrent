@@ -8,13 +8,23 @@ import {
   StyleSheet,
 } from "react-native";
 import { fetchCitySuggestions } from "../api/citiesApi";
+import { useTheme } from "../contexts/ThemeContext";
+import { COLORS } from "../constants/colors";
 
 export default function CityAutocompleteInput({ onCitySelect }) {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
-  // Дебаунс: оновлюємо debouncedQuery через 500 мс після останнього введення
+  const { theme } = useTheme();
+  const backgroundColor =
+    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
+  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
+  const inputBg = theme === "light" ? "#fff" : "#1e1e1e";
+  const borderColor = theme === "light" ? "#ccc" : "#555";
+  const listBg = theme === "light" ? "#fff" : "#2a2a2a";
+  const itemBorder = theme === "light" ? "#eee" : "#444";
+
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query);
@@ -22,7 +32,6 @@ export default function CityAutocompleteInput({ onCitySelect }) {
     return () => clearTimeout(handler);
   }, [query]);
 
-  // Запит до API при зміні debouncedQuery, якщо довжина >= 2
   useEffect(() => {
     if (debouncedQuery.length < 2) return;
     fetchCitySuggestions(debouncedQuery)
@@ -33,7 +42,6 @@ export default function CityAutocompleteInput({ onCitySelect }) {
       });
   }, [debouncedQuery]);
 
-  // Вибір міста зі списку
   const handleSelect = (city) => {
     setQuery(`${city.name}, ${city.state}`);
     setSuggestions([]);
@@ -43,8 +51,12 @@ export default function CityAutocompleteInput({ onCitySelect }) {
   return (
     <View style={styles.wrapper}>
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          { backgroundColor: inputBg, borderColor, color: textColor },
+        ]}
         placeholder="Введіть місто (наприклад: New York)"
+        placeholderTextColor={theme === "light" ? "#999" : "#888"}
         value={query}
         onChangeText={setQuery}
       />
@@ -54,15 +66,18 @@ export default function CityAutocompleteInput({ onCitySelect }) {
           keyExtractor={(item, idx) => `${item.name}-${idx}`}
           renderItem={({ item }) => (
             <TouchableOpacity
-              style={styles.item}
+              style={[styles.item, { borderBottomColor: itemBorder }]}
               onPress={() => handleSelect(item)}
             >
-              <Text>
+              <Text style={{ color: textColor }}>
                 {item.name}, {item.state}
               </Text>
             </TouchableOpacity>
           )}
-          style={styles.list}
+          style={[
+            styles.list,
+            { backgroundColor: listBg, borderColor: borderColor },
+          ]}
         />
       )}
     </View>
@@ -73,23 +88,18 @@ const styles = StyleSheet.create({
   wrapper: { marginBottom: 16, zIndex: 10 },
   input: {
     height: 40,
-    borderColor: "#ccc",
     borderWidth: 1,
     paddingHorizontal: 10,
     borderRadius: 6,
-    backgroundColor: "#fff",
   },
   list: {
     maxHeight: 150,
-    backgroundColor: "#fff",
-    borderColor: "#ddd",
     borderWidth: 1,
     borderRadius: 6,
     marginTop: 4,
   },
   item: {
     padding: 10,
-    borderBottomColor: "#eee",
     borderBottomWidth: 1,
   },
 });

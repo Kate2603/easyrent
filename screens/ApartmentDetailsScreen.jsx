@@ -7,17 +7,21 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+
 import CustomButton from "../components/CustomButton";
 import SectionTitle from "../components/SectionTitle";
 
-import { useDispatch, useSelector } from "react-redux";
 import {
   fetchApartmentById,
   selectSelectedApartment,
   selectSelectedApartmentLoading,
   selectSelectedApartmentError,
 } from "../redux/apartmentsSlice";
+
 import { ROUTES } from "../constants/ROUTES";
+import { useTheme } from "../contexts/ThemeContext";
+import { COLORS } from "../constants/colors";
 
 export default function ApartmentDetailsScreen() {
   const { apartmentId } = useRoute().params;
@@ -28,13 +32,19 @@ export default function ApartmentDetailsScreen() {
   const loading = useSelector(selectSelectedApartmentLoading);
   const error = useSelector(selectSelectedApartmentError);
 
+  const { theme } = useTheme();
+  const backgroundColor =
+    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
+  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
+  const secondaryTextColor = theme === "light" ? "#666" : "#aaa";
+
   useEffect(() => {
     dispatch(fetchApartmentById(apartmentId));
   }, [apartmentId]);
 
   if (loading) {
     return (
-      <View style={styles.center}>
+      <View style={[styles.center, { backgroundColor }]}>
         <ActivityIndicator size="large" color="#007AFF" />
       </View>
     );
@@ -42,45 +52,41 @@ export default function ApartmentDetailsScreen() {
 
   if (error) {
     return (
-      <View style={styles.center}>
-        <Text style={styles.notFoundText}>Помилка завантаження: {error}</Text>
+      <View style={[styles.center, { backgroundColor }]}>
+        <Text style={[styles.notFoundText, { color: textColor }]}>
+          Помилка завантаження: {error}
+        </Text>
       </View>
     );
   }
 
   if (!apartment) {
     return (
-      <View style={styles.center}>
-        <Text style={styles.notFoundText}>Квартира не знайдена</Text>
+      <View style={[styles.center, { backgroundColor }]}>
+        <Text style={[styles.notFoundText, { color: textColor }]}>
+          Квартира не знайдена
+        </Text>
       </View>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Якщо є фото — вивести, інакше не показувати */}
-      {/* <Image source={{ uri: apartment.image }} style={styles.image} /> */}
-
-      <SectionTitle>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor }]}>
+      <SectionTitle style={{ color: textColor }}>
         {apartment.formattedAddress || "Адреса відсутня"}
       </SectionTitle>
 
       <View style={styles.detailRow}>
-        {/* Іконку можна замінити на стандартну або прибрати */}
-        <Text style={styles.detailText}>
+        <Text style={[styles.detailText, { color: secondaryTextColor }]}>
           Тип: {apartment.propertyType || "Невідомий"}
         </Text>
       </View>
 
       {apartment.yearBuilt && (
-        <Text style={styles.detailText}>
+        <Text style={[styles.detailText, { color: secondaryTextColor }]}>
           Рік побудови: {apartment.yearBuilt}
         </Text>
       )}
-
-      {/* Ціна і рейтинг відсутні — прибрати або додати, якщо будуть */}
-      {/* <Text style={styles.price}>Ціна: {apartment.price} ₴ / ніч</Text> */}
-      {/* <Text style={styles.rating}>⭐ Рейтинг: {apartment.rating}</Text> */}
 
       <View style={styles.buttonWrapper}>
         <CustomButton
@@ -97,7 +103,6 @@ export default function ApartmentDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: "#FFFFFF",
   },
   center: {
     flex: 1,
@@ -106,7 +111,6 @@ const styles = StyleSheet.create({
   },
   notFoundText: {
     fontSize: 18,
-    color: "#333",
   },
   detailRow: {
     flexDirection: "row",
@@ -115,7 +119,6 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 16,
-    color: "#444",
   },
   buttonWrapper: {
     marginTop: 24,

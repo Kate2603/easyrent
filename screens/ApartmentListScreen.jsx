@@ -30,6 +30,8 @@ import {
   setStateCode,
 } from "../redux/filtersSlice";
 
+import { useTheme } from "../contexts/ThemeContext";
+import { COLORS } from "../constants/colors";
 import { ROUTES } from "../constants/ROUTES";
 
 export default function ApartmentListScreen() {
@@ -40,6 +42,12 @@ export default function ApartmentListScreen() {
   const isLoading = useSelector(selectApartmentsLoading);
   const hasMore = useSelector(selectApartmentsHasMore);
   const filters = useSelector(selectFilters);
+  const { theme } = useTheme();
+
+  const backgroundColor =
+    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
+  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
+  const secondaryTextColor = theme === "light" ? "#555" : "#aaa";
 
   useEffect(() => {
     dispatch(fetchApartments(filters.page));
@@ -52,7 +60,7 @@ export default function ApartmentListScreen() {
   };
 
   const handleRefresh = () => {
-    dispatch(fetchApartments(1)); // оновлення першої сторінки
+    dispatch(fetchApartments(1));
   };
 
   const handleCitySelect = (cityObj) => {
@@ -76,12 +84,14 @@ export default function ApartmentListScreen() {
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>😔 Квартир не знайдено</Text>
+      <Text style={[styles.emptyText, { color: secondaryTextColor }]}>
+        😔 Квартир не знайдено
+      </Text>
     </View>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor }]}>
       <LocationAutoDetect />
       <CityAutocompleteInput onCitySelect={handleCitySelect} />
       <View style={{ marginBottom: 8 }}>
@@ -99,7 +109,14 @@ export default function ApartmentListScreen() {
           <RefreshControl refreshing={isLoading} onRefresh={handleRefresh} />
         }
         ListFooterComponent={
-          isLoading && hasMore ? <ActivityIndicator size="large" /> : null
+          isLoading && hasMore ? (
+            <ActivityIndicator
+              size="large"
+              color={
+                theme === "light" ? COLORS.primaryLight : COLORS.primaryDark
+              }
+            />
+          ) : null
         }
         ListEmptyComponent={renderEmpty}
       />
@@ -116,7 +133,6 @@ export default function ApartmentListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   listContent: {
     paddingHorizontal: 16,
@@ -132,6 +148,5 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 18,
-    color: "#999",
   },
 });

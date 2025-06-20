@@ -2,7 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import HomeStack from "./HomeStack";
-import ProfileScreen from "../screens/ProfileScreen";
+import ProfileStack from "./ProfileStack";
 import SearchScreen from "../screens/SearchScreen";
 import { ROUTES } from "../constants/ROUTES";
 
@@ -40,7 +40,7 @@ export default function HomeTabs() {
       />
       <Tab.Screen
         name={ROUTES.PROFILE}
-        component={ProfileScreen}
+        component={ProfileStack}
         options={{ title: "Профіль" }}
       />
     </Tab.Navigator>

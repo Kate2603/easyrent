@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
+  StyleSheet,
   Text,
   TextInput,
-  StyleSheet,
-  Alert,
   TouchableOpacity,
 } from "react-native";
+import { Formik } from "formik";
+import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../redux/userSlice";
 import { useNavigation } from "@react-navigation/native";
@@ -16,10 +17,13 @@ import CustomButton from "../components/CustomButton";
 import { useTheme } from "../contexts/ThemeContext";
 import { COLORS } from "../constants/colors";
 
+const validationSchema = Yup.object().shape({
+  fullName: Yup.string().required("Обов'язково"),
+  email: Yup.string().email("Невірний email").required("Обов'язково"),
+  password: Yup.string().min(4, "Мінімум 4 символи").required("Обов'язково"),
+});
+
 export default function RegisterScreen() {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { theme } = useTheme();
@@ -27,12 +31,15 @@ export default function RegisterScreen() {
   const backgroundColor =
     theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
   const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
+  const secondaryTextColor = theme === "light" ? "#555" : "#aaa";
 
-  const handleRegister = () => {
-    if (!fullName || !email || !password) {
-      Alert.alert("Помилка", "Будь ласка, заповніть усі поля");
-      return;
-    }
+  const placeholderColor = theme === "light" ? "#999" : "#aaa";
+  const errorColor = theme === "light" ? "#FF3B30" : "#FF6B6B";
+  const linkColor =
+    theme === "light" ? COLORS.primaryLight : COLORS.primaryDark;
+
+  const handleRegister = (values) => {
+    const { fullName, email, password } = values;
 
     // Мокове збереження користувача
     dispatch(
@@ -46,45 +53,101 @@ export default function RegisterScreen() {
       })
     );
 
-    navigation.navigate(ROUTES.HOME_STACK);
+    navigation.navigate(ROUTES.HOME_TAB, {
+      screen: ROUTES.HOME_STACK,
+      params: { screen: ROUTES.HOME },
+    });
   };
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
       <SectionTitle>📝 Реєстрація</SectionTitle>
 
-      <TextInput
-        placeholder="Повне ім’я"
-        value={fullName}
-        onChangeText={setFullName}
-        placeholderTextColor="#999"
-        style={[styles.input, { color: textColor, borderColor: textColor }]}
-      />
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        placeholderTextColor="#999"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        style={[styles.input, { color: textColor, borderColor: textColor }]}
-      />
-      <TextInput
-        placeholder="Пароль"
-        value={password}
-        onChangeText={setPassword}
-        placeholderTextColor="#999"
-        secureTextEntry
-        style={[styles.input, { color: textColor, borderColor: textColor }]}
-      />
+      <Formik
+        initialValues={{ fullName: "", email: "", password: "" }}
+        validationSchema={validationSchema}
+        onSubmit={handleRegister}
+      >
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          errors,
+          touched,
+          isValid,
+          dirty,
+        }) => (
+          <>
+            <TextInput
+              placeholder="Повне ім’я"
+              placeholderTextColor={placeholderColor}
+              style={[
+                styles.input,
+                { color: textColor, borderColor: textColor },
+              ]}
+              onChangeText={handleChange("fullName")}
+              onBlur={handleBlur("fullName")}
+              value={values.fullName}
+              autoCapitalize="words"
+            />
+            {touched.fullName && errors.fullName && (
+              <Text style={[styles.error, { color: errorColor }]}>
+                {errors.fullName}
+              </Text>
+            )}
 
-      <CustomButton title="Зареєструватись" onPress={handleRegister} isActive />
+            <TextInput
+              placeholder="Email"
+              placeholderTextColor={placeholderColor}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              style={[
+                styles.input,
+                { color: textColor, borderColor: textColor },
+              ]}
+              onChangeText={handleChange("email")}
+              onBlur={handleBlur("email")}
+              value={values.email}
+            />
+            {touched.email && errors.email && (
+              <Text style={[styles.error, { color: errorColor }]}>
+                {errors.email}
+              </Text>
+            )}
 
-      <TouchableOpacity onPress={() => navigation.navigate(ROUTES.HOME)}>
-        <Text style={[styles.link, { color: textColor }]}>
-          Вже маєш акаунт? Увійти
-        </Text>
-      </TouchableOpacity>
+            <TextInput
+              placeholder="Пароль"
+              placeholderTextColor={placeholderColor}
+              secureTextEntry
+              style={[
+                styles.input,
+                { color: textColor, borderColor: textColor },
+              ]}
+              onChangeText={handleChange("password")}
+              onBlur={handleBlur("password")}
+              value={values.password}
+            />
+            {touched.password && errors.password && (
+              <Text style={[styles.error, { color: errorColor }]}>
+                {errors.password}
+              </Text>
+            )}
+
+            <CustomButton
+              title="Зареєструватись"
+              onPress={handleSubmit}
+              isActive={dirty && isValid}
+            />
+
+            <TouchableOpacity onPress={() => navigation.navigate(ROUTES.LOGIN)}>
+              <Text style={[styles.link, { color: linkColor }]}>
+                Вже маєш акаунт? Увійти
+              </Text>
+            </TouchableOpacity>
+          </>
+        )}
+      </Formik>
     </View>
   );
 }
@@ -99,8 +162,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     padding: 12,
-    marginBottom: 16,
+    marginBottom: 10,
     fontSize: 16,
+  },
+  error: {
+    marginBottom: 10,
   },
   link: {
     textAlign: "center",

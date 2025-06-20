@@ -1,19 +1,15 @@
+// HomeScreen.jsx
 import React, { useEffect } from "react";
-import { View, StyleSheet, Text, Button } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector, useDispatch } from "react-redux";
-import { loginSuccess, loadUserProfile } from "../redux/userSlice";
-import { loginSuccess } from "../redux/userSlice";
+import { loadUserProfile } from "../redux/userSlice";
 import { ROUTES } from "../constants/ROUTES";
 import { useTheme } from "../contexts/ThemeContext";
 import SectionTitle from "../components/SectionTitle";
 import LocationAutoDetect from "../components/LocationAutoDetect";
 import CustomButton from "../components/CustomButton";
-
-function ThemeToggleButton() {
-  const { toggleTheme, theme } = useTheme();
-  return <Button title={`Тема: ${theme}`} onPress={toggleTheme} />;
-}
+import ThemeToggleButton from "../components/ThemeToggleButton"; // імпорт нового перемикача
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -21,29 +17,26 @@ export default function HomeScreen() {
   const { user } = useSelector((state) => state.user);
   const { theme } = useTheme();
 
-  // для завантаження профілю з AsyncStorage ---
   useEffect(() => {
     dispatch(loadUserProfile());
   }, [dispatch]);
 
-  const backgroundColor = theme === "light" ? "#fff" : "#121212";
-  const textColor = theme === "light" ? "#000" : "#fff";
+  const backgroundColor =
+    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
+  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
 
   const handleGoToRegister = () => {
-    navigation.navigate("Register");
+    navigation.navigate(ROUTES.HOME_TAB, {
+      screen: ROUTES.HOME_STACK,
+      params: { screen: ROUTES.REGISTER },
+    });
   };
 
-  const handleFakeLogin = () => {
-    dispatch(
-      loginSuccess({
-        user: {
-          fullName: "Катерина Величко",
-          email: "kateryna@example.com",
-          avatar: "https://i.pravatar.cc/150?u=kateryna",
-        },
-        token: "mock-token",
-      })
-    );
+  const handleLogin = () => {
+    navigation.navigate(ROUTES.HOME_TAB, {
+      screen: ROUTES.HOME_STACK,
+      params: { screen: ROUTES.LOGIN },
+    });
   };
 
   return (
@@ -62,7 +55,7 @@ export default function HomeScreen() {
             onPress={handleGoToRegister}
             isActive
           />
-          <CustomButton title="Увійти" onPress={handleFakeLogin} isActive />
+          <CustomButton title="Увійти" onPress={handleLogin} isActive />
         </>
       ) : (
         <>
@@ -73,7 +66,7 @@ export default function HomeScreen() {
           <CustomButton
             title="🔍 Пошук квартир"
             onPress={() => navigation.navigate(ROUTES.APARTMENT_LIST)}
-            isActive={true}
+            isActive
           />
         </>
       )}
