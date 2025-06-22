@@ -1,5 +1,14 @@
-import React, { useEffect } from "react";
-import { View, FlatList, StyleSheet, Text } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  LayoutAnimation,
+  Platform,
+  UIManager,
+} from "react-native";
 import ApartmentCard from "../components/ApartmentCard";
 import SectionTitle from "../components/SectionTitle";
 import { useSelector, useDispatch } from "react-redux";
@@ -11,6 +20,7 @@ import {
 } from "../redux/apartmentsSlice";
 import { useTheme } from "../contexts/ThemeContext";
 import { COLORS } from "../constants/colors";
+import FiltersScreen from "./FiltersScreen"; // 👈 важливо
 
 export default function SearchScreen() {
   const dispatch = useDispatch();
@@ -19,13 +29,29 @@ export default function SearchScreen() {
   const loading = useSelector(selectLoading);
   const { theme } = useTheme();
 
+  const [filtersVisible, setFiltersVisible] = useState(false);
+
   const backgroundColor =
     theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
 
+  // Включення LayoutAnimation на Android
   useEffect(() => {
-    // Виклик пошуку квартир з урахуванням фільтрів
+    if (
+      Platform.OS === "android" &&
+      UIManager.setLayoutAnimationEnabledExperimental
+    ) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }, []);
+
+  useEffect(() => {
     dispatch(fetchApartments(filters));
   }, [dispatch, filters]);
+
+  const toggleFilters = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setFiltersVisible((prev) => !prev);
+  };
 
   if (loading) {
     return (
@@ -43,12 +69,26 @@ export default function SearchScreen() {
         <Text style={{ color: theme === "light" ? "#000" : "#fff" }}>
           Квартири не знайдені
         </Text>
+        <TouchableOpacity onPress={toggleFilters} style={styles.toggleBtn}>
+          <Text style={styles.toggleBtnText}>
+            {filtersVisible ? "Сховати фільтри" : "Показати фільтри"}
+          </Text>
+        </TouchableOpacity>
+        {filtersVisible && <FiltersScreen />}
       </View>
     );
   }
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
+      <TouchableOpacity onPress={toggleFilters} style={styles.toggleBtn}>
+        <Text style={styles.toggleBtnText}>
+          {filtersVisible ? "Сховати фільтри" : "Показати фільтри"}
+        </Text>
+      </TouchableOpacity>
+
+      {filtersVisible && <FiltersScreen />}
+
       <SectionTitle>Результати пошуку</SectionTitle>
 
       <FlatList
@@ -79,5 +119,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  toggleBtn: {
+    marginVertical: 12,
+    padding: 8,
+    backgroundColor: "#007AFF",
+    borderRadius: 6,
+  },
+  toggleBtnText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });

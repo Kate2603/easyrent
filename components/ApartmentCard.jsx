@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -32,11 +32,12 @@ const ApartmentCard = React.memo(({ apartment, onPress }) => {
   const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
   const shadowColor = "#000";
 
-  const handleToggle = () => {
+  // useCallback для стабілізації функції між рендерами
+  const handleToggle = useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpanded((prev) => !prev);
     if (onPress) onPress();
-  };
+  }, [onPress]);
 
   const createdAtFormatted = formatDate(apartment.createdAt, locale);
 

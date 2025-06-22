@@ -10,6 +10,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
+import Animated, { FadeIn } from "react-native-reanimated"; // 👈 ДОДАНО
+
 import LocationAutoDetect from "../components/LocationAutoDetect";
 import CityAutocompleteInput from "../components/CityAutocompleteInput";
 import ApartmentCard from "../components/ApartmentCard";
@@ -65,7 +67,6 @@ export default function ApartmentListScreen() {
 
   const strings = STRINGS[locale] || STRINGS.uk;
 
-  // Виклик fetchApartments — залежить не тільки від page, а й від усіх фільтрів
   useEffect(() => {
     dispatch(
       fetchApartments({
@@ -102,15 +103,17 @@ export default function ApartmentListScreen() {
 
   const renderItem = useCallback(
     ({ item }) => (
-      <ApartmentCard
-        apartment={item}
-        locale={locale}
-        onPress={() =>
-          navigation.navigate(ROUTES.APARTMENT_DETAILS, {
-            apartmentId: item.id,
-          })
-        }
-      />
+      <Animated.View entering={FadeIn.duration(300)}>
+        <ApartmentCard
+          apartment={item}
+          locale={locale}
+          onPress={() =>
+            navigation.navigate(ROUTES.APARTMENT_DETAILS, {
+              apartmentId: item.id,
+            })
+          }
+        />
+      </Animated.View>
     ),
     [navigation, locale]
   );
@@ -159,10 +162,10 @@ export default function ApartmentListScreen() {
           ) : null
         }
         ListEmptyComponent={renderEmpty}
-        // Забезпечує плавність прокрутки
         initialNumToRender={10}
         maxToRenderPerBatch={10}
         windowSize={21}
+        removeClippedSubviews={true}
       />
 
       {!hasMore && apartments.length > 0 && (
