@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { fetchCitySuggestions } from "../api/citiesApi";
 import { useTheme } from "../contexts/ThemeContext";
+import { useStrings } from "../hooks/useStrings";
 import { COLORS } from "../constants/colors";
 
 export default function CityAutocompleteInput({ onCitySelect }) {
@@ -17,6 +18,8 @@ export default function CityAutocompleteInput({ onCitySelect }) {
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
   const { theme } = useTheme();
+  const { strings } = useStrings();
+
   const backgroundColor =
     theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
   const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
@@ -33,7 +36,10 @@ export default function CityAutocompleteInput({ onCitySelect }) {
   }, [query]);
 
   useEffect(() => {
-    if (debouncedQuery.length < 2) return;
+    if (debouncedQuery.length < 2) {
+      setSuggestions([]);
+      return;
+    }
     fetchCitySuggestions(debouncedQuery)
       .then(setSuggestions)
       .catch((e) => {
@@ -55,7 +61,7 @@ export default function CityAutocompleteInput({ onCitySelect }) {
           styles.input,
           { backgroundColor: inputBg, borderColor, color: textColor },
         ]}
-        placeholder="Введіть місто (наприклад: New York)"
+        placeholder={strings.enterCityPlaceholder}
         placeholderTextColor={theme === "light" ? "#999" : "#888"}
         value={query}
         onChangeText={setQuery}
@@ -63,7 +69,9 @@ export default function CityAutocompleteInput({ onCitySelect }) {
       {suggestions.length > 0 && (
         <FlatList
           data={suggestions}
-          keyExtractor={(item, idx) => `${item.name}-${idx}`}
+          keyExtractor={(item) =>
+            item.id?.toString() || `${item.name}-${item.state}`
+          }
           renderItem={({ item }) => (
             <TouchableOpacity
               style={[styles.item, { borderBottomColor: itemBorder }]}
@@ -74,10 +82,8 @@ export default function CityAutocompleteInput({ onCitySelect }) {
               </Text>
             </TouchableOpacity>
           )}
-          style={[
-            styles.list,
-            { backgroundColor: listBg, borderColor: borderColor },
-          ]}
+          style={[styles.list, { backgroundColor: listBg, borderColor }]}
+          keyboardShouldPersistTaps="handled"
         />
       )}
     </View>

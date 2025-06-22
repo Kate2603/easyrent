@@ -32,18 +32,19 @@ export default function CustomButton({
       : "#666666"
     : "#FFFFFF";
 
+  const handlePress = () => {
+    if (!disabled && onPress) {
+      onPress();
+    }
+  };
+
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={handlePress}
       disabled={disabled}
-      style={[
-        styles.button,
-        {
-          backgroundColor,
-          borderColor,
-        },
-        style,
-      ]}
+      accessibilityRole="button"
+      accessibilityState={{ disabled }}
+      style={[styles.button, { backgroundColor, borderColor }, style]}
       activeOpacity={0.8}
     >
       <Text style={[styles.text, { color: textColor }, textStyle]}>

@@ -1,66 +1,83 @@
-import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import CityAutocompleteInput from "../components/CityAutocompleteInput";
+import React, { useEffect } from "react";
+import { View, FlatList, StyleSheet, Text } from "react-native";
+import ApartmentCard from "../components/ApartmentCard";
 import SectionTitle from "../components/SectionTitle";
-import CustomButton from "../components/CustomButton";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { selectFilters } from "../redux/filtersSlice";
 import {
-  setFilters,
-  selectFilters,
-  FILTER_SORT_OPTIONS,
-} from "../redux/filtersSlice";
+  fetchApartments,
+  selectApartments,
+  selectLoading,
+} from "../redux/apartmentsSlice";
 import { useTheme } from "../contexts/ThemeContext";
 import { COLORS } from "../constants/colors";
 
-export default function FiltersScreen() {
+export default function SearchScreen() {
   const dispatch = useDispatch();
-  const { filterSort } = useSelector(selectFilters);
-
+  const filters = useSelector(selectFilters);
+  const apartments = useSelector(selectApartments);
+  const loading = useSelector(selectLoading);
   const { theme } = useTheme();
 
   const backgroundColor =
     theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
 
-  const handleSelect = (filter) => {
-    dispatch(setFilters({ filterSort: filter, page: 1 }));
-  };
+  useEffect(() => {
+    // Виклик пошуку квартир з урахуванням фільтрів
+    dispatch(fetchApartments(filters));
+  }, [dispatch, filters]);
+
+  if (loading) {
+    return (
+      <View style={[styles.loadingContainer, { backgroundColor }]}>
+        <Text style={{ color: theme === "light" ? "#000" : "#fff" }}>
+          Завантаження...
+        </Text>
+      </View>
+    );
+  }
+
+  if (apartments.length === 0) {
+    return (
+      <View style={[styles.emptyContainer, { backgroundColor }]}>
+        <Text style={{ color: theme === "light" ? "#000" : "#fff" }}>
+          Квартири не знайдені
+        </Text>
+      </View>
+    );
+  }
 
   return (
-    <View style={[styles.wrapper, { backgroundColor }]}>
-      <SectionTitle>Оберіть місто</SectionTitle>
-      <CityAutocompleteInput />
-
-      <SectionTitle>Фільтрувати за:</SectionTitle>
+    <View style={[styles.container, { backgroundColor }]}>
+      <SectionTitle>Результати пошуку</SectionTitle>
 
       <FlatList
-        data={FILTER_SORT_OPTIONS}
-        keyExtractor={(item) => item}
+        data={apartments}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <ApartmentCard apartment={item} />}
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <View style={styles.chipWrapper}>
-            <CustomButton
-              title={item}
-              onPress={() => handleSelect(item)}
-              isActive={item === filterSort}
-            />
-          </View>
-        )}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
+  container: {
     flex: 1,
     paddingHorizontal: 16,
-    marginBottom: 16,
   },
   listContainer: {
-    paddingVertical: 10,
+    paddingBottom: 16,
   },
-  chipWrapper: {
-    marginBottom: 10,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

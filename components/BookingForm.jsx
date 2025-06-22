@@ -11,57 +11,68 @@ import {
 import { useDispatch } from "react-redux";
 import { Formik } from "formik";
 import * as Yup from "yup";
+
 import { setBookingData } from "../redux/bookingFormSlice";
 import CustomButton from "./CustomButton";
 import SectionTitle from "./SectionTitle";
 import { useTheme } from "../contexts/ThemeContext";
+import { useStrings } from "../hooks/useStrings";
 import { COLORS } from "../constants/colors";
 
 const fields = [
-  { key: "city", placeholder: "Місто" },
-  { key: "date", placeholder: "Дата заїзду" },
-  { key: "guests", placeholder: "Кількість гостей", keyboardType: "numeric" },
-  { key: "name", placeholder: "Ім'я" },
-  { key: "phone", placeholder: "Телефон", keyboardType: "phone-pad" },
-  { key: "email", placeholder: "Email", keyboardType: "email-address" },
+  { key: "city", placeholderKey: "city" },
+  { key: "date", placeholderKey: "date" },
+  { key: "guests", placeholderKey: "guests", keyboardType: "numeric" },
+  { key: "name", placeholderKey: "name" },
+  { key: "phone", placeholderKey: "phone", keyboardType: "phone-pad" },
+  { key: "email", placeholderKey: "email", keyboardType: "email-address" },
 ];
-
-const validationSchema = Yup.object().shape({
-  city: Yup.string().required("Це поле має бути заповнене"),
-  date: Yup.string().required("Це поле має бути заповнене"),
-  guests: Yup.string().required("Це поле має бути заповнене"),
-  name: Yup.string().required("Це поле має бути заповнене"),
-  phone: Yup.string().required("Це поле має бути заповнене"),
-  email: Yup.string()
-    .email("Невірний email")
-    .required("Це поле має бути заповнене"),
-});
 
 export default function BookingForm({ onSubmit }) {
   const dispatch = useDispatch();
   const { theme } = useTheme();
+  const { strings } = useStrings();
 
   const backgroundColor =
     theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
   const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
 
+  const validationSchema = Yup.object().shape({
+    city: Yup.string().required(strings.errors.required),
+    date: Yup.string().required(strings.errors.required),
+    guests: Yup.number()
+      .typeError(strings.errors.required)
+      .required(strings.errors.required),
+    name: Yup.string().required(strings.errors.required),
+    phone: Yup.string().required(strings.errors.required),
+    email: Yup.string()
+      .email(strings.errors.invalidEmail)
+      .required(strings.errors.required),
+  });
+
   const initialValues = Object.fromEntries(fields.map(({ key }) => [key, ""]));
+
+  const handleSubmit = (values) => {
+    dispatch(setBookingData(values));
+    if (typeof onSubmit === "function") {
+      onSubmit(values);
+    }
+  };
 
   return (
     <KeyboardAvoidingView
       style={[styles.container, { backgroundColor }]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <SectionTitle>📝 Форма бронювання</SectionTitle>
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <SectionTitle accessibilityRole="header">
+          {strings.formTitle}
+        </SectionTitle>
 
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={(values) => {
-            dispatch(setBookingData(values));
-            onSubmit?.(values);
-          }}
+          onSubmit={handleSubmit}
         >
           {({
             handleChange,
@@ -72,11 +83,16 @@ export default function BookingForm({ onSubmit }) {
             touched,
           }) => (
             <>
-              {fields.map(({ key, placeholder, keyboardType }) => (
+              {fields.map(({ key, placeholderKey, keyboardType }) => (
                 <View key={key} style={styles.inputWrapper}>
                   <TextInput
-                    placeholder={placeholder}
+                    placeholder={strings[placeholderKey]}
+                    placeholderTextColor={theme === "light" ? "#999" : "#aaa"}
                     keyboardType={keyboardType || "default"}
+                    returnKeyType="done"
+                    value={values[key]}
+                    onChangeText={handleChange(key)}
+                    onBlur={handleBlur(key)}
                     style={[
                       styles.input,
                       {
@@ -89,10 +105,7 @@ export default function BookingForm({ onSubmit }) {
                       },
                       touched[key] && errors[key] && styles.inputError,
                     ]}
-                    placeholderTextColor={theme === "light" ? "#999" : "#aaa"}
-                    value={values[key]}
-                    onChangeText={handleChange(key)}
-                    onBlur={handleBlur(key)}
+                    accessibilityLabel={strings[placeholderKey]}
                   />
                   {touched[key] && errors[key] && (
                     <Text style={styles.errorText}>{errors[key]}</Text>
@@ -101,7 +114,7 @@ export default function BookingForm({ onSubmit }) {
               ))}
 
               <CustomButton
-                title="Перейти до оплати"
+                title={strings.submit}
                 onPress={handleSubmit}
                 isActive
               />
@@ -117,6 +130,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  scroll: {
+    padding: 16,
+  },
   inputWrapper: {
     marginBottom: 12,
   },
@@ -124,6 +140,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     borderWidth: 1,
+    fontSize: 16,
   },
   inputError: {
     borderColor: "red",

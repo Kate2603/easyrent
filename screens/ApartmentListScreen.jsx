@@ -33,6 +33,18 @@ import {
 import { useTheme } from "../contexts/ThemeContext";
 import { COLORS } from "../constants/colors";
 import { ROUTES } from "../constants/ROUTES";
+import { useLocale } from "../contexts/LocaleContext";
+
+const STRINGS = {
+  uk: {
+    noApartments: "😔 Квартир не знайдено",
+    allLoaded: "Завантажено всі",
+  },
+  en: {
+    noApartments: "😔 No apartments found",
+    allLoaded: "All loaded",
+  },
+};
 
 export default function ApartmentListScreen() {
   const dispatch = useDispatch();
@@ -42,36 +54,57 @@ export default function ApartmentListScreen() {
   const isLoading = useSelector(selectApartmentsLoading);
   const hasMore = useSelector(selectApartmentsHasMore);
   const filters = useSelector(selectFilters);
+
   const { theme } = useTheme();
+  const { locale } = useLocale();
 
   const backgroundColor =
     theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
   const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
   const secondaryTextColor = theme === "light" ? "#555" : "#aaa";
 
-  useEffect(() => {
-    dispatch(fetchApartments(filters.page));
-  }, [filters.page, filters.city, filters.propertyType]);
+  const strings = STRINGS[locale] || STRINGS.uk;
 
-  const handleLoadMore = () => {
+  // Виклик fetchApartments — залежить не тільки від page, а й від усіх фільтрів
+  useEffect(() => {
+    dispatch(
+      fetchApartments({
+        page: filters.page,
+        city: filters.city,
+        propertyType: filters.propertyType,
+      })
+    );
+  }, [dispatch, filters.page, filters.city, filters.propertyType]);
+
+  const handleLoadMore = useCallback(() => {
     if (!isLoading && hasMore) {
       dispatch(incrementPage());
     }
-  };
+  }, [dispatch, isLoading, hasMore]);
 
-  const handleRefresh = () => {
-    dispatch(fetchApartments(1));
-  };
+  const handleRefresh = useCallback(() => {
+    dispatch(
+      fetchApartments({
+        page: 1,
+        city: filters.city,
+        propertyType: filters.propertyType,
+      })
+    );
+  }, [dispatch, filters.city, filters.propertyType]);
 
-  const handleCitySelect = (cityObj) => {
-    dispatch(setCity(cityObj.name));
-    dispatch(setStateCode(cityObj.state));
-  };
+  const handleCitySelect = useCallback(
+    (cityObj) => {
+      dispatch(setCity(cityObj.name));
+      dispatch(setStateCode(cityObj.state));
+    },
+    [dispatch]
+  );
 
   const renderItem = useCallback(
     ({ item }) => (
       <ApartmentCard
         apartment={item}
+        locale={locale}
         onPress={() =>
           navigation.navigate(ROUTES.APARTMENT_DETAILS, {
             apartmentId: item.id,
@@ -79,30 +112,37 @@ export default function ApartmentListScreen() {
         }
       />
     ),
-    [navigation]
+    [navigation, locale]
   );
 
-  const renderEmpty = () => (
-    <View style={styles.emptyContainer}>
-      <Text style={[styles.emptyText, { color: secondaryTextColor }]}>
-        😔 Квартир не знайдено
-      </Text>
-    </View>
+  const renderEmpty = useCallback(
+    () => (
+      <View style={styles.emptyContainer}>
+        <Text style={[styles.emptyText, { color: secondaryTextColor }]}>
+          {strings.noApartments}
+        </Text>
+      </View>
+    ),
+    [secondaryTextColor, strings.noApartments]
   );
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
       <LocationAutoDetect />
       <CityAutocompleteInput onCitySelect={handleCitySelect} />
-      <View style={{ marginBottom: 8 }}>
+
+      <View style={styles.filtersWrapper}>
         <FilterChips />
       </View>
 
       <FlatList
         data={apartments}
-        keyExtractor={(item, index) => `${item.id}-${index}`}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[
+          styles.listContent,
+          apartments.length === 0 && { flexGrow: 1, justifyContent: "center" },
+        ]}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.6}
         refreshControl={
@@ -119,11 +159,19 @@ export default function ApartmentListScreen() {
           ) : null
         }
         ListEmptyComponent={renderEmpty}
+        // Забезпечує плавність прокрутки
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={21}
       />
 
       {!hasMore && apartments.length > 0 && (
         <View style={styles.footer}>
-          <CustomButton title="Завантажено всі" disabled />
+          <CustomButton
+            title={strings.allLoaded}
+            disabled
+            accessibilityLabel={strings.allLoaded}
+          />
         </View>
       )}
     </View>
@@ -133,6 +181,10 @@ export default function ApartmentListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  filtersWrapper: {
+    marginBottom: 8,
+    paddingHorizontal: 16,
   },
   listContent: {
     paddingHorizontal: 16,
@@ -148,5 +200,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 18,
+    textAlign: "center",
   },
 });

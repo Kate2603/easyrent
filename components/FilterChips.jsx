@@ -3,69 +3,85 @@ import { FlatList, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { setFilters, selectFilters } from "../redux/filtersSlice";
 import { useTheme } from "../contexts/ThemeContext";
+import { useLocale } from "../contexts/LocaleContext";
 import { COLORS } from "../constants/colors";
 
-const SORT_MAP = {
-  Адреса: "formattedAddress",
-  Тип: "propertyType",
-  Місто: "city",
+const SORT_LABELS = {
+  uk: {
+    formattedAddress: "Адреса",
+    propertyType: "Тип",
+    city: "Місто",
+  },
+  en: {
+    formattedAddress: "Address",
+    propertyType: "Type",
+    city: "City",
+  },
 };
-
-const SORT_OPTIONS = Object.keys(SORT_MAP);
 
 export default function FilterChips() {
   const dispatch = useDispatch();
   const { filterSort } = useSelector(selectFilters);
   const { theme } = useTheme();
+  const { locale } = useLocale();
+
+  const labels = SORT_LABELS[locale] || SORT_LABELS["uk"];
 
   const backgroundColor =
     theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
-  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
-  const chipBg = theme === "light" ? "#eee" : "#444";
-  const chipText = theme === "light" ? "#333" : "#eee";
+
   const chipActiveBg =
     theme === "light" ? COLORS.chipActiveBgLight : COLORS.chipActiveBgDark;
   const chipActiveText =
     theme === "light" ? COLORS.chipActiveTextLight : COLORS.chipActiveTextDark;
 
-  const handlePress = (option) => {
-    const mappedValue = SORT_MAP[option];
-    if (mappedValue !== filterSort) {
-      dispatch(setFilters({ filterSort: mappedValue }));
+  const chipInactiveBg = theme === "light" ? "#eee" : "#444";
+  const chipInactiveText = theme === "light" ? "#333" : "#eee";
+
+  const SORT_KEYS = Object.keys(labels);
+
+  const handlePress = (key) => {
+    if (key !== filterSort) {
+      dispatch(setFilters({ filterSort: key }));
     }
+  };
+
+  const renderChip = ({ item: key }) => {
+    const isActive = key === filterSort;
+    return (
+      <TouchableOpacity
+        key={key}
+        onPress={() => handlePress(key)}
+        style={[
+          styles.chip,
+          { backgroundColor: isActive ? chipActiveBg : chipInactiveBg },
+        ]}
+        accessibilityRole="button"
+        accessibilityState={{ selected: isActive }}
+      >
+        <Text
+          style={[
+            styles.text,
+            {
+              color: isActive ? chipActiveText : chipInactiveText,
+              fontWeight: isActive ? "600" : "400",
+            },
+          ]}
+        >
+          {labels[key]}
+        </Text>
+      </TouchableOpacity>
+    );
   };
 
   return (
     <FlatList
       horizontal
-      data={SORT_OPTIONS}
-      keyExtractor={(item) => item}
+      data={SORT_KEYS}
+      keyExtractor={(key) => key}
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={[styles.container, { backgroundColor }]}
-      renderItem={({ item }) => {
-        const isActive = SORT_MAP[item] === filterSort;
-        return (
-          <TouchableOpacity
-            style={[
-              styles.chip,
-              { backgroundColor: isActive ? chipActiveBg : chipBg },
-            ]}
-            onPress={() => handlePress(item)}
-          >
-            <Text
-              style={[
-                styles.text,
-                {
-                  color: isActive ? chipActiveText : chipText,
-                  fontWeight: isActive ? "600" : "400",
-                },
-              ]}
-            >
-              {item}
-            </Text>
-          </TouchableOpacity>
-        );
-      }}
+      renderItem={renderChip}
     />
   );
 }

@@ -2,20 +2,44 @@ import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector, useDispatch } from "react-redux";
+
 import { loadUserProfile } from "../redux/userSlice";
 import { ROUTES } from "../constants/ROUTES";
 import { useTheme } from "../contexts/ThemeContext";
+import { useLocale } from "../contexts/LocaleContext";
+
 import SectionTitle from "../components/SectionTitle";
 import LocationAutoDetect from "../components/LocationAutoDetect";
 import CustomButton from "../components/CustomButton";
 import ThemeToggleButton from "../components/ThemeToggleButton";
 import { COLORS } from "../constants/colors";
 
+const TEXTS = {
+  uk: {
+    home: "🏠 Головна",
+    notLoggedIn: "Ви не залогінені",
+    register: "Зареєструватися",
+    login: "Увійти",
+    greeting: "Привіт",
+    search: "🔍 Пошук квартир",
+  },
+  en: {
+    home: "🏠 Home",
+    notLoggedIn: "You are not logged in",
+    register: "Register",
+    login: "Login",
+    greeting: "Hello",
+    search: "🔍 Search apartments",
+  },
+};
+
 export default function HomeScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const { theme } = useTheme();
+  const { locale } = useLocale();
+  const strings = TEXTS[locale] || TEXTS.uk;
 
   useEffect(() => {
     dispatch(loadUserProfile());
@@ -41,30 +65,30 @@ export default function HomeScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
-      <SectionTitle>🏠 Головна</SectionTitle>
+      <SectionTitle>{strings.home}</SectionTitle>
 
       <ThemeToggleButton />
 
       {!user ? (
         <>
           <Text style={[styles.text, { color: textColor }]}>
-            Ви не залогінені
+            {strings.notLoggedIn}
           </Text>
           <CustomButton
-            title="Зареєструватися"
+            title={strings.register}
             onPress={handleGoToRegister}
             isActive
           />
-          <CustomButton title="Увійти" onPress={handleLogin} isActive />
+          <CustomButton title={strings.login} onPress={handleLogin} isActive />
         </>
       ) : (
         <>
           <Text style={[styles.text, { color: textColor }]}>
-            Привіт, {user.fullName}
+            {strings.greeting}, {user.fullName}
           </Text>
           <LocationAutoDetect />
           <CustomButton
-            title="🔍 Пошук квартир"
+            title={strings.search}
             onPress={() => navigation.navigate(ROUTES.APARTMENT_LIST)}
             isActive
           />

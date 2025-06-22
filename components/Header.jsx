@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { useTheme } from "../contexts/ThemeContext";
 import { COLORS } from "../constants/colors";
 
-const Header = ({ title, onBack }) => {
+export default function Header({ title, onBack }) {
   const { theme } = useTheme();
 
   const backgroundColor =
@@ -19,28 +19,34 @@ const Header = ({ title, onBack }) => {
         styles.container,
         { backgroundColor, borderBottomColor: borderColor },
       ]}
+      accessibilityRole="header"
     >
       {onBack && (
-        <TouchableOpacity onPress={onBack} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={onBack}
+          style={styles.backButton}
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+        >
           <Icon name="chevron-back" size={26} color={iconColor} />
         </TouchableOpacity>
       )}
       <Text style={[styles.title, { color: textColor }]}>{title}</Text>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    height: 20,
+    height: 56,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 5,
+    paddingHorizontal: 16,
     borderBottomWidth: 1,
   },
   backButton: {
     marginRight: 12,
-    padding: 6,
+    padding: 8,
     borderRadius: 20,
   },
   title: {
@@ -48,5 +54,3 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 });
-
-export default Header;

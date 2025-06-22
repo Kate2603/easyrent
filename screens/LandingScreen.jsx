@@ -5,27 +5,54 @@ import { useSelector } from "react-redux";
 
 import { ROUTES } from "../constants/ROUTES";
 import { useTheme } from "../contexts/ThemeContext";
+import { useLocale } from "../contexts/LocaleContext";
+
 import CustomButton from "../components/CustomButton";
 import SectionTitle from "../components/SectionTitle";
 import { COLORS } from "../constants/colors";
 
+const TEXTS = {
+  uk: {
+    welcome: "Ласкаво просимо до EasyRent!",
+    themeSwitch: {
+      light: "Перемкнути тему: темна",
+      dark: "Перемкнути тему: світла",
+    },
+    prompt: "Щоб почати, увійдіть або зареєструйтесь",
+    register: "Зареєструватися",
+    login: "Увійти",
+    viewApartments: "Переглянути квартири",
+  },
+  en: {
+    welcome: "Welcome to EasyRent!",
+    themeSwitch: {
+      light: "Switch theme: dark",
+      dark: "Switch theme: light",
+    },
+    prompt: "To get started, please log in or register",
+    register: "Register",
+    login: "Login",
+    viewApartments: "View Apartments",
+  },
+};
+
 function ThemeToggleButton() {
   const { toggleTheme, theme } = useTheme();
-  const nextTheme = theme === "light" ? "темна" : "світла";
+  const { locale } = useLocale();
+  const strings = TEXTS[locale] || TEXTS.uk;
 
-  return (
-    <CustomButton
-      title={`Перемкнути тему: ${nextTheme}`}
-      onPress={toggleTheme}
-      isActive={false}
-    />
-  );
+  const title =
+    theme === "light" ? strings.themeSwitch.light : strings.themeSwitch.dark;
+
+  return <CustomButton title={title} onPress={toggleTheme} isActive={false} />;
 }
 
 export default function LandingScreen() {
   const navigation = useNavigation();
   const { user } = useSelector((state) => state.user);
   const { theme } = useTheme();
+  const { locale } = useLocale();
+  const strings = TEXTS[locale] || TEXTS.uk;
 
   const handleRegister = () => {
     navigation.navigate(ROUTES.HOME_TAB, {
@@ -56,20 +83,20 @@ export default function LandingScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
-      <SectionTitle>Ласкаво просимо до EasyRent!</SectionTitle>
+      <SectionTitle>{strings.welcome}</SectionTitle>
       <ThemeToggleButton />
 
       {!user ? (
         <>
           <Text style={[styles.text, { color: textColor }]}>
-            Щоб почати, увійдіть або зареєструйтесь
+            {strings.prompt}
           </Text>
-          <CustomButton title="Зареєструватися" onPress={handleRegister} />
-          <CustomButton title="Увійти" onPress={handleLogin} isActive />
+          <CustomButton title={strings.register} onPress={handleRegister} />
+          <CustomButton title={strings.login} onPress={handleLogin} isActive />
         </>
       ) : (
         <CustomButton
-          title="Переглянути квартири"
+          title={strings.viewApartments}
           onPress={goToApartmentsList}
         />
       )}

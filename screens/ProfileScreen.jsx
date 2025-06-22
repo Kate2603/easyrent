@@ -2,17 +2,21 @@ import React from "react";
 import { View, Text, Image, StyleSheet, FlatList, Alert } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import { ROUTES } from "../constants/ROUTES";
 import SectionTitle from "../components/SectionTitle";
 import CustomButton from "../components/CustomButton";
 import { logout } from "../redux/userSlice";
 import { useTheme } from "../contexts/ThemeContext";
 import { COLORS } from "../constants/colors";
+import { useStrings } from "../hooks/useStrings";
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { theme } = useTheme();
+  const { strings } = useStrings();
 
   const { user } = useSelector((state) => state.user);
 
@@ -30,17 +34,24 @@ export default function ProfileScreen() {
   };
 
   const handleLogout = () => {
-    Alert.alert("Вийти з акаунту?", "Ви впевнені?", [
-      { text: "Скасувати", style: "cancel" },
-      {
-        text: "Вийти",
-        onPress: () => {
-          dispatch(logout());
-          navigation.navigate(ROUTES.LANDING);
+    Alert.alert(
+      strings.logoutConfirmTitle || "Вийти з акаунту?",
+      strings.logoutConfirmMessage || "Ви впевнені?",
+      [
+        {
+          text: strings.cancel || "Скасувати",
+          style: "cancel",
         },
-        style: "destructive",
-      },
-    ]);
+        {
+          text: strings.logout || "Вийти",
+          onPress: () => {
+            dispatch(logout());
+            navigation.navigate(ROUTES.LANDING);
+          },
+          style: "destructive",
+        },
+      ]
+    );
   };
 
   const data = [
@@ -52,9 +63,9 @@ export default function ProfileScreen() {
             source={{ uri: user?.avatar || "https://i.pravatar.cc/150" }}
             style={[styles.avatar, { borderColor: avatarBorderColor }]}
           />
-          <SectionTitle>{user?.fullName || "Користувач"}</SectionTitle>
+          <SectionTitle>{user?.fullName || strings.unknownUser}</SectionTitle>
           <Text style={[styles.email, { color: secondaryTextColor }]}>
-            {user?.email || "no-email@example.com"}
+            {user?.email || strings.noEmail}
           </Text>
         </View>
       ),
@@ -62,24 +73,33 @@ export default function ProfileScreen() {
     {
       key: "edit",
       render: () => (
-        <CustomButton title="Редагувати профіль" onPress={handleEditProfile} />
+        <CustomButton
+          title={strings.editProfile || "Редагувати профіль"}
+          onPress={handleEditProfile}
+        />
       ),
     },
     {
       key: "logout",
       render: () => (
-        <CustomButton title="Вийти" onPress={handleLogout} isActive />
+        <CustomButton
+          title={strings.logout || "Вийти"}
+          onPress={handleLogout}
+          isActive
+        />
       ),
     },
   ];
 
   return (
-    <FlatList
-      style={{ backgroundColor }}
-      contentContainerStyle={[styles.container, { backgroundColor }]}
-      data={data}
-      renderItem={({ item }) => item.render()}
-    />
+    <SafeAreaView style={{ flex: 1, backgroundColor }}>
+      <FlatList
+        style={{ backgroundColor }}
+        contentContainerStyle={[styles.container, { backgroundColor }]}
+        data={data}
+        renderItem={({ item }) => item.render()}
+      />
+    </SafeAreaView>
   );
 }
 

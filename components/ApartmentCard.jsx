@@ -1,42 +1,72 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  LayoutAnimation,
+  Platform,
+  UIManager,
+} from "react-native";
 import SectionTitle from "./SectionTitle";
 import { useTheme } from "../contexts/ThemeContext";
+import { useStrings } from "../hooks/useStrings";
 import { COLORS } from "../constants/colors";
+import { formatDate } from "../utils/dateUtils";
 
-const ApartmentCard = React.memo(function ApartmentCard({
-  apartment,
-  onPress,
-}) {
+// Enable LayoutAnimation on Android
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+const ApartmentCard = React.memo(({ apartment, onPress }) => {
   const { theme } = useTheme();
+  const { strings, locale } = useStrings();
+  const [expanded, setExpanded] = useState(false);
 
   const backgroundColor =
     theme === "light" ? COLORS.lightCard : COLORS.darkCard;
   const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
-  const shadowColor = theme === "light" ? "#000" : "#000";
+  const shadowColor = "#000";
+
+  const handleToggle = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpanded((prev) => !prev);
+    if (onPress) onPress();
+  };
+
+  const createdAtFormatted = formatDate(apartment.createdAt, locale);
 
   return (
     <TouchableOpacity
-      style={[
-        styles.card,
-        {
-          backgroundColor,
-          shadowColor,
-        },
-      ]}
-      onPress={onPress}
+      onPress={handleToggle}
+      style={[styles.card, { backgroundColor, shadowColor }]}
+      activeOpacity={0.9}
     >
       <SectionTitle>
-        {apartment.formattedAddress || "Адреса відсутня"}
+        {apartment.formattedAddress || strings.noAddress}
       </SectionTitle>
 
       <Text style={[styles.text, { color: textColor }]}>
-        Тип: {apartment.propertyType || "Невідомий"}
+        {strings.type}: {apartment.propertyType || strings.unknown}
       </Text>
 
-      {apartment.yearBuilt && (
+      {expanded && apartment.yearBuilt && (
         <Text style={[styles.text, { color: textColor }]}>
-          Рік побудови: {apartment.yearBuilt}
+          {strings.yearBuilt}: {apartment.yearBuilt}
+        </Text>
+      )}
+
+      <Text style={[styles.text, { color: textColor }]}>
+        {strings.publishedOn}: {createdAtFormatted}
+      </Text>
+
+      {expanded && apartment.squareFootage && (
+        <Text style={[styles.text, { color: textColor }]}>
+          {strings.area}: {apartment.squareFootage} {strings.sqMeters}
         </Text>
       )}
     </TouchableOpacity>
@@ -51,11 +81,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 12,
     shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowRadius: 6,
+    elevation: 4,
   },
   text: {
     fontSize: 16,
-    marginBottom: 4,
+    marginTop: 4,
   },
 });

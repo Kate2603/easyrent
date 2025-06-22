@@ -1,38 +1,42 @@
-import React from "react";
+import React, { useRef } from "react";
 import { View, TextInput, Text, StyleSheet, Switch } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { TextInputMask } from "react-native-masked-text";
 import CustomButton from "./CustomButton";
 import { useTheme } from "../contexts/ThemeContext";
-import { COLORS } from "../constants/colors";
+import { useStrings } from "../hooks/useStrings";
 
-const validationSchema = Yup.object({
-  cardNumber: Yup.string()
-    .matches(/^\d{16}$/, "Має бути 16 цифр")
-    .required("Це поле має бути заповнене"),
-  expiry: Yup.string()
-    .matches(/^(0[1-9]|1[0-2])\/\d{2}$/, "Формат MM/YY")
-    .required("Це поле має бути заповнене"),
-  cvv: Yup.string()
-    .matches(/^\d{3}$/, "Має бути 3 цифри")
-    .required("Це поле має бути заповнене"),
-});
-
-const PaymentForm = ({ onSubmit }) => {
+export default function PaymentForm({ onSubmit }) {
   const { theme } = useTheme();
+  const { strings } = useStrings();
 
-  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
-  const borderColor = theme === "light" ? "#ccc" : "#555";
-  const placeholderColor = theme === "light" ? "#999" : "#aaa";
-  const inputBackground =
-    theme === "light" ? COLORS.lightBackground : COLORS.darkCard;
-  const switchThumbColor =
-    theme === "light" ? COLORS.primaryLight : COLORS.primaryDark;
-  const switchTrackColor =
-    theme === "light"
-      ? { true: "#cce0ff", false: "#ddd" }
-      : { true: "#335577", false: "#555" };
-  const errorColor = theme === "light" ? "red" : "#ff6b6b";
+  const cvvRef = useRef(null);
+
+  const validationSchema = Yup.object({
+    cardNumber: Yup.string()
+      .matches(/^\d{16}$/, strings.errors.cardNumberLength)
+      .required(strings.errors.required),
+    expiry: Yup.string()
+      .matches(/^(0[1-9]|1[0-2])\/\d{2}$/, strings.errors.expiryFormat)
+      .required(strings.errors.required),
+    cvv: Yup.string()
+      .matches(/^\d{3}$/, strings.errors.cvvLength)
+      .required(strings.errors.required),
+  });
+
+  const colors = {
+    text: theme === "light" ? "#222" : "#eee",
+    border: theme === "light" ? "#ccc" : "#555",
+    placeholder: theme === "light" ? "#999" : "#aaa",
+    inputBg: theme === "light" ? "#fff" : "#222",
+    error: theme === "light" ? "red" : "#ff6b6b",
+    thumb: theme === "light" ? "#006FFD" : "#66AAFF",
+    track:
+      theme === "light"
+        ? { true: "#cce0ff", false: "#ddd" }
+        : { true: "#335577", false: "#555" },
+  };
 
   return (
     <Formik
@@ -43,9 +47,7 @@ const PaymentForm = ({ onSubmit }) => {
         securePayment: false,
       }}
       validationSchema={validationSchema}
-      onSubmit={(values) => {
-        if (onSubmit) onSubmit(values);
-      }}
+      onSubmit={onSubmit}
     >
       {({
         handleChange,
@@ -57,108 +59,123 @@ const PaymentForm = ({ onSubmit }) => {
         setFieldValue,
       }) => (
         <View style={styles.container}>
-          <Text style={[styles.label, { color: textColor }]}>Номер картки</Text>
-          <TextInput
+          {/* Card Number */}
+          <Text style={[styles.label, { color: colors.text }]}>
+            {strings.cardNumber}
+          </Text>
+          <TextInputMask
+            type={"credit-card"}
+            value={values.cardNumber}
+            onChangeText={(text) =>
+              setFieldValue("cardNumber", text.replace(/\s/g, ""))
+            }
+            onBlur={handleBlur("cardNumber")}
             style={[
               styles.input,
               {
-                borderColor,
-                color: textColor,
-                backgroundColor: inputBackground,
+                borderColor: colors.border,
+                backgroundColor: colors.inputBg,
+                color: colors.text,
               },
             ]}
             placeholder="0000 0000 0000 0000"
-            placeholderTextColor={placeholderColor}
+            placeholderTextColor={colors.placeholder}
             keyboardType="numeric"
-            value={values.cardNumber}
-            onChangeText={handleChange("cardNumber")}
-            onBlur={handleBlur("cardNumber")}
           />
           {touched.cardNumber && errors.cardNumber && (
-            <Text style={[styles.error, { color: errorColor }]}>
+            <Text style={[styles.error, { color: colors.error }]}>
               {errors.cardNumber}
             </Text>
           )}
 
-          <Text style={[styles.label, { color: textColor }]}>
-            Термін дії (MM/YY)
+          {/* Expiry */}
+          <Text style={[styles.label, { color: colors.text }]}>
+            {strings.expiry}
           </Text>
-          <TextInput
+          <TextInputMask
+            type="custom"
+            options={{ mask: "99/99" }}
+            value={values.expiry}
+            onChangeText={(text) => {
+              setFieldValue("expiry", text);
+              if (text.length === 5 && cvvRef.current) {
+                cvvRef.current.focus();
+              }
+            }}
+            onBlur={handleBlur("expiry")}
             style={[
               styles.input,
               {
-                borderColor,
-                color: textColor,
-                backgroundColor: inputBackground,
+                borderColor: colors.border,
+                backgroundColor: colors.inputBg,
+                color: colors.text,
               },
             ]}
             placeholder="MM/YY"
-            placeholderTextColor={placeholderColor}
-            value={values.expiry}
-            onChangeText={handleChange("expiry")}
-            onBlur={handleBlur("expiry")}
+            placeholderTextColor={colors.placeholder}
+            keyboardType="numeric"
           />
           {touched.expiry && errors.expiry && (
-            <Text style={[styles.error, { color: errorColor }]}>
+            <Text style={[styles.error, { color: colors.error }]}>
               {errors.expiry}
             </Text>
           )}
 
-          <Text style={[styles.label, { color: textColor }]}>CVV</Text>
+          {/* CVV */}
+          <Text style={[styles.label, { color: colors.text }]}>
+            {strings.cvv}
+          </Text>
           <TextInput
-            style={[
-              styles.input,
-              {
-                borderColor,
-                color: textColor,
-                backgroundColor: inputBackground,
-              },
-            ]}
-            placeholder="***"
-            placeholderTextColor={placeholderColor}
-            keyboardType="numeric"
-            secureTextEntry
+            ref={cvvRef}
             value={values.cvv}
             onChangeText={handleChange("cvv")}
             onBlur={handleBlur("cvv")}
+            style={[
+              styles.input,
+              {
+                borderColor: colors.border,
+                backgroundColor: colors.inputBg,
+                color: colors.text,
+              },
+            ]}
+            placeholder="***"
+            placeholderTextColor={colors.placeholder}
+            keyboardType="numeric"
+            maxLength={3}
+            secureTextEntry
           />
           {touched.cvv && errors.cvv && (
-            <Text style={[styles.error, { color: errorColor }]}>
+            <Text style={[styles.error, { color: colors.error }]}>
               {errors.cvv}
             </Text>
           )}
 
+          {/* Switch */}
           <View style={styles.switchContainer}>
-            <Text style={[styles.switchLabel, { color: textColor }]}>
-              Безпечна оплата
+            <Text style={[styles.switchLabel, { color: colors.text }]}>
+              {strings.securePayment}
             </Text>
             <Switch
               value={values.securePayment}
-              onValueChange={(value) => setFieldValue("securePayment", value)}
-              thumbColor={values.securePayment ? switchThumbColor : "#ccc"}
-              trackColor={switchTrackColor}
+              onValueChange={(val) => setFieldValue("securePayment", val)}
+              thumbColor={
+                values.securePayment ? colors.thumb : colors.placeholder
+              }
+              trackColor={colors.track}
             />
           </View>
 
-          <CustomButton title="Оплатити" onPress={handleSubmit} isActive />
+          {/* Submit */}
+          <CustomButton title={strings.pay} onPress={handleSubmit} isActive />
         </View>
       )}
     </Formik>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginHorizontal: 16,
-    paddingVertical: 24,
-    gap: 14,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 4,
-  },
+  container: { flex: 1, gap: 14 },
+  label: { fontSize: 14, fontWeight: "600", marginBottom: 4 },
   input: {
     paddingVertical: 12,
     paddingHorizontal: 14,
@@ -166,21 +183,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     fontSize: 16,
   },
-  error: {
-    fontSize: 12,
-    marginTop: -8,
-    marginBottom: 8,
-  },
+  error: { fontSize: 12, marginTop: -8, marginBottom: 8 },
   switchContainer: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 8,
+    alignItems: "center",
   },
-  switchLabel: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
+  switchLabel: { fontSize: 16, fontWeight: "500" },
 });
-
-export default PaymentForm;

@@ -16,32 +16,35 @@ import SectionTitle from "../components/SectionTitle";
 import CustomButton from "../components/CustomButton";
 import { useTheme } from "../contexts/ThemeContext";
 import { COLORS } from "../constants/colors";
-
-const validationSchema = Yup.object().shape({
-  fullName: Yup.string().required("Обов'язково"),
-  email: Yup.string().email("Невірний email").required("Обов'язково"),
-  password: Yup.string().min(4, "Мінімум 4 символи").required("Обов'язково"),
-});
+import { useStrings } from "../hooks/useStrings";
 
 export default function RegisterScreen() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { theme } = useTheme();
+  const { strings } = useStrings();
 
   const backgroundColor =
     theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
   const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
-  const secondaryTextColor = theme === "light" ? "#555" : "#aaa";
-
   const placeholderColor = theme === "light" ? "#999" : "#aaa";
   const errorColor = theme === "light" ? "#FF3B30" : "#FF6B6B";
   const linkColor =
     theme === "light" ? COLORS.primaryLight : COLORS.primaryDark;
 
+  const validationSchema = Yup.object().shape({
+    fullName: Yup.string().required(strings.errors.required),
+    email: Yup.string()
+      .email(strings.errors.invalidEmail)
+      .required(strings.errors.required),
+    password: Yup.string()
+      .min(4, strings.minPassword)
+      .required(strings.errors.required),
+  });
+
   const handleRegister = (values) => {
     const { fullName, email, password } = values;
 
-    // Мокове збереження користувача
     dispatch(
       loginSuccess({
         user: {
@@ -61,7 +64,7 @@ export default function RegisterScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
-      <SectionTitle>📝 Реєстрація</SectionTitle>
+      <SectionTitle>{strings.register}</SectionTitle>
 
       <Formik
         initialValues={{ fullName: "", email: "", password: "" }}
@@ -80,7 +83,7 @@ export default function RegisterScreen() {
         }) => (
           <>
             <TextInput
-              placeholder="Повне ім’я"
+              placeholder={strings.name}
               placeholderTextColor={placeholderColor}
               style={[
                 styles.input,
@@ -90,6 +93,7 @@ export default function RegisterScreen() {
               onBlur={handleBlur("fullName")}
               value={values.fullName}
               autoCapitalize="words"
+              accessibilityLabel={strings.name}
             />
             {touched.fullName && errors.fullName && (
               <Text style={[styles.error, { color: errorColor }]}>
@@ -98,7 +102,7 @@ export default function RegisterScreen() {
             )}
 
             <TextInput
-              placeholder="Email"
+              placeholder={strings.email}
               placeholderTextColor={placeholderColor}
               keyboardType="email-address"
               autoCapitalize="none"
@@ -109,6 +113,7 @@ export default function RegisterScreen() {
               onChangeText={handleChange("email")}
               onBlur={handleBlur("email")}
               value={values.email}
+              accessibilityLabel={strings.email}
             />
             {touched.email && errors.email && (
               <Text style={[styles.error, { color: errorColor }]}>
@@ -117,7 +122,7 @@ export default function RegisterScreen() {
             )}
 
             <TextInput
-              placeholder="Пароль"
+              placeholder={strings.password || "Пароль"}
               placeholderTextColor={placeholderColor}
               secureTextEntry
               style={[
@@ -127,6 +132,7 @@ export default function RegisterScreen() {
               onChangeText={handleChange("password")}
               onBlur={handleBlur("password")}
               value={values.password}
+              accessibilityLabel={strings.password || "Пароль"}
             />
             {touched.password && errors.password && (
               <Text style={[styles.error, { color: errorColor }]}>
@@ -135,14 +141,15 @@ export default function RegisterScreen() {
             )}
 
             <CustomButton
-              title="Зареєструватись"
+              title={strings.register}
               onPress={handleSubmit}
               isActive={dirty && isValid}
+              accessibilityLabel={strings.register}
             />
 
             <TouchableOpacity onPress={() => navigation.navigate(ROUTES.LOGIN)}>
               <Text style={[styles.link, { color: linkColor }]}>
-                Вже маєш акаунт? Увійти
+                {strings.login}
               </Text>
             </TouchableOpacity>
           </>

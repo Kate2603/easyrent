@@ -11,6 +11,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 import CustomButton from "../components/CustomButton";
 import SectionTitle from "../components/SectionTitle";
+import { useStrings } from "../hooks/useStrings";
+import { useTheme } from "../contexts/ThemeContext";
 
 import {
   fetchApartmentById,
@@ -20,27 +22,26 @@ import {
 } from "../redux/apartmentsSlice";
 
 import { ROUTES } from "../constants/ROUTES";
-import { useTheme } from "../contexts/ThemeContext";
-import { COLORS } from "../constants/colors";
+import { formatDate } from "../utils/formatDate";
 
 export default function ApartmentDetailsScreen() {
   const { apartmentId } = useRoute().params;
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const strings = useStrings();
+  const { theme } = useTheme();
 
   const apartment = useSelector(selectSelectedApartment);
   const loading = useSelector(selectSelectedApartmentLoading);
   const error = useSelector(selectSelectedApartmentError);
 
-  const { theme } = useTheme();
-  const backgroundColor =
-    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
-  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
+  const backgroundColor = theme === "light" ? "#fff" : "#121212";
+  const textColor = theme === "light" ? "#222" : "#eee";
   const secondaryTextColor = theme === "light" ? "#666" : "#aaa";
 
   useEffect(() => {
     dispatch(fetchApartmentById(apartmentId));
-  }, [apartmentId]);
+  }, [apartmentId, dispatch]);
 
   if (loading) {
     return (
@@ -53,8 +54,8 @@ export default function ApartmentDetailsScreen() {
   if (error) {
     return (
       <View style={[styles.center, { backgroundColor }]}>
-        <Text style={[styles.notFoundText, { color: textColor }]}>
-          Помилка завантаження: {error}
+        <Text style={[styles.messageText, { color: textColor }]}>
+          {strings.loadingError}: {error}
         </Text>
       </View>
     );
@@ -63,37 +64,50 @@ export default function ApartmentDetailsScreen() {
   if (!apartment) {
     return (
       <View style={[styles.center, { backgroundColor }]}>
-        <Text style={[styles.notFoundText, { color: textColor }]}>
-          Квартира не знайдена
+        <Text style={[styles.messageText, { color: textColor }]}>
+          {strings.apartmentNotFound}
         </Text>
       </View>
     );
   }
 
+  const createdAtFormatted = apartment.createdAt
+    ? formatDate(apartment.createdAt, strings.locale)
+    : strings.unknown || (strings.locale === "uk" ? "невідомо" : "unknown");
+
   return (
     <ScrollView contentContainerStyle={[styles.container, { backgroundColor }]}>
       <SectionTitle style={{ color: textColor }}>
-        {apartment.formattedAddress || "Адреса відсутня"}
+        {apartment.formattedAddress || strings.addressMissing}
       </SectionTitle>
 
       <View style={styles.detailRow}>
         <Text style={[styles.detailText, { color: secondaryTextColor }]}>
-          Тип: {apartment.propertyType || "Невідомий"}
+          {strings.type}: {apartment.propertyType || strings.unknown}
         </Text>
       </View>
 
       {apartment.yearBuilt && (
-        <Text style={[styles.detailText, { color: secondaryTextColor }]}>
-          Рік побудови: {apartment.yearBuilt}
-        </Text>
+        <View style={styles.detailRow}>
+          <Text style={[styles.detailText, { color: secondaryTextColor }]}>
+            {strings.yearBuilt}: {apartment.yearBuilt}
+          </Text>
+        </View>
       )}
+
+      <View style={styles.detailRow}>
+        <Text style={[styles.detailText, { color: secondaryTextColor }]}>
+          {strings.publishedOn}: {createdAtFormatted}
+        </Text>
+      </View>
 
       <View style={styles.buttonWrapper}>
         <CustomButton
-          title="Забронювати"
+          title={strings.bookNow}
           onPress={() =>
             navigation.navigate(ROUTES.BOOKING, { id: apartment.id })
           }
+          accessibilityLabel={strings.bookNow}
         />
       </View>
     </ScrollView>
@@ -103,14 +117,17 @@ export default function ApartmentDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    flexGrow: 1,
   },
   center: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  notFoundText: {
+  messageText: {
     fontSize: 18,
+    textAlign: "center",
+    paddingHorizontal: 16,
   },
   detailRow: {
     flexDirection: "row",

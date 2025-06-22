@@ -8,7 +8,7 @@ export default function LocationAutoDetect() {
   const { city, state } = useSelector(selectFilters);
 
   useEffect(() => {
-    if (city && state) return; // вже встановлено
+    if (city && state) return;
 
     (async () => {
       try {
@@ -19,8 +19,16 @@ export default function LocationAutoDetect() {
         const { latitude, longitude } = location.coords;
 
         const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`
+          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`,
+          {
+            headers: {
+              "User-Agent":
+                "EasyRent/1.0 (https://github.com/Kate2603/easyrent; contact:kate2603.kv@gmail.com)",
+              "Accept-Language": "uk",
+            },
+          }
         );
+
         const data = await response.json();
         const cityName =
           data.address.city || data.address.town || data.address.village;
@@ -36,12 +44,12 @@ export default function LocationAutoDetect() {
         dispatch(setCity("New York"));
         dispatch(setStateCode("NY"));
       } catch (error) {
-        // fallback on any error
+        // Optional: console.warn("LocationAutoDetect error:", error);
         dispatch(setCity("New York"));
         dispatch(setStateCode("NY"));
       }
     })();
-  }, [city, state]);
+  }, [city, state, dispatch]);
 
   return null;
 }

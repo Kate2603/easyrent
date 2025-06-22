@@ -16,19 +16,10 @@ const userSlice = createSlice({
       state.user = action.payload.user;
       state.token = action.payload.token;
       state.error = null;
-
-      AsyncStorage.setItem(
-        "userData",
-        JSON.stringify({
-          user: action.payload.user,
-          token: action.payload.token,
-        })
-      );
     },
     logout: (state) => {
       state.user = null;
       state.token = null;
-      AsyncStorage.removeItem("userData");
     },
     updateUser: (state, action) => {
       state.user = { ...state.user, ...action.payload };
@@ -44,9 +35,11 @@ const userSlice = createSlice({
 
 export const { loginSuccess, logout, updateUser, setLoading, setError } =
   userSlice.actions;
+
 export default userSlice.reducer;
 
-// --- Thunk для завантаження користувача з AsyncStorage ---
+// --- THUNKS ---
+
 export const loadUserProfile = () => async (dispatch) => {
   dispatch(setLoading(true));
   try {
@@ -55,10 +48,39 @@ export const loadUserProfile = () => async (dispatch) => {
       const { user, token } = JSON.parse(jsonValue);
       dispatch(loginSuccess({ user, token }));
     }
-    dispatch(setLoading(false));
   } catch (e) {
     dispatch(setError("Помилка завантаження профілю"));
+    console.error("AsyncStorage load error:", e);
+  } finally {
     dispatch(setLoading(false));
-    console.error("Помилка завантаження профілю", e);
+  }
+};
+
+export const performLogin = (userData) => async (dispatch) => {
+  dispatch(loginSuccess(userData));
+  try {
+    await AsyncStorage.setItem("userData", JSON.stringify(userData));
+  } catch (e) {
+    console.error("AsyncStorage login save error:", e);
+  }
+};
+
+export const performLogout = () => async (dispatch) => {
+  dispatch(logout());
+  try {
+    await AsyncStorage.removeItem("userData");
+  } catch (e) {
+    console.error("AsyncStorage logout error:", e);
+  }
+};
+
+export const updateProfile = (updatedFields) => async (dispatch, getState) => {
+  dispatch(updateUser(updatedFields));
+  try {
+    const { user, token } = getState().user;
+    await AsyncStorage.setItem("userData", JSON.stringify({ user, token }));
+  } catch (e) {
+    console.error("AsyncStorage update error:", e);
+    dispatch(setError("Не вдалося зберегти зміни"));
   }
 };

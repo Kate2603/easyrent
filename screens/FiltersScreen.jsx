@@ -1,32 +1,45 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-
 import CityAutocompleteInput from "../components/CityAutocompleteInput";
 import SectionTitle from "../components/SectionTitle";
 import CustomButton from "../components/CustomButton";
-
+import { useDispatch, useSelector } from "react-redux";
 import {
   setFilters,
   selectFilters,
   FILTER_SORT_OPTIONS,
 } from "../redux/filtersSlice";
-
 import { useTheme } from "../contexts/ThemeContext";
+import { useLocale } from "../contexts/LocaleContext";
 import { COLORS } from "../constants/colors";
+
+const SORT_LABELS = {
+  uk: {
+    formattedAddress: "Адреса",
+    propertyType: "Тип",
+    city: "Місто",
+  },
+  en: {
+    formattedAddress: "Address",
+    propertyType: "Type",
+    city: "City",
+  },
+};
 
 export default function FiltersScreen() {
   const dispatch = useDispatch();
   const { filterSort } = useSelector(selectFilters);
   const { theme } = useTheme();
+  const { locale } = useLocale();
 
   const backgroundColor =
     theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
-  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
-  const secondaryTextColor = theme === "light" ? "#555" : "#aaa";
+  const labels = SORT_LABELS[locale] || SORT_LABELS.uk;
 
-  const handleSelect = (filter) => {
-    dispatch(setFilters({ filterSort: filter, page: 1 }));
+  const handleSelect = (filterKey) => {
+    if (filterKey !== filterSort) {
+      dispatch(setFilters({ filterSort: filterKey, page: 1 }));
+    }
   };
 
   return (
@@ -44,7 +57,7 @@ export default function FiltersScreen() {
         renderItem={({ item }) => (
           <View style={styles.chipWrapper}>
             <CustomButton
-              title={item}
+              title={labels[item] || item}
               onPress={() => handleSelect(item)}
               isActive={item === filterSort}
             />
