@@ -17,6 +17,14 @@ export default function SearchForm({
   const { backgroundColor, textColor, cardColor } = useThemeColors();
   const strings = useStrings();
 
+  const inputStyle = {
+    borderColor: cardColor,
+    color: textColor,
+    backgroundColor: cardColor,
+  };
+
+  const placeholderColor = textColor + "88";
+
   const handleSubmit = () => {
     if (onSubmit) {
       onSubmit({ city, addressLine1, propertyType });
@@ -28,54 +36,45 @@ export default function SearchForm({
       <SectionTitle>{strings.searchParameters}</SectionTitle>
 
       <TextInput
-        style={[
-          styles.input,
-          {
-            borderColor: cardColor,
-            color: textColor,
-            backgroundColor: cardColor,
-          },
-        ]}
+        style={[styles.input, inputStyle]}
         placeholder={strings.city}
-        placeholderTextColor={textColor + "88"} // напівпрозорий текст
+        placeholderTextColor={placeholderColor}
         value={city}
         onChangeText={setCity}
         onEndEditing={handleSubmit}
         accessibilityLabel={strings.city}
+        importantForAccessibility="yes"
+        returnKeyType="done"
+        autoCorrect={false}
+        autoCapitalize="words"
       />
 
       <TextInput
-        style={[
-          styles.input,
-          {
-            borderColor: cardColor,
-            color: textColor,
-            backgroundColor: cardColor,
-          },
-        ]}
+        style={[styles.input, inputStyle]}
         placeholder={strings.propertyType}
-        placeholderTextColor={textColor + "88"}
+        placeholderTextColor={placeholderColor}
         value={propertyType}
         onChangeText={setPropertyType}
         onEndEditing={handleSubmit}
         accessibilityLabel={strings.propertyType}
+        importantForAccessibility="yes"
+        returnKeyType="done"
+        autoCorrect={false}
+        autoCapitalize="none"
       />
 
       <TextInput
-        style={[
-          styles.input,
-          {
-            borderColor: cardColor,
-            color: textColor,
-            backgroundColor: cardColor,
-          },
-        ]}
+        style={[styles.input, inputStyle]}
         placeholder={strings.address}
-        placeholderTextColor={textColor + "88"}
+        placeholderTextColor={placeholderColor}
         value={addressLine1}
         onChangeText={setAddressLine1}
         onEndEditing={handleSubmit}
         accessibilityLabel={strings.address}
+        importantForAccessibility="yes"
+        returnKeyType="done"
+        autoCorrect={false}
+        autoCapitalize="none"
       />
     </View>
   );

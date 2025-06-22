@@ -5,10 +5,13 @@ import { ROUTES } from "../constants/ROUTES";
 import SectionTitle from "../components/SectionTitle";
 import CustomButton from "../components/CustomButton";
 import { useThemeColors } from "../hooks/useThemeColors";
+import { useStrings } from "../hooks/useStrings";
 
 export default function SuccessScreen() {
   const navigation = useNavigation();
   const { backgroundColor, textColor, cardColor } = useThemeColors();
+  const { strings } = useStrings();
+  const t = strings.successScreen;
 
   const handleReturn = () => {
     navigation.dispatch(
@@ -21,21 +24,13 @@ export default function SuccessScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
-      <SectionTitle style={{ color: textColor }}>
-        Дякуємо за бронювання!
-      </SectionTitle>
+      <SectionTitle style={{ color: textColor }}>{t.title}</SectionTitle>
 
       <View style={[styles.messageBox, { backgroundColor: cardColor }]}>
-        <Text style={[styles.message, { color: textColor }]}>
-          Ми надіслали вам підтвердження на електронну пошту.
-        </Text>
+        <Text style={[styles.message, { color: textColor }]}>{t.message}</Text>
       </View>
 
-      <CustomButton
-        title="Повернутись на головну"
-        onPress={handleReturn}
-        isActive
-      />
+      <CustomButton title={t.returnButton} onPress={handleReturn} isActive />
     </View>
   );
 }

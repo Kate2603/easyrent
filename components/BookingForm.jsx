@@ -102,9 +102,7 @@ export default function BookingForm({ onSubmit }) {
                       },
                     ]}
                     accessibilityLabel={strings[placeholderKey]}
-                    selectionColor={
-                      isLight ? COLORS.primaryLight : COLORS.primaryDark
-                    }
+                    selectionColor={primaryColor}
                   />
                   {touched[key] && errors[key] && (
                     <Text style={styles.errorText}>{errors[key]}</Text>

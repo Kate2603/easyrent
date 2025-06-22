@@ -4,43 +4,17 @@ import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
 import { ROUTES } from "../constants/ROUTES";
-import { useThemeColors } from "../hooks/useThemeColors"; // Використання хуку для кольорів
-import { useTheme } from "../contexts/ThemeContext"; // Для toggleTheme
-import { useLocale } from "../contexts/LocaleContext";
+import { useThemeColors } from "../hooks/useThemeColors";
+import { useStrings } from "../hooks/useStrings";
+import { useTheme } from "../contexts/ThemeContext";
 
 import CustomButton from "../components/CustomButton";
 import SectionTitle from "../components/SectionTitle";
 
-const TEXTS = {
-  uk: {
-    welcome: "Ласкаво просимо до EasyRent!",
-    themeSwitch: {
-      light: "Перемкнути тему: темна",
-      dark: "Перемкнути тему: світла",
-    },
-    prompt: "Щоб почати, увійдіть або зареєструйтесь",
-    register: "Зареєструватися",
-    login: "Увійти",
-    viewApartments: "Переглянути квартири",
-  },
-  en: {
-    welcome: "Welcome to EasyRent!",
-    themeSwitch: {
-      light: "Switch theme: dark",
-      dark: "Switch theme: light",
-    },
-    prompt: "To get started, please log in or register",
-    register: "Register",
-    login: "Login",
-    viewApartments: "View Apartments",
-  },
-};
-
 function ThemeToggleButton() {
   const { toggleTheme, theme } = useTheme();
-  const { locale } = useLocale();
+  const { strings } = useStrings();
   const colors = useThemeColors();
-  const strings = TEXTS[locale] || TEXTS.uk;
 
   const title =
     theme === "light" ? strings.themeSwitch.light : strings.themeSwitch.dark;
@@ -60,8 +34,7 @@ export default function LandingScreen() {
   const navigation = useNavigation();
   const { user } = useSelector((state) => state.user);
   const colors = useThemeColors();
-  const { locale } = useLocale();
-  const strings = TEXTS[locale] || TEXTS.uk;
+  const { strings } = useStrings();
 
   const handleRegister = () => {
     navigation.navigate(ROUTES.HOME_TAB, {
@@ -80,9 +53,7 @@ export default function LandingScreen() {
   const goToApartmentsList = () => {
     navigation.navigate(ROUTES.HOME_TAB, {
       screen: ROUTES.HOME_STACK,
-      params: {
-        screen: ROUTES.APARTMENT_LIST,
-      },
+      params: { screen: ROUTES.APARTMENT_LIST },
     });
   };
 

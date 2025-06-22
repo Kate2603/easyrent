@@ -77,6 +77,12 @@ export const STRINGS = {
     editProfile: "Редагувати профіль",
     unknownUser: "Користувач",
     noEmail: "електронна адреса відсутня",
+
+    successScreen: {
+      title: "Дякуємо за бронювання!",
+      message: "Ми надіслали вам підтвердження на електронну пошту.",
+      returnButton: "Повернутись на головну",
+    },
   },
 
   en: {
@@ -157,5 +163,11 @@ export const STRINGS = {
     editProfile: "Edit Profile",
     unknownUser: "User",
     noEmail: "no-email@example.com",
+
+    successScreen: {
+      title: "Thank you for your booking!",
+      message: "We have sent a confirmation to your email.",
+      returnButton: "Return to Home",
+    },
   },
 };

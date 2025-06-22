@@ -8,11 +8,10 @@ import { useThemeColors } from "../hooks/useThemeColors";
 
 export default function PaymentForm({ onSubmit }) {
   const { strings } = useStrings();
-  const { textColor, cardColor, primaryColor } = useThemeColors();
+  const { textColor, cardColor, primaryColor, warningText } = useThemeColors();
 
   const cvvRef = useRef(null);
 
-  // Маскування номеру карти: додаємо пробіли кожні 4 цифри
   const formatCardNumber = (text) => {
     return text
       .replace(/\D/g, "")
@@ -21,7 +20,6 @@ export default function PaymentForm({ onSubmit }) {
       .trim();
   };
 
-  // Маскування терміну дії: формат MM/YY
   const formatExpiry = (text) => {
     const cleaned = text.replace(/\D/g, "").slice(0, 4);
     if (cleaned.length === 0) return "";
@@ -62,13 +60,12 @@ export default function PaymentForm({ onSubmit }) {
         setFieldValue,
       }) => (
         <View style={styles.container}>
-          <Text style={[styles.label, { color: textColor }]}>
+          <Text style={[styles.label, { color: textColor, marginBottom: 4 }]}>
             {strings.cardNumber}
           </Text>
           <TextInput
             value={formatCardNumber(values.cardNumber)}
             onChangeText={(text) => {
-              // Зберігаємо лише цифри без пробілів
               setFieldValue("cardNumber", text.replace(/\D/g, ""));
             }}
             onBlur={handleBlur("cardNumber")}
@@ -78,20 +75,23 @@ export default function PaymentForm({ onSubmit }) {
                 borderColor: cardColor,
                 backgroundColor: cardColor,
                 color: textColor,
+                marginBottom: touched.cardNumber && errors.cardNumber ? 0 : 14,
               },
             ]}
             placeholder="0000 0000 0000 0000"
             placeholderTextColor={primaryColor}
-            keyboardType="numeric"
-            maxLength={19} // 16 цифр + 3 пробіли
+            keyboardType="number-pad"
+            maxLength={19}
           />
           {touched.cardNumber && errors.cardNumber && (
-            <Text style={[styles.error, { color: "red" }]}>
+            <Text
+              style={[styles.error, { color: warningText, marginBottom: 14 }]}
+            >
               {errors.cardNumber}
             </Text>
           )}
 
-          <Text style={[styles.label, { color: textColor }]}>
+          <Text style={[styles.label, { color: textColor, marginBottom: 4 }]}>
             {strings.expiry}
           </Text>
           <TextInput
@@ -110,27 +110,29 @@ export default function PaymentForm({ onSubmit }) {
                 borderColor: cardColor,
                 backgroundColor: cardColor,
                 color: textColor,
+                marginBottom: touched.expiry && errors.expiry ? 0 : 14,
               },
             ]}
             placeholder="MM/YY"
             placeholderTextColor={primaryColor}
-            keyboardType="numeric"
+            keyboardType="number-pad"
             maxLength={5}
           />
           {touched.expiry && errors.expiry && (
-            <Text style={[styles.error, { color: "red" }]}>
+            <Text
+              style={[styles.error, { color: warningText, marginBottom: 14 }]}
+            >
               {errors.expiry}
             </Text>
           )}
 
-          <Text style={[styles.label, { color: textColor }]}>
+          <Text style={[styles.label, { color: textColor, marginBottom: 4 }]}>
             {strings.cvv}
           </Text>
           <TextInput
             ref={cvvRef}
             value={values.cvv}
             onChangeText={(text) => {
-              // Відфільтровуємо лише цифри, максимум 3
               const clean = text.replace(/\D/g, "").slice(0, 3);
               setFieldValue("cvv", clean);
             }}
@@ -141,16 +143,21 @@ export default function PaymentForm({ onSubmit }) {
                 borderColor: cardColor,
                 backgroundColor: cardColor,
                 color: textColor,
+                marginBottom: touched.cvv && errors.cvv ? 0 : 14,
               },
             ]}
             placeholder="***"
             placeholderTextColor={primaryColor}
-            keyboardType="numeric"
+            keyboardType="number-pad"
             maxLength={3}
             secureTextEntry
           />
           {touched.cvv && errors.cvv && (
-            <Text style={[styles.error, { color: "red" }]}>{errors.cvv}</Text>
+            <Text
+              style={[styles.error, { color: warningText, marginBottom: 14 }]}
+            >
+              {errors.cvv}
+            </Text>
           )}
 
           <View style={styles.switchContainer}>
@@ -173,8 +180,8 @@ export default function PaymentForm({ onSubmit }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, gap: 14 },
-  label: { fontSize: 14, fontWeight: "600", marginBottom: 4 },
+  container: { flex: 1 },
+  label: { fontSize: 14, fontWeight: "600" },
   input: {
     paddingVertical: 12,
     paddingHorizontal: 14,
@@ -182,11 +189,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     fontSize: 16,
   },
-  error: { fontSize: 12, marginTop: -8, marginBottom: 8 },
+  error: { fontSize: 12 },
   switchContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: 20,
   },
   switchLabel: { fontSize: 16, fontWeight: "500" },
 });

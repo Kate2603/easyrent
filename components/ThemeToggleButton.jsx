@@ -7,24 +7,23 @@ import { useThemeColors } from "../hooks/useThemeColors";
 export default function ThemeToggleButton() {
   const { toggleTheme, theme } = useTheme();
   const strings = useStrings();
-  const { textColor, primaryColor, cardColor } = useThemeColors();
+  const { primaryColor, cardColor } = useThemeColors();
 
   const nextTheme =
     theme === "light"
       ? strings.themeDark || "dark"
       : strings.themeLight || "light";
 
+  const labelPrefix = strings.switchTheme || "Switch theme to: ";
+
   return (
     <CustomButton
-      title={`${strings.switchTheme || "Switch theme to: "} ${nextTheme}`}
+      title={`${labelPrefix}${nextTheme}`}
       onPress={toggleTheme}
       isActive={false}
-      accessibilityLabel={`${
-        strings.switchTheme || "Switch theme to: "
-      } ${nextTheme}`}
+      accessibilityLabel={`${labelPrefix}${nextTheme}`}
       style={{
         backgroundColor: cardColor,
-        color: primaryColor,
         borderColor: primaryColor,
       }}
       textStyle={{ color: primaryColor }}

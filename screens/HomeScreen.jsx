@@ -7,39 +7,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { loadUserProfile } from "../redux/userSlice";
 import { ROUTES } from "../constants/ROUTES";
 import { useThemeColors } from "../hooks/useThemeColors";
-import { useLocale } from "../contexts/LocaleContext";
+import { useStrings } from "../hooks/useStrings";
 
 import SectionTitle from "../components/SectionTitle";
 import LocationAutoDetect from "../components/LocationAutoDetect";
 import CustomButton from "../components/CustomButton";
 import ThemeToggleButton from "../components/ThemeToggleButton";
 
-const TEXTS = {
-  uk: {
-    home: "🏠 Головна",
-    notLoggedIn: "Ви не залогінені",
-    register: "Зареєструватися",
-    login: "Увійти",
-    greeting: "Привіт",
-    search: "🔍 Пошук квартир",
-  },
-  en: {
-    home: "🏠 Home",
-    notLoggedIn: "You are not logged in",
-    register: "Register",
-    login: "Login",
-    greeting: "Hello",
-    search: "🔍 Search apartments",
-  },
-};
-
 export default function HomeScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const colors = useThemeColors();
-  const { locale } = useLocale();
-  const strings = TEXTS[locale] || TEXTS.uk;
+  const { strings, locale } = useStrings();
 
   useEffect(() => {
     dispatch(loadUserProfile());
@@ -47,7 +27,7 @@ export default function HomeScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Головна",
+      headerTitle: strings.home,
       headerLeft: () => (
         <TouchableOpacity
           onPress={() => navigation.openDrawer()}
@@ -57,7 +37,7 @@ export default function HomeScreen() {
         </TouchableOpacity>
       ),
     });
-  }, [navigation, colors]);
+  }, [navigation, colors, strings.home]);
 
   const handleGoToRegister = () => {
     navigation.navigate(ROUTES.HOME_TAB, {
@@ -113,11 +93,12 @@ export default function HomeScreen() {
       ) : (
         <>
           <Text style={[styles.text, { color: colors.textColor }]}>
-            {strings.greeting}, {user.fullName || "User"}
+            {strings.hello}
+            {user.fullName || strings.unknownUser}
           </Text>
           <LocationAutoDetect />
           <CustomButton
-            title={strings.search}
+            title={strings.searchApartments}
             onPress={handleSearch}
             isActive
             activeBgColor={colors.primaryColor}
