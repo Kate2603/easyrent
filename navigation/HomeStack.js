@@ -6,6 +6,7 @@ import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import ApartmentListScreen from "../screens/ApartmentListScreen";
 import ApartmentDetailsScreen from "../screens/ApartmentDetailsScreen";
+import LoginRequiredWrapper from "../components/LoginRequiredWrapper";
 import BookingFormScreen from "../screens/BookingFormScreen";
 import PaymentScreen from "../screens/PaymentScreen";
 import SuccessScreen from "../screens/SuccessScreen";
@@ -49,11 +50,13 @@ export default function HomeStack() {
         component={ApartmentDetailsScreen}
         options={{ title: "Деталі квартири" }}
       />
-      <Stack.Screen
-        name={ROUTES.BOOKING}
-        component={BookingFormScreen}
-        options={{ title: "Бронювання" }}
-      />
+      <Stack.Screen name={ROUTES.BOOKING} options={{ title: "Бронювання" }}>
+        {() => (
+          <LoginRequiredWrapper>
+            <BookingFormScreen />
+          </LoginRequiredWrapper>
+        )}
+      </Stack.Screen>
       <Stack.Screen
         name={ROUTES.PAYMENT}
         component={PaymentScreen}

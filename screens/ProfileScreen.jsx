@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, Image, StyleSheet, FlatList, Alert } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
@@ -26,6 +26,15 @@ export default function ProfileScreen() {
   const secondaryTextColor = theme === "light" ? "#555" : "#aaa";
   const avatarBorderColor =
     theme === "light" ? COLORS.lightAvatarBorder : COLORS.darkAvatarBorder;
+
+  // Якщо користувач не авторизований або гість — редірект на логін
+  useEffect(() => {
+    if (!user || user.role === "guest") {
+      navigation.navigate(ROUTES.LOGIN);
+    }
+  }, [user, navigation]);
+
+  // Далі код для авторизованого користувача
 
   const handleEditProfile = () => {
     navigation.navigate(ROUTES.PROFILE_TAB, {
@@ -90,6 +99,11 @@ export default function ProfileScreen() {
       ),
     },
   ];
+
+  // Поки user === undefined (завантаження), можна показати спінер або пустий екран
+  if (!user || user.role === "guest") {
+    return null; // або можна показати ActivityIndicator
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor }}>

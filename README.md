@@ -134,7 +134,7 @@ return response.data;
 
 https://drive.google.com/file/d/1VdBzBJgKAv3BrGYVi7KI1eGQv-muiIoN/view?usp=sharing
 
-Запуск
+### Запуск
 
 npx expo start
 
@@ -164,4 +164,16 @@ npm cache clean --force
 npm install
 npx expo start
 
+### Запуск аналізу розміру:
+
+Виконати
+
 npm run analyze
+
+або
+
+expo-bundle-analyzer
+
+після чистої установки та зібрати звіт.
+
+Перевірити, чи зменшився бандл після замін

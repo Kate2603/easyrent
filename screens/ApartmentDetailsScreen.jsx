@@ -23,6 +23,7 @@ import {
 
 import { ROUTES } from "../constants/ROUTES";
 import { formatDate } from "../utils/formatDate";
+import LoginRequiredWrapper from "../components/LoginRequiredWrapper";
 
 export default function ApartmentDetailsScreen() {
   const { apartmentId } = useRoute().params;
@@ -102,13 +103,15 @@ export default function ApartmentDetailsScreen() {
       </View>
 
       <View style={styles.buttonWrapper}>
-        <CustomButton
-          title={strings.bookNow}
-          onPress={() =>
-            navigation.navigate(ROUTES.BOOKING, { id: apartment.id })
-          }
-          accessibilityLabel={strings.bookNow}
-        />
+        <LoginRequiredWrapper>
+          <CustomButton
+            title={strings.bookNow}
+            onPress={() =>
+              navigation.navigate(ROUTES.BOOKING, { id: apartment.id })
+            }
+            accessibilityLabel={strings.bookNow}
+          />
+        </LoginRequiredWrapper>
       </View>
     </ScrollView>
   );
