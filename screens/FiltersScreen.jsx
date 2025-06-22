@@ -9,9 +9,8 @@ import {
   selectFilters,
   FILTER_SORT_OPTIONS,
 } from "../redux/filtersSlice";
-import { useTheme } from "../contexts/ThemeContext";
+import { useThemeColors } from "../hooks/useThemeColors"; // імпорт хука
 import { useLocale } from "../contexts/LocaleContext";
-import { COLORS } from "../constants/colors";
 
 const SORT_LABELS = {
   uk: {
@@ -29,11 +28,9 @@ const SORT_LABELS = {
 export default function FiltersScreen() {
   const dispatch = useDispatch();
   const { filterSort } = useSelector(selectFilters);
-  const { theme } = useTheme();
+  const colors = useThemeColors(); // отримуємо кольори
   const { locale } = useLocale();
 
-  const backgroundColor =
-    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
   const labels = SORT_LABELS[locale] || SORT_LABELS.uk;
 
   const handleSelect = (filterKey) => {
@@ -43,7 +40,7 @@ export default function FiltersScreen() {
   };
 
   return (
-    <View style={[styles.wrapper, { backgroundColor }]}>
+    <View style={[styles.wrapper, { backgroundColor: colors.backgroundColor }]}>
       <SectionTitle>Оберіть місто</SectionTitle>
       <CityAutocompleteInput />
 

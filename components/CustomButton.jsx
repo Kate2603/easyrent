@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
+import { useThemeColors } from "../hooks/useThemeColors";
 
 export default function CustomButton({
   title,
@@ -10,24 +10,24 @@ export default function CustomButton({
   style,
   textStyle,
 }) {
-  const { theme } = useTheme();
+  const { colors, isLight } = useThemeColors();
 
   const backgroundColor = isActive
-    ? theme === "light"
-      ? "#FFFFFF"
-      : "#333333"
+    ? isLight
+      ? colors.lightBackground
+      : colors.darkBackground
     : disabled
-    ? theme === "light"
+    ? isLight
       ? "#F6F6F6"
       : "#2a2a2a"
-    : "#006FFD";
+    : colors.primary;
 
-  const borderColor = isActive ? "#006FFD" : "transparent";
+  const borderColor = isActive ? colors.primary : "transparent";
 
   const textColor = isActive
-    ? "#006FFD"
+    ? colors.primary
     : disabled
-    ? theme === "light"
+    ? isLight
       ? "#AFAFAF"
       : "#666666"
     : "#FFFFFF";

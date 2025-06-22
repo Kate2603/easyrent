@@ -4,12 +4,12 @@ import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
 import { ROUTES } from "../constants/ROUTES";
-import { useTheme } from "../contexts/ThemeContext";
+import { useThemeColors } from "../hooks/useThemeColors"; // використання хуку
+import { useTheme } from "../contexts/ThemeContext"; // для toggleTheme
 import { useLocale } from "../contexts/LocaleContext";
 
 import CustomButton from "../components/CustomButton";
 import SectionTitle from "../components/SectionTitle";
-import { COLORS } from "../constants/colors";
 
 const TEXTS = {
   uk: {
@@ -50,7 +50,7 @@ function ThemeToggleButton() {
 export default function LandingScreen() {
   const navigation = useNavigation();
   const { user } = useSelector((state) => state.user);
-  const { theme } = useTheme();
+  const colors = useThemeColors();
   const { locale } = useLocale();
   const strings = TEXTS[locale] || TEXTS.uk;
 
@@ -77,18 +77,16 @@ export default function LandingScreen() {
     });
   };
 
-  const backgroundColor =
-    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
-  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
-
   return (
-    <View style={[styles.container, { backgroundColor }]}>
+    <View
+      style={[styles.container, { backgroundColor: colors.backgroundColor }]}
+    >
       <SectionTitle>{strings.welcome}</SectionTitle>
       <ThemeToggleButton />
 
       {!user ? (
         <>
-          <Text style={[styles.text, { color: textColor }]}>
+          <Text style={[styles.text, { color: colors.text }]}>
             {strings.prompt}
           </Text>
           <CustomButton title={strings.register} onPress={handleRegister} />

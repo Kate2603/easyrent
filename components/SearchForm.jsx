@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, TextInput, StyleSheet } from "react-native";
 import SectionTitle from "./SectionTitle";
-import { useTheme } from "../contexts/ThemeContext";
+import { useThemeColors } from "../hooks/useThemeColors";
 import { useStrings } from "../hooks/useStrings";
 
 export default function SearchForm({
@@ -14,13 +14,8 @@ export default function SearchForm({
   const [addressLine1, setAddressLine1] = useState(initialAddressLine1);
   const [propertyType, setPropertyType] = useState(initialPropertyType);
 
-  const { theme } = useTheme();
+  const { backgroundColor, textColor, cardColor } = useThemeColors();
   const strings = useStrings();
-
-  const textColor = theme === "light" ? "#222" : "#eee";
-  const borderColor = theme === "light" ? "#ccc" : "#555";
-  const placeholderColor = theme === "light" ? "#999" : "#aaa";
-  const backgroundColor = theme === "light" ? "#fff" : "#222";
 
   const handleSubmit = () => {
     if (onSubmit) {
@@ -35,10 +30,14 @@ export default function SearchForm({
       <TextInput
         style={[
           styles.input,
-          { borderColor, color: textColor, backgroundColor },
+          {
+            borderColor: cardColor,
+            color: textColor,
+            backgroundColor: cardColor,
+          },
         ]}
         placeholder={strings.city}
-        placeholderTextColor={placeholderColor}
+        placeholderTextColor={textColor + "88"} // напівпрозорий текст
         value={city}
         onChangeText={setCity}
         onEndEditing={handleSubmit}
@@ -48,10 +47,14 @@ export default function SearchForm({
       <TextInput
         style={[
           styles.input,
-          { borderColor, color: textColor, backgroundColor },
+          {
+            borderColor: cardColor,
+            color: textColor,
+            backgroundColor: cardColor,
+          },
         ]}
         placeholder={strings.propertyType}
-        placeholderTextColor={placeholderColor}
+        placeholderTextColor={textColor + "88"}
         value={propertyType}
         onChangeText={setPropertyType}
         onEndEditing={handleSubmit}
@@ -61,10 +64,14 @@ export default function SearchForm({
       <TextInput
         style={[
           styles.input,
-          { borderColor, color: textColor, backgroundColor },
+          {
+            borderColor: cardColor,
+            color: textColor,
+            backgroundColor: cardColor,
+          },
         ]}
         placeholder={strings.address}
-        placeholderTextColor={placeholderColor}
+        placeholderTextColor={textColor + "88"}
         value={addressLine1}
         onChangeText={setAddressLine1}
         onEndEditing={handleSubmit}

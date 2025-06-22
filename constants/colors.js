@@ -15,4 +15,7 @@ export const COLORS = {
 
   lightAvatarBorder: "#4CAF50",
   darkAvatarBorder: "#88FF88",
+
+  warningBg: isLight ? "#FFF3CD" : "#665c00",
+  warningText: isLight ? "#664d03" : "#fff8dc",
 };

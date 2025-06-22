@@ -1,17 +1,14 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import { useTheme } from "../contexts/ThemeContext";
-import { COLORS } from "../constants/colors";
+import { useThemeColors } from "../hooks/useThemeColors";
 
 export default function Header({ title, onBack }) {
-  const { theme } = useTheme();
+  const { backgroundColor, primaryColor } = useThemeColors();
 
-  const backgroundColor =
-    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
-  const borderColor = theme === "light" ? "#eee" : "#333";
-  const textColor = theme === "light" ? "#006FFD" : "#66AAFF";
-  const iconColor = textColor;
+  const borderColor = backgroundColor === "#ffffff" ? "#eee" : "#333";
+  const textColor = primaryColor;
+  const iconColor = primaryColor;
 
   return (
     <View

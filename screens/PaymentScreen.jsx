@@ -31,12 +31,12 @@ export default function PaymentScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor }}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
       <KeyboardAvoidingView
-        style={[styles.container]}
+        style={styles.container}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
           <SectionTitle style={{ color: textColor }}>{title}</SectionTitle>
           <PaymentForm
             onSubmit={handlePaymentSubmit}
@@ -49,7 +49,14 @@ export default function PaymentScreen() {
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    padding: 16,
   },
 });

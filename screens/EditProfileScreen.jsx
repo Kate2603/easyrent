@@ -16,25 +16,14 @@ import { Formik } from "formik";
 import { updateProfile } from "../redux/userSlice";
 import SectionTitle from "../components/SectionTitle";
 import CustomButton from "../components/CustomButton";
-import { useTheme } from "../contexts/ThemeContext";
-import { COLORS } from "../constants/colors";
+import { useThemeColors } from "../hooks/useThemeColors"; // <-- використання useThemeColors
 
 export default function EditProfileScreen() {
   const dispatch = useDispatch();
-  const { theme } = useTheme();
   const { user } = useSelector((state) => state.user);
+  const colors = useThemeColors();
 
   const [submitting, setSubmitting] = useState(false);
-
-  const backgroundColor =
-    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
-  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
-  const inputBackground =
-    theme === "light" ? COLORS.lightCard : COLORS.darkCard;
-  const placeholderColor = theme === "light" ? "#888" : "#aaa";
-  const borderColor = theme === "light" ? "#ccc" : "#555";
-  const avatarBorderColor =
-    theme === "light" ? COLORS.lightAvatarBorder : COLORS.darkAvatarBorder;
 
   const validationSchema = Yup.object().shape({
     fullName: Yup.string().required("Ім’я обов’язкове"),
@@ -57,7 +46,7 @@ export default function EditProfileScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor }]}
+      style={[styles.container, { backgroundColor: colors.backgroundColor }]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -83,7 +72,7 @@ export default function EditProfileScreen() {
               <View style={styles.avatarContainer}>
                 <Image
                   source={{ uri: values.avatar }}
-                  style={[styles.avatar, { borderColor: avatarBorderColor }]}
+                  style={[styles.avatar, { borderColor: colors.avatarBorder }]}
                 />
               </View>
 
@@ -96,12 +85,15 @@ export default function EditProfileScreen() {
                   style={[
                     styles.input,
                     {
-                      color: textColor,
-                      backgroundColor: inputBackground,
-                      borderColor,
+                      color: colors.textColor,
+                      backgroundColor: colors.cardColor,
+                      borderColor:
+                        colors.cardColor === "#fff" ? "#ccc" : "#555", // якщо хочеш точніше, можна додати в useThemeColors
                     },
                   ]}
-                  placeholderTextColor={placeholderColor}
+                  placeholderTextColor={
+                    colors.textColor === "#222" ? "#888" : "#aaa"
+                  } // можна винести теж
                   accessibilityLabel="Full name"
                 />
                 {touched.fullName && errors.fullName && (
@@ -118,12 +110,15 @@ export default function EditProfileScreen() {
                   style={[
                     styles.input,
                     {
-                      color: textColor,
-                      backgroundColor: inputBackground,
-                      borderColor,
+                      color: colors.textColor,
+                      backgroundColor: colors.cardColor,
+                      borderColor:
+                        colors.cardColor === "#fff" ? "#ccc" : "#555",
                     },
                   ]}
-                  placeholderTextColor={placeholderColor}
+                  placeholderTextColor={
+                    colors.textColor === "#222" ? "#888" : "#aaa"
+                  }
                   accessibilityLabel="Avatar URL"
                 />
                 {touched.avatar && errors.avatar && (

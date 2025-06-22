@@ -1,16 +1,11 @@
 import React, { useEffect, useRef } from "react";
-import { View, StyleSheet, Animated, Image, Text } from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
-import { COLORS } from "../constants/colors";
+import { View, StyleSheet, Animated } from "react-native";
+import { useThemeColors } from "../hooks/useThemeColors";
 import logo from "../assets/logo.png"; // твій логотип
 
 export default function SplashScreen() {
-  const { theme } = useTheme();
+  const { backgroundColor, textColor } = useThemeColors();
   const fadeAnim = useRef(new Animated.Value(0)).current;
-
-  const backgroundColor =
-    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
-  const textColor = theme === "light" ? "#000" : "#fff";
 
   useEffect(() => {
     Animated.timing(fadeAnim, {

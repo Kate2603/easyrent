@@ -4,12 +4,17 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { TextInputMask } from "react-native-masked-text";
 import CustomButton from "./CustomButton";
-import { useTheme } from "../contexts/ThemeContext";
 import { useStrings } from "../hooks/useStrings";
+import { useThemeColors } from "../hooks/useThemeColors";
 
 export default function PaymentForm({ onSubmit }) {
-  const { theme } = useTheme();
   const { strings } = useStrings();
+  const {
+    textColor,
+    cardColor,
+    primaryColor,
+    // можна додати інші, якщо потрібно
+  } = useThemeColors();
 
   const cvvRef = useRef(null);
 
@@ -24,19 +29,6 @@ export default function PaymentForm({ onSubmit }) {
       .matches(/^\d{3}$/, strings.errors.cvvLength)
       .required(strings.errors.required),
   });
-
-  const colors = {
-    text: theme === "light" ? "#222" : "#eee",
-    border: theme === "light" ? "#ccc" : "#555",
-    placeholder: theme === "light" ? "#999" : "#aaa",
-    inputBg: theme === "light" ? "#fff" : "#222",
-    error: theme === "light" ? "red" : "#ff6b6b",
-    thumb: theme === "light" ? "#006FFD" : "#66AAFF",
-    track:
-      theme === "light"
-        ? { true: "#cce0ff", false: "#ddd" }
-        : { true: "#335577", false: "#555" },
-  };
 
   return (
     <Formik
@@ -59,8 +51,7 @@ export default function PaymentForm({ onSubmit }) {
         setFieldValue,
       }) => (
         <View style={styles.container}>
-          {/* Card Number */}
-          <Text style={[styles.label, { color: colors.text }]}>
+          <Text style={[styles.label, { color: textColor }]}>
             {strings.cardNumber}
           </Text>
           <TextInputMask
@@ -73,23 +64,22 @@ export default function PaymentForm({ onSubmit }) {
             style={[
               styles.input,
               {
-                borderColor: colors.border,
-                backgroundColor: colors.inputBg,
-                color: colors.text,
+                borderColor: cardColor,
+                backgroundColor: cardColor,
+                color: textColor,
               },
             ]}
             placeholder="0000 0000 0000 0000"
-            placeholderTextColor={colors.placeholder}
+            placeholderTextColor={primaryColor}
             keyboardType="numeric"
           />
           {touched.cardNumber && errors.cardNumber && (
-            <Text style={[styles.error, { color: colors.error }]}>
+            <Text style={[styles.error, { color: "red" }]}>
               {errors.cardNumber}
             </Text>
           )}
 
-          {/* Expiry */}
-          <Text style={[styles.label, { color: colors.text }]}>
+          <Text style={[styles.label, { color: textColor }]}>
             {strings.expiry}
           </Text>
           <TextInputMask
@@ -106,23 +96,22 @@ export default function PaymentForm({ onSubmit }) {
             style={[
               styles.input,
               {
-                borderColor: colors.border,
-                backgroundColor: colors.inputBg,
-                color: colors.text,
+                borderColor: cardColor,
+                backgroundColor: cardColor,
+                color: textColor,
               },
             ]}
             placeholder="MM/YY"
-            placeholderTextColor={colors.placeholder}
+            placeholderTextColor={primaryColor}
             keyboardType="numeric"
           />
           {touched.expiry && errors.expiry && (
-            <Text style={[styles.error, { color: colors.error }]}>
+            <Text style={[styles.error, { color: "red" }]}>
               {errors.expiry}
             </Text>
           )}
 
-          {/* CVV */}
-          <Text style={[styles.label, { color: colors.text }]}>
+          <Text style={[styles.label, { color: textColor }]}>
             {strings.cvv}
           </Text>
           <TextInput
@@ -133,39 +122,33 @@ export default function PaymentForm({ onSubmit }) {
             style={[
               styles.input,
               {
-                borderColor: colors.border,
-                backgroundColor: colors.inputBg,
-                color: colors.text,
+                borderColor: cardColor,
+                backgroundColor: cardColor,
+                color: textColor,
               },
             ]}
             placeholder="***"
-            placeholderTextColor={colors.placeholder}
+            placeholderTextColor={primaryColor}
             keyboardType="numeric"
             maxLength={3}
             secureTextEntry
           />
           {touched.cvv && errors.cvv && (
-            <Text style={[styles.error, { color: colors.error }]}>
-              {errors.cvv}
-            </Text>
+            <Text style={[styles.error, { color: "red" }]}>{errors.cvv}</Text>
           )}
 
-          {/* Switch */}
           <View style={styles.switchContainer}>
-            <Text style={[styles.switchLabel, { color: colors.text }]}>
+            <Text style={[styles.switchLabel, { color: textColor }]}>
               {strings.securePayment}
             </Text>
             <Switch
               value={values.securePayment}
               onValueChange={(val) => setFieldValue("securePayment", val)}
-              thumbColor={
-                values.securePayment ? colors.thumb : colors.placeholder
-              }
-              trackColor={colors.track}
+              thumbColor={values.securePayment ? primaryColor : cardColor}
+              trackColor={{ true: cardColor, false: cardColor }}
             />
           </View>
 
-          {/* Submit */}
           <CustomButton title={strings.pay} onPress={handleSubmit} isActive />
         </View>
       )}

@@ -10,7 +10,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
-import Animated, { FadeIn } from "react-native-reanimated"; // 👈 ДОДАНО
+import Animated, { FadeIn } from "react-native-reanimated";
 
 import LocationAutoDetect from "../components/LocationAutoDetect";
 import CityAutocompleteInput from "../components/CityAutocompleteInput";
@@ -32,10 +32,10 @@ import {
   setStateCode,
 } from "../redux/filtersSlice";
 
-import { useTheme } from "../contexts/ThemeContext";
-import { COLORS } from "../constants/colors";
-import { ROUTES } from "../constants/ROUTES";
+import { useThemeColors } from "../hooks/useThemeColors";
 import { useLocale } from "../contexts/LocaleContext";
+
+import { ROUTES } from "../constants/ROUTES";
 
 const STRINGS = {
   uk: {
@@ -57,13 +57,12 @@ export default function ApartmentListScreen() {
   const hasMore = useSelector(selectApartmentsHasMore);
   const filters = useSelector(selectFilters);
 
-  const { theme } = useTheme();
-  const { locale } = useLocale();
+  const { backgroundColor, textColor, chipActiveText } = useThemeColors();
+  // Використовую chipActiveText або можна додати в useThemeColors вторинний текстовий колір,
+  // або для secondaryTextColor взяти textColor з прозорістю
+  const secondaryTextColor = textColor + "CC"; // ~80% прозорість
 
-  const backgroundColor =
-    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
-  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
-  const secondaryTextColor = theme === "light" ? "#555" : "#aaa";
+  const { locale } = useLocale();
 
   const strings = STRINGS[locale] || STRINGS.uk;
 
@@ -155,9 +154,7 @@ export default function ApartmentListScreen() {
           isLoading && hasMore ? (
             <ActivityIndicator
               size="large"
-              color={
-                theme === "light" ? COLORS.primaryLight : COLORS.primaryDark
-              }
+              color={theme === "light" ? chipActiveText : chipActiveText}
             />
           ) : null
         }

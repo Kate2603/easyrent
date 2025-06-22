@@ -8,23 +8,16 @@ import { useDispatch } from "react-redux";
 import { loginSuccess } from "../redux/userSlice";
 import { ROUTES } from "../constants/ROUTES";
 import { useNavigation } from "@react-navigation/native";
-import { useTheme } from "../contexts/ThemeContext";
+import { useThemeColors } from "../hooks/useThemeColors";
 import { useStrings } from "../hooks/useStrings";
-import { COLORS } from "../constants/colors";
 
 export default function LoginScreen() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const { theme } = useTheme();
+  const colors = useThemeColors();
   const { strings } = useStrings();
   const t = strings.loginScreen;
 
-  const backgroundColor =
-    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
-  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
-  const inputBgColor = theme === "light" ? "#fff" : "#222";
-  const borderColor = theme === "light" ? "#ccc" : "#555";
-  const placeholderColor = theme === "light" ? "#999" : "#aaa";
   const errorColor = "#FF3B30";
 
   const validationSchema = Yup.object().shape({
@@ -54,8 +47,10 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
-      <SectionTitle style={{ color: textColor }}>{t.title}</SectionTitle>
+    <View
+      style={[styles.container, { backgroundColor: colors.backgroundColor }]}
+    >
+      <SectionTitle style={{ color: colors.text }}>{t.title}</SectionTitle>
 
       <Formik
         initialValues={{ email: "", password: "" }}
@@ -75,13 +70,13 @@ export default function LoginScreen() {
               style={[
                 styles.input,
                 {
-                  backgroundColor: inputBgColor,
-                  borderColor,
-                  color: textColor,
+                  backgroundColor: colors.inputBackground,
+                  borderColor: colors.borderColor,
+                  color: colors.text,
                 },
               ]}
               placeholder={t.email}
-              placeholderTextColor={placeholderColor}
+              placeholderTextColor={colors.placeholderColor}
               onChangeText={handleChange("email")}
               onBlur={handleBlur("email")}
               value={values.email}
@@ -101,13 +96,13 @@ export default function LoginScreen() {
               style={[
                 styles.input,
                 {
-                  backgroundColor: inputBgColor,
-                  borderColor,
-                  color: textColor,
+                  backgroundColor: colors.inputBackground,
+                  borderColor: colors.borderColor,
+                  color: colors.text,
                 },
               ]}
               placeholder={t.password}
-              placeholderTextColor={placeholderColor}
+              placeholderTextColor={colors.placeholderColor}
               onChangeText={handleChange("password")}
               onBlur={handleBlur("password")}
               value={values.password}

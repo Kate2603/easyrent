@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../components/CustomButton";
 import SectionTitle from "../components/SectionTitle";
 import { useStrings } from "../hooks/useStrings";
-import { useTheme } from "../contexts/ThemeContext";
+import { useThemeColors } from "../hooks/useThemeColors";
 
 import {
   fetchApartmentById,
@@ -30,15 +30,11 @@ export default function ApartmentDetailsScreen() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const strings = useStrings();
-  const { theme } = useTheme();
+  const { backgroundColor, textColor, cardColor } = useThemeColors();
 
   const apartment = useSelector(selectSelectedApartment);
   const loading = useSelector(selectSelectedApartmentLoading);
   const error = useSelector(selectSelectedApartmentError);
-
-  const backgroundColor = theme === "light" ? "#fff" : "#121212";
-  const textColor = theme === "light" ? "#222" : "#eee";
-  const secondaryTextColor = theme === "light" ? "#666" : "#aaa";
 
   useEffect(() => {
     dispatch(fetchApartmentById(apartmentId));
@@ -47,7 +43,7 @@ export default function ApartmentDetailsScreen() {
   if (loading) {
     return (
       <View style={[styles.center, { backgroundColor }]}>
-        <ActivityIndicator size="large" color="#007AFF" />
+        <ActivityIndicator size="large" color={cardColor} />
       </View>
     );
   }
@@ -75,6 +71,9 @@ export default function ApartmentDetailsScreen() {
   const createdAtFormatted = apartment.createdAt
     ? formatDate(apartment.createdAt, strings.locale)
     : strings.unknown || (strings.locale === "uk" ? "невідомо" : "unknown");
+
+  // Візьмемо вторинний текстовий колір, наприклад, як textColor з меншим opacity
+  const secondaryTextColor = textColor + "CC"; // наприклад, 80% прозорість, або можна взяти інший колір
 
   return (
     <ScrollView contentContainerStyle={[styles.container, { backgroundColor }]}>

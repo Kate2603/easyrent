@@ -5,15 +5,13 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Text,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 
 import BookingForm from "../components/BookingForm";
 import SectionTitle from "../components/SectionTitle";
 import { ROUTES } from "../constants/ROUTES";
-import { useTheme } from "../contexts/ThemeContext";
-import { COLORS } from "../constants/colors";
+import { useThemeColors } from "../hooks/useThemeColors";
 import { useLocale } from "../contexts/LocaleContext";
 
 const STRINGS = {
@@ -30,13 +28,10 @@ const STRINGS = {
 };
 
 export default function BookingFormScreen() {
-  const { theme } = useTheme();
+  const { backgroundColor } = useThemeColors();
   const { locale } = useLocale();
   const navigation = useNavigation();
   const route = useRoute();
-
-  const backgroundColor =
-    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
 
   const strings = useMemo(() => STRINGS[locale] || STRINGS.uk, [locale]);
 

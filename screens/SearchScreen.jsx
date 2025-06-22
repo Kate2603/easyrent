@@ -18,23 +18,20 @@ import {
   selectApartments,
   selectLoading,
 } from "../redux/apartmentsSlice";
-import { useTheme } from "../contexts/ThemeContext";
+import { useThemeColors } from "../hooks/useThemeColors";
 import { COLORS } from "../constants/colors";
-import FiltersScreen from "./FiltersScreen"; // 👈 важливо
+import FiltersScreen from "./FiltersScreen";
 
 export default function SearchScreen() {
   const dispatch = useDispatch();
   const filters = useSelector(selectFilters);
   const apartments = useSelector(selectApartments);
   const loading = useSelector(selectLoading);
-  const { theme } = useTheme();
+
+  const { backgroundColor, textColor } = useThemeColors();
 
   const [filtersVisible, setFiltersVisible] = useState(false);
 
-  const backgroundColor =
-    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
-
-  // Включення LayoutAnimation на Android
   useEffect(() => {
     if (
       Platform.OS === "android" &&
@@ -56,9 +53,7 @@ export default function SearchScreen() {
   if (loading) {
     return (
       <View style={[styles.loadingContainer, { backgroundColor }]}>
-        <Text style={{ color: theme === "light" ? "#000" : "#fff" }}>
-          Завантаження...
-        </Text>
+        <Text style={{ color: textColor }}>Завантаження...</Text>
       </View>
     );
   }
@@ -66,9 +61,7 @@ export default function SearchScreen() {
   if (apartments.length === 0) {
     return (
       <View style={[styles.emptyContainer, { backgroundColor }]}>
-        <Text style={{ color: theme === "light" ? "#000" : "#fff" }}>
-          Квартири не знайдені
-        </Text>
+        <Text style={{ color: textColor }}>Квартири не знайдені</Text>
         <TouchableOpacity onPress={toggleFilters} style={styles.toggleBtn}>
           <Text style={styles.toggleBtnText}>
             {filtersVisible ? "Сховати фільтри" : "Показати фільтри"}
@@ -89,7 +82,9 @@ export default function SearchScreen() {
 
       {filtersVisible && <FiltersScreen />}
 
-      <SectionTitle>Результати пошуку</SectionTitle>
+      <SectionTitle style={{ color: textColor }}>
+        Результати пошуку
+      </SectionTitle>
 
       <FlatList
         data={apartments}
@@ -123,7 +118,7 @@ const styles = StyleSheet.create({
   toggleBtn: {
     marginVertical: 12,
     padding: 8,
-    backgroundColor: "#007AFF",
+    backgroundColor: COLORS.primaryLight, // Можна винести в useThemeColors, якщо потрібно
     borderRadius: 6,
   },
   toggleBtnText: {

@@ -9,10 +9,9 @@ import {
   UIManager,
 } from "react-native";
 import SectionTitle from "./SectionTitle";
-import { useTheme } from "../contexts/ThemeContext";
 import { useStrings } from "../hooks/useStrings";
-import { COLORS } from "../constants/colors";
 import { formatDate } from "../utils/dateUtils";
+import { useThemeColors } from "../hooks/useThemeColors";
 
 // Enable LayoutAnimation on Android
 if (
@@ -23,16 +22,12 @@ if (
 }
 
 const ApartmentCard = React.memo(({ apartment, onPress }) => {
-  const { theme } = useTheme();
   const { strings, locale } = useStrings();
   const [expanded, setExpanded] = useState(false);
+  const { cardColor, textColor } = useThemeColors();
 
-  const backgroundColor =
-    theme === "light" ? COLORS.lightCard : COLORS.darkCard;
-  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
   const shadowColor = "#000";
 
-  // useCallback для стабілізації функції між рендерами
   const handleToggle = useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpanded((prev) => !prev);
@@ -44,7 +39,7 @@ const ApartmentCard = React.memo(({ apartment, onPress }) => {
   return (
     <TouchableOpacity
       onPress={handleToggle}
-      style={[styles.card, { backgroundColor, shadowColor }]}
+      style={[styles.card, { backgroundColor: cardColor, shadowColor }]}
       activeOpacity={0.9}
     >
       <SectionTitle>

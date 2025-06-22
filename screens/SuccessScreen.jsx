@@ -4,17 +4,11 @@ import { useNavigation, CommonActions } from "@react-navigation/native";
 import { ROUTES } from "../constants/ROUTES";
 import SectionTitle from "../components/SectionTitle";
 import CustomButton from "../components/CustomButton";
-import { useTheme } from "../contexts/ThemeContext";
-import { COLORS } from "../constants/colors";
+import { useThemeColors } from "../hooks/useThemeColors";
 
 export default function SuccessScreen() {
   const navigation = useNavigation();
-  const { theme } = useTheme();
-
-  const backgroundColor =
-    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
-  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
-  const secondaryTextColor = theme === "light" ? "#555" : "#aaa";
+  const { backgroundColor, textColor, secondaryTextColor } = useThemeColors();
 
   const handleReturn = () => {
     navigation.dispatch(
@@ -31,7 +25,7 @@ export default function SuccessScreen() {
 
       <View
         style={{
-          backgroundColor: theme === "light" ? "#f0f4ff" : "#2a2a2a",
+          backgroundColor: backgroundColor === "#fff" ? "#f0f4ff" : "#2a2a2a",
           padding: 12,
           borderRadius: 10,
           marginBottom: 24,

@@ -1,11 +1,9 @@
 import React from "react";
 import { Text, StyleSheet } from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
-import { COLORS } from "../constants/colors";
+import { useThemeColors } from "../hooks/useThemeColors";
 
 export default function SectionTitle({ children, style }) {
-  const { theme } = useTheme();
-  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
+  const { textColor } = useThemeColors();
 
   return (
     <Text

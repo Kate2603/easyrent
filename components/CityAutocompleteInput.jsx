@@ -8,25 +8,16 @@ import {
   StyleSheet,
 } from "react-native";
 import { fetchCitySuggestions } from "../api/citiesApi";
-import { useTheme } from "../contexts/ThemeContext";
+import { useThemeColors } from "../hooks/useThemeColors";
 import { useStrings } from "../hooks/useStrings";
-import { COLORS } from "../constants/colors";
 
 export default function CityAutocompleteInput({ onCitySelect }) {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
-  const { theme } = useTheme();
+  const { colors, isLight } = useThemeColors();
   const { strings } = useStrings();
-
-  const backgroundColor =
-    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
-  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
-  const inputBg = theme === "light" ? "#fff" : "#1e1e1e";
-  const borderColor = theme === "light" ? "#ccc" : "#555";
-  const listBg = theme === "light" ? "#fff" : "#2a2a2a";
-  const itemBorder = theme === "light" ? "#eee" : "#444";
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -59,10 +50,14 @@ export default function CityAutocompleteInput({ onCitySelect }) {
       <TextInput
         style={[
           styles.input,
-          { backgroundColor: inputBg, borderColor, color: textColor },
+          {
+            backgroundColor: isLight ? "#fff" : "#1e1e1e",
+            borderColor: isLight ? "#ccc" : "#555",
+            color: colors.text,
+          },
         ]}
         placeholder={strings.enterCityPlaceholder}
-        placeholderTextColor={theme === "light" ? "#999" : "#888"}
+        placeholderTextColor={isLight ? "#999" : "#888"}
         value={query}
         onChangeText={setQuery}
       />
@@ -74,15 +69,24 @@ export default function CityAutocompleteInput({ onCitySelect }) {
           }
           renderItem={({ item }) => (
             <TouchableOpacity
-              style={[styles.item, { borderBottomColor: itemBorder }]}
+              style={[
+                styles.item,
+                { borderBottomColor: isLight ? "#eee" : "#444" },
+              ]}
               onPress={() => handleSelect(item)}
             >
-              <Text style={{ color: textColor }}>
+              <Text style={{ color: colors.text }}>
                 {item.name}, {item.state}
               </Text>
             </TouchableOpacity>
           )}
-          style={[styles.list, { backgroundColor: listBg, borderColor }]}
+          style={[
+            styles.list,
+            {
+              backgroundColor: isLight ? "#fff" : "#2a2a2a",
+              borderColor: isLight ? "#ccc" : "#555",
+            },
+          ]}
           keyboardShouldPersistTaps="handled"
         />
       )}

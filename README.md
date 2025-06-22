@@ -130,6 +130,36 @@ return response.data;
 - Є екран редагування профілю, де можна оновити ім’я та аватар.
 - Навігація реалізована через React Navigation (Stack, Tab, Drawer).
 
+## Оптимізація продуктивності
+
+Заміна важких залежностей
+Замінено moment на dayjs — набагато легша і сучасніша бібліотека для роботи з датами.
+
+Використовується форматування дати з локалізацією:
+
+import dayjs from "dayjs";
+dayjs().locale("uk").format("LL");
+
+## Анімація
+
+Додано анімацію розгортання картки квартири через LayoutAnimation в ApartmentCard.js.
+
+Реакція на натискання відбувається плавно:
+
+LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
+## Оптимізація повторних ререндерів
+
+Компонент ApartmentCard обгорнуто в React.memo, щоб уникнути зайвих ререндерів.
+
+Функції onPress і handleToggle оптимізовані через useCallback.
+
+const ApartmentCard = React.memo(({ apartment, onPress }) => { ... });
+
+## Аналіз бандлу
+
+Проведено аналіз розміру бандлу через source-map-explorer.
+
 Скріншоти або Відео роботи застосунку
 
 https://drive.google.com/file/d/1VdBzBJgKAv3BrGYVi7KI1eGQv-muiIoN/view?usp=sharing

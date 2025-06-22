@@ -8,33 +8,23 @@ import { ROUTES } from "../constants/ROUTES";
 import SectionTitle from "../components/SectionTitle";
 import CustomButton from "../components/CustomButton";
 import { logout } from "../redux/userSlice";
-import { useTheme } from "../contexts/ThemeContext";
-import { COLORS } from "../constants/colors";
+import { useThemeColors } from "../hooks/useThemeColors"; // Заміна
 import { useStrings } from "../hooks/useStrings";
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { theme } = useTheme();
   const { strings } = useStrings();
 
   const { user } = useSelector((state) => state.user);
+  const { backgroundColor, textColor, secondaryTextColor, avatarBorderColor } =
+    useThemeColors();
 
-  const backgroundColor =
-    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
-  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
-  const secondaryTextColor = theme === "light" ? "#555" : "#aaa";
-  const avatarBorderColor =
-    theme === "light" ? COLORS.lightAvatarBorder : COLORS.darkAvatarBorder;
-
-  // Якщо користувач не авторизований або гість — редірект на логін
   useEffect(() => {
     if (!user || user.role === "guest") {
       navigation.navigate(ROUTES.LOGIN);
     }
   }, [user, navigation]);
-
-  // Далі код для авторизованого користувача
 
   const handleEditProfile = () => {
     navigation.navigate(ROUTES.PROFILE_TAB, {
@@ -72,7 +62,9 @@ export default function ProfileScreen() {
             source={{ uri: user?.avatar || "https://i.pravatar.cc/150" }}
             style={[styles.avatar, { borderColor: avatarBorderColor }]}
           />
-          <SectionTitle>{user?.fullName || strings.unknownUser}</SectionTitle>
+          <SectionTitle style={{ color: textColor }}>
+            {user?.fullName || strings.unknownUser}
+          </SectionTitle>
           <Text style={[styles.email, { color: secondaryTextColor }]}>
             {user?.email || strings.noEmail}
           </Text>
@@ -100,9 +92,8 @@ export default function ProfileScreen() {
     },
   ];
 
-  // Поки user === undefined (завантаження), можна показати спінер або пустий екран
   if (!user || user.role === "guest") {
-    return null; // або можна показати ActivityIndicator
+    return null;
   }
 
   return (

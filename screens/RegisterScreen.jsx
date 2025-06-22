@@ -14,23 +14,24 @@ import { useNavigation } from "@react-navigation/native";
 import { ROUTES } from "../constants/ROUTES";
 import SectionTitle from "../components/SectionTitle";
 import CustomButton from "../components/CustomButton";
-import { useTheme } from "../contexts/ThemeContext";
-import { COLORS } from "../constants/colors";
+import { useThemeColors } from "../hooks/useThemeColors";
 import { useStrings } from "../hooks/useStrings";
 
 export default function RegisterScreen() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const { theme } = useTheme();
   const { strings } = useStrings();
 
-  const backgroundColor =
-    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
-  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
-  const placeholderColor = theme === "light" ? "#999" : "#aaa";
-  const errorColor = theme === "light" ? "#FF3B30" : "#FF6B6B";
-  const linkColor =
-    theme === "light" ? COLORS.primaryLight : COLORS.primaryDark;
+  const {
+    backgroundColor,
+    textColor,
+    // За потреби можна додати linkColor, errorColor в useThemeColors і сюди їх отримувати
+  } = useThemeColors();
+
+  // Локальні кольори помилок та посилань
+  const placeholderColor = "#999";
+  const errorColor = "#FF3B30";
+  const linkColor = "#007AFF";
 
   const validationSchema = Yup.object().shape({
     fullName: Yup.string().required(strings.errors.required),
@@ -64,7 +65,9 @@ export default function RegisterScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
-      <SectionTitle>{strings.register}</SectionTitle>
+      <SectionTitle style={{ color: textColor }}>
+        {strings.register}
+      </SectionTitle>
 
       <Formik
         initialValues={{ fullName: "", email: "", password: "" }}

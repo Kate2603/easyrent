@@ -5,14 +5,13 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { loadUserProfile } from "../redux/userSlice";
 import { ROUTES } from "../constants/ROUTES";
-import { useTheme } from "../contexts/ThemeContext";
+import { useThemeColors } from "../hooks/useThemeColors";
 import { useLocale } from "../contexts/LocaleContext";
 
 import SectionTitle from "../components/SectionTitle";
 import LocationAutoDetect from "../components/LocationAutoDetect";
 import CustomButton from "../components/CustomButton";
 import ThemeToggleButton from "../components/ThemeToggleButton";
-import { COLORS } from "../constants/colors";
 
 const TEXTS = {
   uk: {
@@ -37,17 +36,13 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
-  const { theme } = useTheme();
+  const colors = useThemeColors();
   const { locale } = useLocale();
   const strings = TEXTS[locale] || TEXTS.uk;
 
   useEffect(() => {
     dispatch(loadUserProfile());
   }, [dispatch]);
-
-  const backgroundColor =
-    theme === "light" ? COLORS.lightBackground : COLORS.darkBackground;
-  const textColor = theme === "light" ? COLORS.lightText : COLORS.darkText;
 
   const handleGoToRegister = () => {
     navigation.navigate(ROUTES.HOME_TAB, {
@@ -64,14 +59,16 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
+    <View
+      style={[styles.container, { backgroundColor: colors.backgroundColor }]}
+    >
       <SectionTitle>{strings.home}</SectionTitle>
 
       <ThemeToggleButton />
 
       {!user ? (
         <>
-          <Text style={[styles.text, { color: textColor }]}>
+          <Text style={[styles.text, { color: colors.text }]}>
             {strings.notLoggedIn}
           </Text>
           <CustomButton
@@ -83,7 +80,7 @@ export default function HomeScreen() {
         </>
       ) : (
         <>
-          <Text style={[styles.text, { color: textColor }]}>
+          <Text style={[styles.text, { color: colors.text }]}>
             {strings.greeting}, {user.fullName}
           </Text>
           <LocationAutoDetect />
