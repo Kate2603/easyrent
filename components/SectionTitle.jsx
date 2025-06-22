@@ -16,5 +16,9 @@ export default function SectionTitle({ children, style }) {
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 6 },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 6,
+  },
 });

@@ -4,8 +4,8 @@ import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
 import { ROUTES } from "../constants/ROUTES";
-import { useThemeColors } from "../hooks/useThemeColors"; // використання хуку
-import { useTheme } from "../contexts/ThemeContext"; // для toggleTheme
+import { useThemeColors } from "../hooks/useThemeColors"; // Використання хуку для кольорів
+import { useTheme } from "../contexts/ThemeContext"; // Для toggleTheme
 import { useLocale } from "../contexts/LocaleContext";
 
 import CustomButton from "../components/CustomButton";
@@ -39,12 +39,21 @@ const TEXTS = {
 function ThemeToggleButton() {
   const { toggleTheme, theme } = useTheme();
   const { locale } = useLocale();
+  const colors = useThemeColors();
   const strings = TEXTS[locale] || TEXTS.uk;
 
   const title =
     theme === "light" ? strings.themeSwitch.light : strings.themeSwitch.dark;
 
-  return <CustomButton title={title} onPress={toggleTheme} isActive={false} />;
+  return (
+    <CustomButton
+      title={title}
+      onPress={toggleTheme}
+      isActive={false}
+      activeBgColor={colors.primaryColor}
+      activeTextColor={colors.chipActiveText}
+    />
+  );
 }
 
 export default function LandingScreen() {
@@ -81,21 +90,38 @@ export default function LandingScreen() {
     <View
       style={[styles.container, { backgroundColor: colors.backgroundColor }]}
     >
-      <SectionTitle>{strings.welcome}</SectionTitle>
+      <SectionTitle style={{ color: colors.textColor }}>
+        {strings.welcome}
+      </SectionTitle>
       <ThemeToggleButton />
 
       {!user ? (
         <>
-          <Text style={[styles.text, { color: colors.text }]}>
+          <Text style={[styles.text, { color: colors.textColor }]}>
             {strings.prompt}
           </Text>
-          <CustomButton title={strings.register} onPress={handleRegister} />
-          <CustomButton title={strings.login} onPress={handleLogin} isActive />
+          <CustomButton
+            title={strings.register}
+            onPress={handleRegister}
+            isActive
+            activeBgColor={colors.primaryColor}
+            activeTextColor={colors.chipActiveText}
+          />
+          <CustomButton
+            title={strings.login}
+            onPress={handleLogin}
+            isActive
+            activeBgColor={colors.primaryColor}
+            activeTextColor={colors.chipActiveText}
+          />
         </>
       ) : (
         <CustomButton
           title={strings.viewApartments}
           onPress={goToApartmentsList}
+          isActive
+          activeBgColor={colors.primaryColor}
+          activeTextColor={colors.chipActiveText}
         />
       )}
     </View>

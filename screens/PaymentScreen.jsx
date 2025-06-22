@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
+
 import { selectBookingData } from "../redux/bookingFormSlice";
 import PaymentForm from "../components/PaymentForm";
 import { ROUTES } from "../constants/ROUTES";

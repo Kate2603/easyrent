@@ -8,7 +8,7 @@ import { ROUTES } from "../constants/ROUTES";
 import SectionTitle from "../components/SectionTitle";
 import CustomButton from "../components/CustomButton";
 import { logout } from "../redux/userSlice";
-import { useThemeColors } from "../hooks/useThemeColors"; // Заміна
+import { useThemeColors } from "../hooks/useThemeColors";
 import { useStrings } from "../hooks/useStrings";
 
 export default function ProfileScreen() {
@@ -17,7 +17,7 @@ export default function ProfileScreen() {
   const { strings } = useStrings();
 
   const { user } = useSelector((state) => state.user);
-  const { backgroundColor, textColor, secondaryTextColor, avatarBorderColor } =
+  const { backgroundColor, textColor, placeholderColor, avatarBorder } =
     useThemeColors();
 
   useEffect(() => {
@@ -60,12 +60,12 @@ export default function ProfileScreen() {
         <View style={styles.header}>
           <Image
             source={{ uri: user?.avatar || "https://i.pravatar.cc/150" }}
-            style={[styles.avatar, { borderColor: avatarBorderColor }]}
+            style={[styles.avatar, { borderColor: avatarBorder }]}
           />
           <SectionTitle style={{ color: textColor }}>
             {user?.fullName || strings.unknownUser}
           </SectionTitle>
-          <Text style={[styles.email, { color: secondaryTextColor }]}>
+          <Text style={[styles.email, { color: placeholderColor }]}>
             {user?.email || strings.noEmail}
           </Text>
         </View>

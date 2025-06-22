@@ -8,7 +8,7 @@ import { useThemeColors } from "../hooks/useThemeColors";
 
 export default function SuccessScreen() {
   const navigation = useNavigation();
-  const { backgroundColor, textColor, secondaryTextColor } = useThemeColors();
+  const { backgroundColor, textColor, cardColor } = useThemeColors();
 
   const handleReturn = () => {
     navigation.dispatch(
@@ -21,17 +21,12 @@ export default function SuccessScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
-      <SectionTitle>Дякуємо за бронювання!</SectionTitle>
+      <SectionTitle style={{ color: textColor }}>
+        Дякуємо за бронювання!
+      </SectionTitle>
 
-      <View
-        style={{
-          backgroundColor: backgroundColor === "#fff" ? "#f0f4ff" : "#2a2a2a",
-          padding: 12,
-          borderRadius: 10,
-          marginBottom: 24,
-        }}
-      >
-        <Text style={[styles.message, { color: secondaryTextColor }]}>
+      <View style={[styles.messageBox, { backgroundColor: cardColor }]}>
+        <Text style={[styles.message, { color: textColor }]}>
           Ми надіслали вам підтвердження на електронну пошту.
         </Text>
       </View>
@@ -54,9 +49,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flex: 1,
   },
+  messageBox: {
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 24,
+    width: "100%",
+  },
   message: {
     fontSize: 16,
     textAlign: "center",
-    marginBottom: 24,
   },
 });

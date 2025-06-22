@@ -58,12 +58,10 @@ export default function ApartmentListScreen() {
   const filters = useSelector(selectFilters);
 
   const { backgroundColor, textColor, chipActiveText } = useThemeColors();
-  // Використовую chipActiveText або можна додати в useThemeColors вторинний текстовий колір,
-  // або для secondaryTextColor взяти textColor з прозорістю
-  const secondaryTextColor = textColor + "CC"; // ~80% прозорість
+  // Для вторинного тексту використовуємо textColor з прозорістю ~80%
+  const secondaryTextColor = textColor + "CC";
 
   const { locale } = useLocale();
-
   const strings = STRINGS[locale] || STRINGS.uk;
 
   useEffect(() => {
@@ -152,10 +150,7 @@ export default function ApartmentListScreen() {
         }
         ListFooterComponent={
           isLoading && hasMore ? (
-            <ActivityIndicator
-              size="large"
-              color={theme === "light" ? chipActiveText : chipActiveText}
-            />
+            <ActivityIndicator size="large" color={chipActiveText} />
           ) : null
         }
         ListEmptyComponent={renderEmpty}

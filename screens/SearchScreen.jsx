@@ -19,7 +19,6 @@ import {
   selectLoading,
 } from "../redux/apartmentsSlice";
 import { useThemeColors } from "../hooks/useThemeColors";
-import { COLORS } from "../constants/colors";
 import FiltersScreen from "./FiltersScreen";
 
 export default function SearchScreen() {
@@ -28,7 +27,7 @@ export default function SearchScreen() {
   const apartments = useSelector(selectApartments);
   const loading = useSelector(selectLoading);
 
-  const { backgroundColor, textColor } = useThemeColors();
+  const { backgroundColor, textColor, primaryColor } = useThemeColors();
 
   const [filtersVisible, setFiltersVisible] = useState(false);
 
@@ -62,7 +61,10 @@ export default function SearchScreen() {
     return (
       <View style={[styles.emptyContainer, { backgroundColor }]}>
         <Text style={{ color: textColor }}>Квартири не знайдені</Text>
-        <TouchableOpacity onPress={toggleFilters} style={styles.toggleBtn}>
+        <TouchableOpacity
+          onPress={toggleFilters}
+          style={[styles.toggleBtn, { backgroundColor: primaryColor }]}
+        >
           <Text style={styles.toggleBtnText}>
             {filtersVisible ? "Сховати фільтри" : "Показати фільтри"}
           </Text>
@@ -74,7 +76,10 @@ export default function SearchScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
-      <TouchableOpacity onPress={toggleFilters} style={styles.toggleBtn}>
+      <TouchableOpacity
+        onPress={toggleFilters}
+        style={[styles.toggleBtn, { backgroundColor: primaryColor }]}
+      >
         <Text style={styles.toggleBtnText}>
           {filtersVisible ? "Сховати фільтри" : "Показати фільтри"}
         </Text>
@@ -118,11 +123,11 @@ const styles = StyleSheet.create({
   toggleBtn: {
     marginVertical: 12,
     padding: 8,
-    backgroundColor: COLORS.primaryLight, // Можна винести в useThemeColors, якщо потрібно
     borderRadius: 6,
   },
   toggleBtnText: {
     color: "#fff",
     fontWeight: "bold",
+    textAlign: "center",
   },
 });

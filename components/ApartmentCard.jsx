@@ -25,19 +25,11 @@ const ApartmentCard = React.memo(({ apartment, onPress }) => {
   const { strings, locale } = useStrings();
   const [expanded, setExpanded] = useState(false);
 
-  // Деструктуризуємо всі потрібні значення, включно з isLight
-  const {
-    isLight,
-    cardColor,
-    textColor,
-    backgroundColor,
-    primaryColor,
-    avatarBorder,
-    chipActiveBg,
-    chipActiveText,
-  } = useThemeColors();
+  // Деструктуризуємо всі потрібні кольори і прапорець теми
+  const { isLight, cardColor, textColor, primaryColor, borderColor } =
+    useThemeColors();
 
-  const shadowColor = "#000";
+  const shadowColor = isLight ? "#000" : "#000"; // можна кастомізувати під темну тему
 
   const handleToggle = useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -50,8 +42,18 @@ const ApartmentCard = React.memo(({ apartment, onPress }) => {
   return (
     <TouchableOpacity
       onPress={handleToggle}
-      style={[styles.card, { backgroundColor: cardColor, shadowColor }]}
+      style={[
+        styles.card,
+        {
+          backgroundColor: cardColor,
+          shadowColor,
+          borderColor,
+          borderWidth: 1,
+        },
+      ]}
       activeOpacity={0.9}
+      accessibilityRole="button"
+      accessibilityState={{ expanded }}
     >
       <SectionTitle>
         {apartment.formattedAddress || strings.noAddress}

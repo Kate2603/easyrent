@@ -16,7 +16,7 @@ import { Formik } from "formik";
 import { updateProfile } from "../redux/userSlice";
 import SectionTitle from "../components/SectionTitle";
 import CustomButton from "../components/CustomButton";
-import { useThemeColors } from "../hooks/useThemeColors"; // <-- використання useThemeColors
+import { useThemeColors } from "../hooks/useThemeColors";
 
 export default function EditProfileScreen() {
   const dispatch = useDispatch();
@@ -50,7 +50,9 @@ export default function EditProfileScreen() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView contentContainerStyle={styles.scroll}>
-        <SectionTitle>Редагування профілю</SectionTitle>
+        <SectionTitle style={{ color: colors.textColor }}>
+          Редагування профілю
+        </SectionTitle>
 
         <Formik
           initialValues={{
@@ -87,13 +89,10 @@ export default function EditProfileScreen() {
                     {
                       color: colors.textColor,
                       backgroundColor: colors.cardColor,
-                      borderColor:
-                        colors.cardColor === "#fff" ? "#ccc" : "#555", // якщо хочеш точніше, можна додати в useThemeColors
+                      borderColor: colors.borderColor,
                     },
                   ]}
-                  placeholderTextColor={
-                    colors.textColor === "#222" ? "#888" : "#aaa"
-                  } // можна винести теж
+                  placeholderTextColor={colors.placeholderColor}
                   accessibilityLabel="Full name"
                 />
                 {touched.fullName && errors.fullName && (
@@ -112,13 +111,10 @@ export default function EditProfileScreen() {
                     {
                       color: colors.textColor,
                       backgroundColor: colors.cardColor,
-                      borderColor:
-                        colors.cardColor === "#fff" ? "#ccc" : "#555",
+                      borderColor: colors.borderColor,
                     },
                   ]}
-                  placeholderTextColor={
-                    colors.textColor === "#222" ? "#888" : "#aaa"
-                  }
+                  placeholderTextColor={colors.placeholderColor}
                   accessibilityLabel="Avatar URL"
                 />
                 {touched.avatar && errors.avatar && (

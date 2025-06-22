@@ -3,11 +3,11 @@ import { View, Text, StyleSheet } from "react-native";
 import { useThemeColors } from "../hooks/useThemeColors";
 
 export default function GuestBanner() {
-  const colors = useThemeColors();
+  const { warningBg, warningText } = useThemeColors();
 
   return (
-    <View style={[styles.banner, { backgroundColor: colors.warningBg }]}>
-      <Text style={[styles.text, { color: colors.warningText }]}>
+    <View style={[styles.banner, { backgroundColor: warningBg }]}>
+      <Text style={[styles.text, { color: warningText }]}>
         Ви переглядаєте як гість. Деякі функції можуть бути недоступні.
       </Text>
     </View>

@@ -16,7 +16,9 @@ export default function CityAutocompleteInput({ onCitySelect }) {
   const [suggestions, setSuggestions] = useState([]);
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
-  const { colors, isLight } = useThemeColors();
+  const { isLight, textColor, placeholderColor, borderColor, cardColor } =
+    useThemeColors();
+
   const { strings } = useStrings();
 
   // Дебаунс введення (500мс)
@@ -51,13 +53,13 @@ export default function CityAutocompleteInput({ onCitySelect }) {
         style={[
           styles.input,
           {
-            backgroundColor: isLight ? "#fff" : "#1e1e1e",
-            borderColor: isLight ? "#ccc" : "#555",
-            color: colors.text,
+            backgroundColor: cardColor,
+            borderColor: borderColor,
+            color: textColor,
           },
         ]}
         placeholder={strings.enterCityPlaceholder}
-        placeholderTextColor={isLight ? "#999" : "#888"}
+        placeholderTextColor={placeholderColor}
         value={query}
         onChangeText={setQuery}
         autoCorrect={false}
@@ -79,7 +81,7 @@ export default function CityAutocompleteInput({ onCitySelect }) {
               onPress={() => handleSelect(item)}
               activeOpacity={0.7}
             >
-              <Text style={{ color: colors.text }}>
+              <Text style={{ color: textColor }}>
                 {item.name}, {item.state}
               </Text>
             </TouchableOpacity>
@@ -87,8 +89,8 @@ export default function CityAutocompleteInput({ onCitySelect }) {
           style={[
             styles.list,
             {
-              backgroundColor: isLight ? "#fff" : "#2a2a2a",
-              borderColor: isLight ? "#ccc" : "#555",
+              backgroundColor: cardColor,
+              borderColor: borderColor,
             },
           ]}
           keyboardShouldPersistTaps="handled"

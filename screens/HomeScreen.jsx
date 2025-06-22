@@ -66,7 +66,9 @@ export default function HomeScreen() {
     <View
       style={[styles.container, { backgroundColor: colors.backgroundColor }]}
     >
-      <SectionTitle>{strings.home}</SectionTitle>
+      <SectionTitle style={{ color: colors.textColor }}>
+        {strings.home}
+      </SectionTitle>
 
       <ThemeToggleButton />
 
@@ -79,8 +81,16 @@ export default function HomeScreen() {
             title={strings.register}
             onPress={handleGoToRegister}
             isActive
+            activeBgColor={colors.primaryColor}
+            activeTextColor={colors.chipActiveText}
           />
-          <CustomButton title={strings.login} onPress={handleLogin} isActive />
+          <CustomButton
+            title={strings.login}
+            onPress={handleLogin}
+            isActive
+            activeBgColor={colors.primaryColor}
+            activeTextColor={colors.chipActiveText}
+          />
         </>
       ) : (
         <>
@@ -92,6 +102,8 @@ export default function HomeScreen() {
             title={strings.search}
             onPress={handleSearch}
             isActive
+            activeBgColor={colors.primaryColor}
+            activeTextColor={colors.chipActiveText}
           />
         </>
       )}

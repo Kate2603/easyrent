@@ -31,11 +31,9 @@ export default function BookingForm({ onSubmit }) {
   const dispatch = useDispatch();
   const { strings } = useStrings();
 
-  // Деструктуризуємо всі кольори й isLight для майбутніх потреб
-  const { isLight, backgroundColor, textColor, cardColor, placeholderColor } =
+  const { backgroundColor, cardColor, textColor, placeholderColor, isLight } =
     useThemeColors();
 
-  // Валідація через Yup з локалізованими повідомленнями
   const validationSchema = Yup.object().shape({
     city: Yup.string().required(strings.errors.required),
     date: Yup.string().required(strings.errors.required),
@@ -64,7 +62,7 @@ export default function BookingForm({ onSubmit }) {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView contentContainerStyle={styles.scroll}>
-        <SectionTitle accessibilityRole="header">
+        <SectionTitle accessibilityRole="header" style={{ color: textColor }}>
           {strings.formTitle}
         </SectionTitle>
 
@@ -97,11 +95,16 @@ export default function BookingForm({ onSubmit }) {
                       {
                         color: textColor,
                         borderColor:
-                          touched[key] && errors[key] ? "red" : textColor,
+                          touched[key] && errors[key]
+                            ? "red"
+                            : placeholderColor,
                         backgroundColor: cardColor,
                       },
                     ]}
                     accessibilityLabel={strings[placeholderKey]}
+                    selectionColor={
+                      isLight ? COLORS.primaryLight : COLORS.primaryDark
+                    }
                   />
                   {touched[key] && errors[key] && (
                     <Text style={styles.errorText}>{errors[key]}</Text>

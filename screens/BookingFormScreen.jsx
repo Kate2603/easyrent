@@ -28,7 +28,7 @@ const STRINGS = {
 };
 
 export default function BookingFormScreen() {
-  const { backgroundColor } = useThemeColors();
+  const { backgroundColor, textColor } = useThemeColors();
   const { locale } = useLocale();
   const navigation = useNavigation();
   const route = useRoute();
@@ -47,7 +47,7 @@ export default function BookingFormScreen() {
   if (!id) {
     return (
       <View style={[styles.container, { backgroundColor }]}>
-        <SectionTitle accessibilityRole="header">
+        <SectionTitle style={{ color: textColor }} accessibilityRole="header">
           {strings.apartmentNotFound}
         </SectionTitle>
       </View>
@@ -63,7 +63,7 @@ export default function BookingFormScreen() {
         contentContainerStyle={[styles.scroll, { backgroundColor }]}
         keyboardShouldPersistTaps="handled"
       >
-        <SectionTitle accessibilityRole="header">
+        <SectionTitle style={{ color: textColor }} accessibilityRole="header">
           {strings.bookingFormTitle(id)}
         </SectionTitle>
         <BookingForm onSubmit={handleBookingSubmit} />

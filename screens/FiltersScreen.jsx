@@ -9,7 +9,7 @@ import {
   selectFilters,
   FILTER_SORT_OPTIONS,
 } from "../redux/filtersSlice";
-import { useThemeColors } from "../hooks/useThemeColors"; // імпорт хука
+import { useThemeColors } from "../hooks/useThemeColors";
 import { useLocale } from "../contexts/LocaleContext";
 
 const SORT_LABELS = {
@@ -28,7 +28,7 @@ const SORT_LABELS = {
 export default function FiltersScreen() {
   const dispatch = useDispatch();
   const { filterSort } = useSelector(selectFilters);
-  const colors = useThemeColors(); // отримуємо кольори
+  const colors = useThemeColors();
   const { locale } = useLocale();
 
   const labels = SORT_LABELS[locale] || SORT_LABELS.uk;
@@ -41,10 +41,14 @@ export default function FiltersScreen() {
 
   return (
     <View style={[styles.wrapper, { backgroundColor: colors.backgroundColor }]}>
-      <SectionTitle>Оберіть місто</SectionTitle>
+      <SectionTitle style={{ color: colors.textColor }}>
+        Оберіть місто
+      </SectionTitle>
       <CityAutocompleteInput />
 
-      <SectionTitle>Фільтрувати за:</SectionTitle>
+      <SectionTitle style={{ color: colors.textColor }}>
+        Фільтрувати за:
+      </SectionTitle>
 
       <FlatList
         data={FILTER_SORT_OPTIONS}
@@ -57,6 +61,14 @@ export default function FiltersScreen() {
               title={labels[item] || item}
               onPress={() => handleSelect(item)}
               isActive={item === filterSort}
+              // Передаємо кольори в CustomButton для адаптивності
+              activeBgColor={colors.chipActiveBg}
+              activeTextColor={colors.chipActiveText}
+              inactiveBgColor={colors.cardColor}
+              inactiveTextColor={colors.textColor}
+              style={{
+                borderColor: colors.borderColor,
+              }}
             />
           </View>
         )}

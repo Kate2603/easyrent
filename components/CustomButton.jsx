@@ -10,22 +10,19 @@ export default function CustomButton({
   style,
   textStyle,
 }) {
-  const { colors, isLight } = useThemeColors();
+  const { isLight, primaryColor, backgroundColor, textColor, cardColor } =
+    useThemeColors();
 
-  const backgroundColor = isActive
-    ? isLight
-      ? colors.lightBackground
-      : colors.darkBackground
+  const computedBg = isActive
+    ? backgroundColor
     : disabled
     ? isLight
       ? "#F6F6F6"
       : "#2a2a2a"
-    : colors.primary;
+    : primaryColor;
 
-  const borderColor = isActive ? colors.primary : "transparent";
-
-  const textColor = isActive
-    ? colors.primary
+  const computedTextColor = isActive
+    ? primaryColor
     : disabled
     ? isLight
       ? "#AFAFAF"
@@ -44,10 +41,17 @@ export default function CustomButton({
       disabled={disabled}
       accessibilityRole="button"
       accessibilityState={{ disabled }}
-      style={[styles.button, { backgroundColor, borderColor }, style]}
+      style={[
+        styles.button,
+        {
+          backgroundColor: computedBg,
+          borderColor: isActive ? primaryColor : "transparent",
+        },
+        style,
+      ]}
       activeOpacity={0.8}
     >
-      <Text style={[styles.text, { color: textColor }, textStyle]}>
+      <Text style={[styles.text, { color: computedTextColor }, textStyle]}>
         {title}
       </Text>
     </TouchableOpacity>

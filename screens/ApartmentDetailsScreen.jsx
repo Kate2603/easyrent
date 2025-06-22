@@ -72,8 +72,8 @@ export default function ApartmentDetailsScreen() {
     ? formatDate(apartment.createdAt, strings.locale)
     : strings.unknown || (strings.locale === "uk" ? "невідомо" : "unknown");
 
-  // Візьмемо вторинний текстовий колір, наприклад, як textColor з меншим opacity
-  const secondaryTextColor = textColor + "CC"; // наприклад, 80% прозорість, або можна взяти інший колір
+  // Використовуємо прозорість для вторинного тексту (наприклад 80%)
+  const secondaryTextColor = textColor + "CC";
 
   return (
     <ScrollView contentContainerStyle={[styles.container, { backgroundColor }]}>

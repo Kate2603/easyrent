@@ -19,7 +19,7 @@ export default function LoginRequiredWrapper({ children }) {
         <Button
           title="Увійти"
           onPress={() => navigation.navigate(ROUTES.LOGIN)}
-          color={textColor} // для кнопки можна передати колір
+          color={textColor} // колір кнопки адаптований під тему
         />
       </View>
     );
@@ -35,5 +35,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
   },
-  text: { fontSize: 16, marginBottom: 12 },
+  text: {
+    fontSize: 16,
+    marginBottom: 12,
+  },
 });

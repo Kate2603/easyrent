@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+
 import { markOnboardingSeen, setGuestUser } from "../redux/userSlice";
 import { useThemeColors } from "../hooks/useThemeColors";
 
@@ -15,16 +16,16 @@ export default function OnboardingScreen({ navigation }) {
     await dispatch(markOnboardingSeen());
 
     if (isRegistered) {
-      navigation.replace("Login"); // Якщо вже є акаунт — логін
+      navigation.replace("Login"); // Якщо акаунт є — на логін
     } else {
-      navigation.replace("Register"); // Інакше — реєстрація
+      navigation.replace("Register"); // Інакше — на реєстрацію
     }
   };
 
   const handleGuest = async () => {
     await dispatch(markOnboardingSeen());
     await dispatch(setGuestUser());
-    navigation.replace("Home"); // Або на потрібний екран для гостей
+    navigation.replace("Home"); // Або потрібний гостевий екран
   };
 
   return (
@@ -39,13 +40,18 @@ export default function OnboardingScreen({ navigation }) {
       <TouchableOpacity
         style={[styles.button, { backgroundColor: colors.backgroundColor }]}
         onPress={handleStart}
+        accessibilityRole="button"
       >
         <Text style={[styles.buttonText, { color: colors.primaryColor }]}>
           Почати
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.linkButton} onPress={handleGuest}>
+      <TouchableOpacity
+        style={styles.linkButton}
+        onPress={handleGuest}
+        accessibilityRole="button"
+      >
         <Text style={[styles.linkText, { color: colors.textColor }]}>
           Продовжити як гість
         </Text>

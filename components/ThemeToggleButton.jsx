@@ -7,7 +7,7 @@ import { useThemeColors } from "../hooks/useThemeColors";
 export default function ThemeToggleButton() {
   const { toggleTheme, theme } = useTheme();
   const strings = useStrings();
-  const { textColor } = useThemeColors(); // Якщо потрібно кольори для CustomButton (наприклад, передати як style)
+  const { textColor, primaryColor, cardColor } = useThemeColors();
 
   const nextTheme =
     theme === "light"
@@ -22,8 +22,12 @@ export default function ThemeToggleButton() {
       accessibilityLabel={`${
         strings.switchTheme || "Switch theme to: "
       } ${nextTheme}`}
-      // При потребі можна додати стилі з useThemeColors
-      // style={{ backgroundColor: ..., color: textColor }}
+      style={{
+        backgroundColor: cardColor,
+        color: primaryColor,
+        borderColor: primaryColor,
+      }}
+      textStyle={{ color: primaryColor }}
     />
   );
 }

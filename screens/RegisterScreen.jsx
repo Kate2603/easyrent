@@ -22,14 +22,10 @@ export default function RegisterScreen() {
   const navigation = useNavigation();
   const { strings } = useStrings();
 
-  const {
-    backgroundColor,
-    textColor,
-    // За потреби можна додати linkColor, errorColor в useThemeColors і сюди їх отримувати
-  } = useThemeColors();
+  const { backgroundColor, textColor, placeholderColor, borderColor } =
+    useThemeColors();
 
-  // Локальні кольори помилок та посилань
-  const placeholderColor = "#999";
+  // Локальні кольори для помилок і посилань (можна винести в COLORS)
   const errorColor = "#FF3B30";
   const linkColor = "#007AFF";
 
@@ -44,7 +40,7 @@ export default function RegisterScreen() {
   });
 
   const handleRegister = (values) => {
-    const { fullName, email, password } = values;
+    const { fullName, email } = values;
 
     dispatch(
       loginSuccess({
@@ -90,7 +86,7 @@ export default function RegisterScreen() {
               placeholderTextColor={placeholderColor}
               style={[
                 styles.input,
-                { color: textColor, borderColor: textColor },
+                { color: textColor, borderColor: borderColor },
               ]}
               onChangeText={handleChange("fullName")}
               onBlur={handleBlur("fullName")}
@@ -111,7 +107,7 @@ export default function RegisterScreen() {
               autoCapitalize="none"
               style={[
                 styles.input,
-                { color: textColor, borderColor: textColor },
+                { color: textColor, borderColor: borderColor },
               ]}
               onChangeText={handleChange("email")}
               onBlur={handleBlur("email")}
@@ -130,7 +126,7 @@ export default function RegisterScreen() {
               secureTextEntry
               style={[
                 styles.input,
-                { color: textColor, borderColor: textColor },
+                { color: textColor, borderColor: borderColor },
               ]}
               onChangeText={handleChange("password")}
               onBlur={handleBlur("password")}
@@ -177,6 +173,7 @@ const styles = StyleSheet.create({
   },
   error: {
     marginBottom: 10,
+    fontSize: 13,
   },
   link: {
     textAlign: "center",

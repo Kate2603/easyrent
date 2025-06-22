@@ -4,11 +4,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { useThemeColors } from "../hooks/useThemeColors";
 
 export default function Header({ title, onBack }) {
-  const { backgroundColor, primaryColor } = useThemeColors();
-
-  const borderColor = backgroundColor === "#ffffff" ? "#eee" : "#333";
-  const textColor = primaryColor;
-  const iconColor = primaryColor;
+  const { backgroundColor, primaryColor, borderColor } = useThemeColors();
 
   return (
     <View
@@ -25,10 +21,10 @@ export default function Header({ title, onBack }) {
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <Icon name="chevron-back" size={26} color={iconColor} />
+          <Icon name="chevron-back" size={26} color={primaryColor} />
         </TouchableOpacity>
       )}
-      <Text style={[styles.title, { color: textColor }]}>{title}</Text>
+      <Text style={[styles.title, { color: primaryColor }]}>{title}</Text>
     </View>
   );
 }

@@ -51,5 +51,5 @@ export default function LocationAutoDetect() {
     })();
   }, [city, state, dispatch]);
 
-  return null;
+  return null; // без UI, тому кольори не застосовуються
 }

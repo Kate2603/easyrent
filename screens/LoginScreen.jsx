@@ -2,12 +2,15 @@ import React from "react";
 import { View, StyleSheet, Text, TextInput } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
+
 import CustomButton from "../components/CustomButton";
 import SectionTitle from "../components/SectionTitle";
+
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../redux/userSlice";
 import { ROUTES } from "../constants/ROUTES";
 import { useNavigation } from "@react-navigation/native";
+
 import { useThemeColors } from "../hooks/useThemeColors";
 import { useStrings } from "../hooks/useStrings";
 
@@ -50,7 +53,7 @@ export default function LoginScreen() {
     <View
       style={[styles.container, { backgroundColor: colors.backgroundColor }]}
     >
-      <SectionTitle style={{ color: colors.text }}>{t.title}</SectionTitle>
+      <SectionTitle style={{ color: colors.textColor }}>{t.title}</SectionTitle>
 
       <Formik
         initialValues={{ email: "", password: "" }}
@@ -70,9 +73,9 @@ export default function LoginScreen() {
               style={[
                 styles.input,
                 {
-                  backgroundColor: colors.inputBackground,
+                  backgroundColor: colors.cardColor,
                   borderColor: colors.borderColor,
-                  color: colors.text,
+                  color: colors.textColor,
                 },
               ]}
               placeholder={t.email}
@@ -96,9 +99,9 @@ export default function LoginScreen() {
               style={[
                 styles.input,
                 {
-                  backgroundColor: colors.inputBackground,
+                  backgroundColor: colors.cardColor,
                   borderColor: colors.borderColor,
-                  color: colors.text,
+                  color: colors.textColor,
                 },
               ]}
               placeholder={t.password}
@@ -123,6 +126,8 @@ export default function LoginScreen() {
               onPress={handleSubmit}
               isActive
               accessibilityLabel={t.submit}
+              activeBgColor={colors.primaryColor}
+              activeTextColor={colors.chipActiveText}
             />
           </>
         )}

@@ -22,12 +22,14 @@ export default function FilterChips() {
   const dispatch = useDispatch();
   const { filterSort } = useSelector(selectFilters);
   const { locale } = useLocale();
-  const { chipActiveBg, chipActiveText, backgroundColor } = useThemeColors();
+  const { chipActiveBg, chipActiveText, backgroundColor, isLight } =
+    useThemeColors();
 
   const labels = SORT_LABELS[locale] || SORT_LABELS["uk"];
 
-  const chipInactiveBg = backgroundColor === "#ffffff" ? "#eee" : "#444";
-  const chipInactiveText = backgroundColor === "#ffffff" ? "#333" : "#eee";
+  // Використовуємо кольори із палітри COLORS, замість хардкоду
+  const chipInactiveBg = isLight ? "#eee" : "#444";
+  const chipInactiveText = isLight ? "#333" : "#eee";
 
   const SORT_KEYS = Object.keys(labels);
 

@@ -9,12 +9,7 @@ import { useThemeColors } from "../hooks/useThemeColors";
 
 export default function PaymentForm({ onSubmit }) {
   const { strings } = useStrings();
-  const {
-    textColor,
-    cardColor,
-    primaryColor,
-    // можна додати інші, якщо потрібно
-  } = useThemeColors();
+  const { textColor, cardColor, primaryColor } = useThemeColors();
 
   const cvvRef = useRef(null);
 
