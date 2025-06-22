@@ -22,7 +22,7 @@ import {
 } from "../redux/apartmentsSlice";
 
 import { ROUTES } from "../constants/ROUTES";
-import { formatDate } from "../utils/formatDate";
+import { formatDate } from "../utils/dateUtils";
 import LoginRequiredWrapper from "../components/LoginRequiredWrapper";
 
 export default function ApartmentDetailsScreen() {

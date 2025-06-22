@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { loadUserProfile } from "../redux/userSlice";
 import { ROUTES } from "../constants/ROUTES";
@@ -58,6 +58,10 @@ export default function HomeScreen() {
     });
   };
 
+  const handleSearch = () => {
+    navigation.navigate(ROUTES.APARTMENT_LIST);
+  };
+
   return (
     <View
       style={[styles.container, { backgroundColor: colors.backgroundColor }]}
@@ -68,7 +72,7 @@ export default function HomeScreen() {
 
       {!user ? (
         <>
-          <Text style={[styles.text, { color: colors.text }]}>
+          <Text style={[styles.text, { color: colors.textColor }]}>
             {strings.notLoggedIn}
           </Text>
           <CustomButton
@@ -80,13 +84,13 @@ export default function HomeScreen() {
         </>
       ) : (
         <>
-          <Text style={[styles.text, { color: colors.text }]}>
-            {strings.greeting}, {user.fullName}
+          <Text style={[styles.text, { color: colors.textColor }]}>
+            {strings.greeting}, {user.fullName || "User"}
           </Text>
           <LocationAutoDetect />
           <CustomButton
             title={strings.search}
-            onPress={() => navigation.navigate(ROUTES.APARTMENT_LIST)}
+            onPress={handleSearch}
             isActive
           />
         </>

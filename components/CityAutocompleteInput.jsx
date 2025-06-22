@@ -19,13 +19,13 @@ export default function CityAutocompleteInput({ onCitySelect }) {
   const { colors, isLight } = useThemeColors();
   const { strings } = useStrings();
 
+  // Дебаунс введення (500мс)
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedQuery(query);
-    }, 500);
+    const handler = setTimeout(() => setDebouncedQuery(query), 500);
     return () => clearTimeout(handler);
   }, [query]);
 
+  // Запит на автопідказки при debouncedQuery > 1 символ
   useEffect(() => {
     if (debouncedQuery.length < 2) {
       setSuggestions([]);
@@ -60,6 +60,9 @@ export default function CityAutocompleteInput({ onCitySelect }) {
         placeholderTextColor={isLight ? "#999" : "#888"}
         value={query}
         onChangeText={setQuery}
+        autoCorrect={false}
+        autoCapitalize="words"
+        keyboardAppearance={isLight ? "light" : "dark"}
       />
       {suggestions.length > 0 && (
         <FlatList
@@ -74,6 +77,7 @@ export default function CityAutocompleteInput({ onCitySelect }) {
                 { borderBottomColor: isLight ? "#eee" : "#444" },
               ]}
               onPress={() => handleSelect(item)}
+              activeOpacity={0.7}
             >
               <Text style={{ color: colors.text }}>
                 {item.name}, {item.state}
@@ -88,6 +92,7 @@ export default function CityAutocompleteInput({ onCitySelect }) {
             },
           ]}
           keyboardShouldPersistTaps="handled"
+          nestedScrollEnabled={true}
         />
       )}
     </View>

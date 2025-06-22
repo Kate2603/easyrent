@@ -24,7 +24,18 @@ if (
 const ApartmentCard = React.memo(({ apartment, onPress }) => {
   const { strings, locale } = useStrings();
   const [expanded, setExpanded] = useState(false);
-  const { cardColor, textColor } = useThemeColors();
+
+  // Деструктуризуємо всі потрібні значення, включно з isLight
+  const {
+    isLight,
+    cardColor,
+    textColor,
+    backgroundColor,
+    primaryColor,
+    avatarBorder,
+    chipActiveBg,
+    chipActiveText,
+  } = useThemeColors();
 
   const shadowColor = "#000";
 

@@ -30,9 +30,12 @@ const fields = [
 export default function BookingForm({ onSubmit }) {
   const dispatch = useDispatch();
   const { strings } = useStrings();
-  const { backgroundColor, textColor, cardColor, placeholderColor } =
+
+  // Деструктуризуємо всі кольори й isLight для майбутніх потреб
+  const { isLight, backgroundColor, textColor, cardColor, placeholderColor } =
     useThemeColors();
 
+  // Валідація через Yup з локалізованими повідомленнями
   const validationSchema = Yup.object().shape({
     city: Yup.string().required(strings.errors.required),
     date: Yup.string().required(strings.errors.required),
@@ -93,10 +96,10 @@ export default function BookingForm({ onSubmit }) {
                       styles.input,
                       {
                         color: textColor,
-                        borderColor: textColor,
+                        borderColor:
+                          touched[key] && errors[key] ? "red" : textColor,
                         backgroundColor: cardColor,
                       },
-                      touched[key] && errors[key] && styles.inputError,
                     ]}
                     accessibilityLabel={strings[placeholderKey]}
                   />
@@ -134,9 +137,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     fontSize: 16,
-  },
-  inputError: {
-    borderColor: "red",
   },
   errorText: {
     color: "red",

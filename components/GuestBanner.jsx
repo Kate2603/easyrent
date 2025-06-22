@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { useThemeColors } from "../hooks/useThemeColors";
 
 export default function GuestBanner() {
-  const { colors } = useThemeColors();
+  const colors = useThemeColors();
 
   return (
     <View style={[styles.banner, { backgroundColor: colors.warningBg }]}>

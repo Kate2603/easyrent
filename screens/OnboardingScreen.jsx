@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { markOnboardingSeen, setGuestUser } from "../redux/userSlice";
 import { useThemeColors } from "../hooks/useThemeColors";
 
@@ -8,36 +8,45 @@ export default function OnboardingScreen({ navigation }) {
   const dispatch = useDispatch();
   const colors = useThemeColors();
 
+  const token = useSelector((state) => state.user.token);
+  const isRegistered = !!token;
+
   const handleStart = async () => {
     await dispatch(markOnboardingSeen());
-    navigation.replace("Register"); // або Login
+
+    if (isRegistered) {
+      navigation.replace("Login"); // Якщо вже є акаунт — логін
+    } else {
+      navigation.replace("Register"); // Інакше — реєстрація
+    }
   };
 
   const handleGuest = async () => {
     await dispatch(markOnboardingSeen());
-    dispatch(setGuestUser());
+    await dispatch(setGuestUser());
+    navigation.replace("Home"); // Або на потрібний екран для гостей
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.primary }]}>
-      <Text style={[styles.title, { color: colors.onPrimary }]}>
+    <View style={[styles.container, { backgroundColor: colors.primaryColor }]}>
+      <Text style={[styles.title, { color: colors.textColor }]}>
         Ласкаво просимо до EasyRent!
       </Text>
-      <Text style={[styles.subtitle, { color: colors.onPrimary }]}>
+      <Text style={[styles.subtitle, { color: colors.textColor }]}>
         Знаходь житло за кілька кліків.
       </Text>
 
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: colors.background }]}
+        style={[styles.button, { backgroundColor: colors.backgroundColor }]}
         onPress={handleStart}
       >
-        <Text style={[styles.buttonText, { color: colors.primary }]}>
+        <Text style={[styles.buttonText, { color: colors.primaryColor }]}>
           Почати
         </Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.linkButton} onPress={handleGuest}>
-        <Text style={[styles.linkText, { color: colors.onPrimary }]}>
+        <Text style={[styles.linkText, { color: colors.textColor }]}>
           Продовжити як гість
         </Text>
       </TouchableOpacity>

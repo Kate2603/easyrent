@@ -193,17 +193,3 @@ rm -rf node_modules package-lock.json
 npm cache clean --force
 npm install
 npx expo start
-
-### Запуск аналізу розміру:
-
-Виконати
-
-npm run analyze
-
-або
-
-expo-bundle-analyzer
-
-після чистої установки та зібрати звіт.
-
-Перевірити, чи зменшився бандл після замін

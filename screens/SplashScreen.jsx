@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Animated } from "react-native";
 import { useThemeColors } from "../hooks/useThemeColors";
-import logo from "../assets/logo.png"; // твій логотип
+import logo from "../assets/logo.png";
 
 export default function SplashScreen() {
   const { backgroundColor, textColor } = useThemeColors();
