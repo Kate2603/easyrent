@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchRentalListings, fetchApartmentDetails } from "../api/api";
-import { selectFilters } from "./filtersSlice";
 
 export const fetchApartments = createAsyncThunk(
   "apartments/fetchApartments",
@@ -47,8 +46,11 @@ const apartmentsSlice = createSlice({
   initialState,
   reducers: {
     resetApartments(state) {
-      // Повернення всього до дефолтного стану
-      Object.assign(state, initialState);
+      // Очищуємо лише список квартир, статуси і помилки, але не зачіпаємо selectedApartment
+      state.list = [];
+      state.loading = false;
+      state.error = null;
+      state.hasMore = true;
     },
   },
   extraReducers: (builder) => {

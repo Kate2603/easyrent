@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import "react-native-gesture-handler";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LocaleProvider } from "./contexts/LocaleContext";
@@ -9,7 +11,8 @@ import OnboardingScreen from "./screens/OnboardingScreen";
 import GuestBanner from "./components/GuestBanner";
 
 import { Provider, useDispatch, useSelector } from "react-redux";
-import { store } from "./redux/store";
+import { store, persistor } from "./redux/store";
+import { PersistGate } from "redux-persist/integration/react";
 import { loadUserProfile } from "./redux/userSlice";
 
 function AppInitializer() {
@@ -19,6 +22,7 @@ function AppInitializer() {
   );
 
   useEffect(() => {
+    AsyncStorage.removeItem("REGISTERED_USERS");
     dispatch(loadUserProfile());
   }, [dispatch]);
 
@@ -30,7 +34,7 @@ function AppInitializer() {
     <ThemeProvider>
       <LocaleProvider>
         <NavigationContainer>
-          {user === "guest" && <GuestBanner />}
+          {user && user.role === "guest" && <GuestBanner />}
           <RootNavigator />
         </NavigationContainer>
       </LocaleProvider>
@@ -41,7 +45,9 @@ function AppInitializer() {
 export default function App() {
   return (
     <Provider store={store}>
-      <AppInitializer />
+      <PersistGate loading={<SplashScreen />} persistor={persistor}>
+        <AppInitializer />
+      </PersistGate>
     </Provider>
   );
 }

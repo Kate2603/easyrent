@@ -2,7 +2,6 @@ import React, { useRef } from "react";
 import { View, TextInput, Text, StyleSheet, Switch } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { TextInputMask } from "react-native-masked-text";
 import CustomButton from "./CustomButton";
 import { useStrings } from "../hooks/useStrings";
 import { useThemeColors } from "../hooks/useThemeColors";
@@ -12,6 +11,23 @@ export default function PaymentForm({ onSubmit }) {
   const { textColor, cardColor, primaryColor } = useThemeColors();
 
   const cvvRef = useRef(null);
+
+  // Маскування номеру карти: додаємо пробіли кожні 4 цифри
+  const formatCardNumber = (text) => {
+    return text
+      .replace(/\D/g, "")
+      .slice(0, 16)
+      .replace(/(.{4})/g, "$1 ")
+      .trim();
+  };
+
+  // Маскування терміну дії: формат MM/YY
+  const formatExpiry = (text) => {
+    const cleaned = text.replace(/\D/g, "").slice(0, 4);
+    if (cleaned.length === 0) return "";
+    if (cleaned.length <= 2) return cleaned;
+    return cleaned.slice(0, 2) + "/" + cleaned.slice(2);
+  };
 
   const validationSchema = Yup.object({
     cardNumber: Yup.string()
@@ -49,12 +65,12 @@ export default function PaymentForm({ onSubmit }) {
           <Text style={[styles.label, { color: textColor }]}>
             {strings.cardNumber}
           </Text>
-          <TextInputMask
-            type={"credit-card"}
-            value={values.cardNumber}
-            onChangeText={(text) =>
-              setFieldValue("cardNumber", text.replace(/\s/g, ""))
-            }
+          <TextInput
+            value={formatCardNumber(values.cardNumber)}
+            onChangeText={(text) => {
+              // Зберігаємо лише цифри без пробілів
+              setFieldValue("cardNumber", text.replace(/\D/g, ""));
+            }}
             onBlur={handleBlur("cardNumber")}
             style={[
               styles.input,
@@ -67,6 +83,7 @@ export default function PaymentForm({ onSubmit }) {
             placeholder="0000 0000 0000 0000"
             placeholderTextColor={primaryColor}
             keyboardType="numeric"
+            maxLength={19} // 16 цифр + 3 пробіли
           />
           {touched.cardNumber && errors.cardNumber && (
             <Text style={[styles.error, { color: "red" }]}>
@@ -77,13 +94,12 @@ export default function PaymentForm({ onSubmit }) {
           <Text style={[styles.label, { color: textColor }]}>
             {strings.expiry}
           </Text>
-          <TextInputMask
-            type="custom"
-            options={{ mask: "99/99" }}
-            value={values.expiry}
+          <TextInput
+            value={formatExpiry(values.expiry)}
             onChangeText={(text) => {
-              setFieldValue("expiry", text);
-              if (text.length === 5 && cvvRef.current) {
+              const formatted = formatExpiry(text);
+              setFieldValue("expiry", formatted);
+              if (formatted.length === 5 && cvvRef.current) {
                 cvvRef.current.focus();
               }
             }}
@@ -99,6 +115,7 @@ export default function PaymentForm({ onSubmit }) {
             placeholder="MM/YY"
             placeholderTextColor={primaryColor}
             keyboardType="numeric"
+            maxLength={5}
           />
           {touched.expiry && errors.expiry && (
             <Text style={[styles.error, { color: "red" }]}>
@@ -112,7 +129,11 @@ export default function PaymentForm({ onSubmit }) {
           <TextInput
             ref={cvvRef}
             value={values.cvv}
-            onChangeText={handleChange("cvv")}
+            onChangeText={(text) => {
+              // Відфільтровуємо лише цифри, максимум 3
+              const clean = text.replace(/\D/g, "").slice(0, 3);
+              setFieldValue("cvv", clean);
+            }}
             onBlur={handleBlur("cvv")}
             style={[
               styles.input,

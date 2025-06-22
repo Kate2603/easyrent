@@ -6,7 +6,7 @@ import { ROUTES } from "../constants/ROUTES";
 import { useThemeColors } from "../hooks/useThemeColors";
 
 export default function LoginRequiredWrapper({ children }) {
-  const user = useSelector((state) => state.user.data);
+  const user = useSelector((state) => state.user.user);
   const navigation = useNavigation();
   const { backgroundColor, textColor } = useThemeColors();
 

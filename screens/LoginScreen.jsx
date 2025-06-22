@@ -2,17 +2,15 @@ import React from "react";
 import { View, StyleSheet, Text, TextInput } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
-
 import CustomButton from "../components/CustomButton";
 import SectionTitle from "../components/SectionTitle";
-
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../redux/userSlice";
 import { ROUTES } from "../constants/ROUTES";
 import { useNavigation } from "@react-navigation/native";
-
 import { useThemeColors } from "../hooks/useThemeColors";
 import { useStrings } from "../hooks/useStrings";
+import { loginUser } from "../services/authService";
 
 export default function LoginScreen() {
   const dispatch = useDispatch();
@@ -20,7 +18,6 @@ export default function LoginScreen() {
   const colors = useThemeColors();
   const { strings } = useStrings();
   const t = strings.loginScreen;
-
   const errorColor = "#FF3B30";
 
   const validationSchema = Yup.object().shape({
@@ -32,21 +29,38 @@ export default function LoginScreen() {
       .required(t.errors.required),
   });
 
-  const handleLogin = (values) => {
-    const { email } = values;
+  const handleLogin = async (values, { setErrors, setSubmitting }) => {
+    try {
+      const normalizedEmail = values.email.trim().toLowerCase();
+      console.log("handleLogin - normalizedEmail:", normalizedEmail);
+      console.log(
+        "handleLogin - password received:",
+        values.password ? "****" : "(empty)"
+      );
 
-    dispatch(
-      loginSuccess({
-        user: {
-          fullName: strings.unknownUser,
-          email,
-          avatar: "https://i.pravatar.cc/150?u=" + email,
-        },
-        token: "mock-token",
-      })
-    );
+      const user = await loginUser({
+        email: normalizedEmail,
+        password: values.password,
+      });
+      console.log("handleLogin - user found:", user);
 
-    navigation.navigate(ROUTES.HOME_TAB);
+      dispatch(
+        loginSuccess({
+          user: {
+            fullName: user.fullName,
+            email: user.email,
+            avatar: "https://i.pravatar.cc/150?u=" + user.email,
+          },
+          token: "mock-token",
+        })
+      );
+
+      navigation.navigate(ROUTES.HOME_TAB);
+    } catch (error) {
+      console.log("handleLogin - login error:", error.message);
+      setErrors({ password: error.message });
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -54,7 +68,6 @@ export default function LoginScreen() {
       style={[styles.container, { backgroundColor: colors.backgroundColor }]}
     >
       <SectionTitle style={{ color: colors.textColor }}>{t.title}</SectionTitle>
-
       <Formik
         initialValues={{ email: "", password: "" }}
         validationSchema={validationSchema}
@@ -67,6 +80,8 @@ export default function LoginScreen() {
           values,
           errors,
           touched,
+          isValid,
+          dirty,
         }) => (
           <>
             <TextInput
@@ -87,7 +102,6 @@ export default function LoginScreen() {
               autoCapitalize="none"
               autoComplete="email"
               returnKeyType="next"
-              accessibilityLabel={t.email}
             />
             {touched.email && errors.email && (
               <Text style={[styles.error, { color: errorColor }]}>
@@ -111,9 +125,7 @@ export default function LoginScreen() {
               value={values.password}
               secureTextEntry
               returnKeyType="done"
-              autoComplete="password"
               onSubmitEditing={() => handleSubmit()}
-              accessibilityLabel={t.password}
             />
             {touched.password && errors.password && (
               <Text style={[styles.error, { color: errorColor }]}>
@@ -124,7 +136,7 @@ export default function LoginScreen() {
             <CustomButton
               title={t.submit}
               onPress={handleSubmit}
-              isActive
+              isActive={dirty && isValid}
               accessibilityLabel={t.submit}
               activeBgColor={colors.primaryColor}
               activeTextColor={colors.chipActiveText}

@@ -19,7 +19,8 @@ export default function HomeTabs() {
 
           if (route.name === ROUTES.HOME_STACK) iconName = "home-outline";
           else if (route.name === ROUTES.SEARCH) iconName = "search-outline";
-          else if (route.name === ROUTES.PROFILE) iconName = "person-outline";
+          else if (route.name === ROUTES.PROFILE_TAB)
+            iconName = "person-outline";
           else iconName = "ellipse";
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -39,7 +40,7 @@ export default function HomeTabs() {
         options={{ title: "Пошук" }}
       />
       <Tab.Screen
-        name={ROUTES.PROFILE}
+        name={ROUTES.PROFILE_TAB}
         component={ProfileStack}
         options={{ title: "Профіль" }}
       />

@@ -10,16 +10,15 @@ const initialState = {
   state: "",
   zipCode: "",
   propertyType: "",
-  yearBuilt: null,
   page: 1,
-  filterSort: "formattedAddress", //  дефолтне сортування
+  filterSort: "formattedAddress", // дефолтне сортування
 };
 
 const filtersSlice = createSlice({
   name: "filters",
   initialState,
   reducers: {
-    //Гнучке оновлення одного фільтра
+    // Гнучке оновлення одного фільтра
     setFilter(state, action) {
       const { key, value } = action.payload;
       if (key === "filterSort" && !SORT_OPTIONS.includes(value)) {
@@ -30,7 +29,7 @@ const filtersSlice = createSlice({
       state.page = 1;
     },
 
-    //Масове оновлення з валідацією
+    // Масове оновлення з валідацією
     setFilters(state, action) {
       const allowedKeys = Object.keys(initialState);
       for (const key of allowedKeys) {
@@ -51,7 +50,7 @@ const filtersSlice = createSlice({
       state.page = 1;
     },
 
-    //Специфічні оновлення
+    // Специфічні оновлення
     setCity(state, action) {
       state.city = action.payload;
       state.page = 1;
@@ -73,19 +72,23 @@ const filtersSlice = createSlice({
       state.page = 1;
     },
 
-    //Пагінація
+    // Пагінація
     incrementPage(state) {
       state.page += 1;
     },
 
-    //Повне скидання до дефолтного стану
+    // Новий екшен для скидання лише сторінки
+    resetPage(state) {
+      state.page = 1;
+    },
+
+    // Повне скидання до дефолтного стану
     resetFilters(state) {
       Object.assign(state, initialState);
     },
   },
 });
 
-//Експорти
 export const {
   setFilter,
   setFilters,
@@ -95,12 +98,13 @@ export const {
   setZipCode,
   setPropertyType,
   incrementPage,
+  resetPage,
   resetFilters,
 } = filtersSlice.actions;
 
 export const selectFilters = (state) => state.filters;
 
-//Для компонента, що показує опції сортування
+// Для компонента, що показує опції сортування
 export const FILTER_SORT_OPTIONS = SORT_OPTIONS;
 
 export default filtersSlice.reducer;

@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useEffect, useLayoutEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 
 import { loadUserProfile } from "../redux/userSlice";
@@ -44,6 +45,20 @@ export default function HomeScreen() {
     dispatch(loadUserProfile());
   }, [dispatch]);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: "Головна",
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={() => navigation.openDrawer()}
+          style={{ marginLeft: 16 }}
+        >
+          <Ionicons name="menu" size={24} color={colors.textColor} />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, colors]);
+
   const handleGoToRegister = () => {
     navigation.navigate(ROUTES.HOME_TAB, {
       screen: ROUTES.HOME_STACK,
@@ -59,7 +74,10 @@ export default function HomeScreen() {
   };
 
   const handleSearch = () => {
-    navigation.navigate(ROUTES.APARTMENT_LIST);
+    navigation.navigate(ROUTES.HOME_TAB, {
+      screen: ROUTES.HOME_STACK,
+      params: { screen: ROUTES.APARTMENT_LIST },
+    });
   };
 
   return (

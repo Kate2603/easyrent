@@ -1,13 +1,23 @@
+// src/redux/userSlice.js
+
 import { createSlice } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { persistReducer } from "redux-persist";
+
+// --- Конфіг для redux-persist ---
+const persistConfig = {
+  key: "user",
+  storage: AsyncStorage,
+  whitelist: ["user", "token", "hasSeenOnboarding"], // що зберігаємо
+};
 
 const initialState = {
-  user: null,
-  token: null,
+  user: null, // обʼєкт користувача або null
+  token: null, // токен або null
   isLoading: false,
   hasLoaded: false,
   error: null,
-  hasSeenOnboarding: false, // для онбордингу
+  hasSeenOnboarding: false,
 };
 
 const userSlice = createSlice({
@@ -22,6 +32,7 @@ const userSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
+      state.error = null;
     },
     updateUser: (state, action) => {
       state.user = { ...state.user, ...action.payload };
@@ -39,12 +50,19 @@ const userSlice = createSlice({
       state.hasSeenOnboarding = action.payload;
     },
     setGuestUser: (state) => {
-      state.user = "guest";
+      state.user = { role: "guest" }; // Обʼєкт з роллю гостя
       state.token = null;
     },
   },
 });
 
+// Експортуємо reducer з persist
+export const persistedUserReducer = persistReducer(
+  persistConfig,
+  userSlice.reducer
+);
+
+// Експортуємо actions
 export const {
   loginSuccess,
   logout,
@@ -55,8 +73,6 @@ export const {
   setHasSeenOnboarding,
   setGuestUser,
 } = userSlice.actions;
-
-export default userSlice.reducer;
 
 // --- THUNKS ---
 

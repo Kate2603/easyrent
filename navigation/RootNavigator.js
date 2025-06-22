@@ -56,6 +56,7 @@ export default function RootNavigator() {
         drawerInactiveTintColor: "#AFAFAF",
         drawerLabelStyle: { fontSize: 16, fontWeight: "700", color: "#000" },
         drawerStyle: { backgroundColor: "#F6F6F6" },
+        headerShown: false,
       }}
     >
       <Drawer.Screen

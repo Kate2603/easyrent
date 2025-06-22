@@ -25,11 +25,9 @@ const ApartmentCard = React.memo(({ apartment, onPress }) => {
   const { strings, locale } = useStrings();
   const [expanded, setExpanded] = useState(false);
 
-  // Деструктуризуємо всі потрібні кольори і прапорець теми
-  const { isLight, cardColor, textColor, primaryColor, borderColor } =
-    useThemeColors();
+  const { isLight, cardColor, textColor, borderColor } = useThemeColors();
 
-  const shadowColor = isLight ? "#000" : "#000"; // можна кастомізувати під темну тему
+  const shadowColor = isLight ? "#000" : "#000"; // можна кастомізувати
 
   const handleToggle = useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);

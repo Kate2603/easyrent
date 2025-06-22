@@ -10,21 +10,16 @@ import CustomButton from "../components/CustomButton";
 import { logout } from "../redux/userSlice";
 import { useThemeColors } from "../hooks/useThemeColors";
 import { useStrings } from "../hooks/useStrings";
+import LoginRequiredWrapper from "../components/LoginRequiredWrapper";
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { strings } = useStrings();
-
-  const { user } = useSelector((state) => state.user);
   const { backgroundColor, textColor, placeholderColor, avatarBorder } =
     useThemeColors();
 
-  useEffect(() => {
-    if (!user || user.role === "guest") {
-      navigation.navigate(ROUTES.LOGIN);
-    }
-  }, [user, navigation]);
+  const { user } = useSelector((state) => state.user);
 
   const handleEditProfile = () => {
     navigation.navigate(ROUTES.PROFILE_TAB, {
@@ -92,19 +87,17 @@ export default function ProfileScreen() {
     },
   ];
 
-  if (!user || user.role === "guest") {
-    return null;
-  }
-
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor }}>
-      <FlatList
-        style={{ backgroundColor }}
-        contentContainerStyle={[styles.container, { backgroundColor }]}
-        data={data}
-        renderItem={({ item }) => item.render()}
-      />
-    </SafeAreaView>
+    <LoginRequiredWrapper>
+      <SafeAreaView style={{ flex: 1, backgroundColor }}>
+        <FlatList
+          style={{ backgroundColor }}
+          contentContainerStyle={[styles.container, { backgroundColor }]}
+          data={data}
+          renderItem={({ item }) => item.render()}
+        />
+      </SafeAreaView>
+    </LoginRequiredWrapper>
   );
 }
 

@@ -16,16 +16,14 @@ import SectionTitle from "../components/SectionTitle";
 import CustomButton from "../components/CustomButton";
 import { useThemeColors } from "../hooks/useThemeColors";
 import { useStrings } from "../hooks/useStrings";
+import { registerUser } from "../services/authService";
 
 export default function RegisterScreen() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { strings } = useStrings();
-
   const { backgroundColor, textColor, placeholderColor, borderColor } =
     useThemeColors();
-
-  // Локальні кольори для помилок і посилань (можна винести в COLORS)
   const errorColor = "#FF3B30";
   const linkColor = "#007AFF";
 
@@ -39,24 +37,37 @@ export default function RegisterScreen() {
       .required(strings.errors.required),
   });
 
-  const handleRegister = (values) => {
-    const { fullName, email } = values;
+  const handleRegister = async (values, { setErrors, setSubmitting }) => {
+    const { fullName, email, password } = values;
+    const normalizedEmail = email.trim().toLowerCase();
 
-    dispatch(
-      loginSuccess({
-        user: {
-          fullName,
-          email,
-          avatar: "https://i.pravatar.cc/150?u=" + email,
-        },
-        token: "mock-token-" + Date.now(),
-      })
-    );
+    try {
+      const user = await registerUser({
+        fullName,
+        email: normalizedEmail,
+        password,
+      });
 
-    navigation.navigate(ROUTES.HOME_TAB, {
-      screen: ROUTES.HOME_STACK,
-      params: { screen: ROUTES.HOME },
-    });
+      dispatch(
+        loginSuccess({
+          user: {
+            fullName: user.fullName,
+            email: user.email,
+            avatar: "https://i.pravatar.cc/150?u=" + user.email,
+          },
+          token: "mock-token-" + Date.now(),
+        })
+      );
+
+      navigation.navigate(ROUTES.HOME_TAB, {
+        screen: ROUTES.HOME_STACK,
+        params: { screen: ROUTES.HOME },
+      });
+    } catch (error) {
+      setErrors({ email: error.message });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -64,7 +75,6 @@ export default function RegisterScreen() {
       <SectionTitle style={{ color: textColor }}>
         {strings.register}
       </SectionTitle>
-
       <Formik
         initialValues={{ fullName: "", email: "", password: "" }}
         validationSchema={validationSchema}
@@ -84,10 +94,7 @@ export default function RegisterScreen() {
             <TextInput
               placeholder={strings.name}
               placeholderTextColor={placeholderColor}
-              style={[
-                styles.input,
-                { color: textColor, borderColor: borderColor },
-              ]}
+              style={[styles.input, { color: textColor, borderColor }]}
               onChangeText={handleChange("fullName")}
               onBlur={handleBlur("fullName")}
               value={values.fullName}
@@ -105,10 +112,7 @@ export default function RegisterScreen() {
               placeholderTextColor={placeholderColor}
               keyboardType="email-address"
               autoCapitalize="none"
-              style={[
-                styles.input,
-                { color: textColor, borderColor: borderColor },
-              ]}
+              style={[styles.input, { color: textColor, borderColor }]}
               onChangeText={handleChange("email")}
               onBlur={handleBlur("email")}
               value={values.email}
@@ -124,10 +128,7 @@ export default function RegisterScreen() {
               placeholder={strings.password || "Пароль"}
               placeholderTextColor={placeholderColor}
               secureTextEntry
-              style={[
-                styles.input,
-                { color: textColor, borderColor: borderColor },
-              ]}
+              style={[styles.input, { color: textColor, borderColor }]}
               onChangeText={handleChange("password")}
               onBlur={handleBlur("password")}
               value={values.password}
