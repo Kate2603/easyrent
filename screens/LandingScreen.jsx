@@ -6,29 +6,9 @@ import { useSelector } from "react-redux";
 import { ROUTES } from "../constants/ROUTES";
 import { useThemeColors } from "../hooks/useThemeColors";
 import { useStrings } from "../hooks/useStrings";
-import { useTheme } from "../contexts/ThemeContext";
 
 import CustomButton from "../components/CustomButton";
 import SectionTitle from "../components/SectionTitle";
-
-function ThemeToggleButton() {
-  const { toggleTheme, theme } = useTheme();
-  const { strings } = useStrings();
-  const colors = useThemeColors();
-
-  const title =
-    theme === "light" ? strings.themeSwitch.light : strings.themeSwitch.dark;
-
-  return (
-    <CustomButton
-      title={title}
-      onPress={toggleTheme}
-      isActive={false}
-      activeBgColor={colors.primaryColor}
-      activeTextColor={colors.chipActiveText}
-    />
-  );
-}
 
 export default function LandingScreen() {
   const navigation = useNavigation();
@@ -64,7 +44,6 @@ export default function LandingScreen() {
       <SectionTitle style={{ color: colors.textColor }}>
         {strings.welcome}
       </SectionTitle>
-      <ThemeToggleButton />
 
       {!user ? (
         <>
@@ -77,6 +56,7 @@ export default function LandingScreen() {
             isActive
             activeBgColor={colors.primaryColor}
             activeTextColor={colors.chipActiveText}
+            style={styles.button}
           />
           <CustomButton
             title={strings.login}
@@ -84,6 +64,7 @@ export default function LandingScreen() {
             isActive
             activeBgColor={colors.primaryColor}
             activeTextColor={colors.chipActiveText}
+            style={styles.button}
           />
         </>
       ) : (
@@ -93,6 +74,7 @@ export default function LandingScreen() {
           isActive
           activeBgColor={colors.primaryColor}
           activeTextColor={colors.chipActiveText}
+          style={styles.button}
         />
       )}
     </View>
@@ -110,5 +92,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginVertical: 16,
     textAlign: "center",
+  },
+  button: {
+    marginTop: 12,
+    minWidth: 200,
   },
 });

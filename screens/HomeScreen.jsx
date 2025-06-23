@@ -6,20 +6,20 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { loadUserProfile } from "../redux/userSlice";
 import { ROUTES } from "../constants/ROUTES";
+
 import { useThemeColors } from "../hooks/useThemeColors";
 import { useStrings } from "../hooks/useStrings";
 
 import SectionTitle from "../components/SectionTitle";
 import LocationAutoDetect from "../components/LocationAutoDetect";
 import CustomButton from "../components/CustomButton";
-import ThemeToggleButton from "../components/ThemeToggleButton";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const colors = useThemeColors();
-  const { strings, locale } = useStrings();
+  const { strings } = useStrings();
 
   useEffect(() => {
     dispatch(loadUserProfile());
@@ -31,13 +31,13 @@ export default function HomeScreen() {
       headerLeft: () => (
         <TouchableOpacity
           onPress={() => navigation.openDrawer()}
-          style={{ marginLeft: 16 }}
+          style={styles.menuButton}
         >
           <Ionicons name="menu" size={24} color={colors.textColor} />
         </TouchableOpacity>
       ),
     });
-  }, [navigation, colors, strings.home]);
+  }, [navigation, colors.textColor, strings.home]);
 
   const handleGoToRegister = () => {
     navigation.navigate(ROUTES.HOME_TAB, {
@@ -68,41 +68,45 @@ export default function HomeScreen() {
         {strings.home}
       </SectionTitle>
 
-      <ThemeToggleButton />
-
       {!user ? (
         <>
           <Text style={[styles.text, { color: colors.textColor }]}>
             {strings.notLoggedIn}
           </Text>
+
           <CustomButton
             title={strings.register}
             onPress={handleGoToRegister}
             isActive
             activeBgColor={colors.primaryColor}
             activeTextColor={colors.chipActiveText}
+            style={styles.button}
           />
+
           <CustomButton
             title={strings.login}
             onPress={handleLogin}
             isActive
             activeBgColor={colors.primaryColor}
             activeTextColor={colors.chipActiveText}
+            style={styles.button}
           />
         </>
       ) : (
         <>
           <Text style={[styles.text, { color: colors.textColor }]}>
-            {strings.hello}
-            {user.fullName || strings.unknownUser}
+            {strings.hello} {user.fullName || strings.unknownUser}
           </Text>
+
           <LocationAutoDetect />
+
           <CustomButton
             title={strings.searchApartments}
             onPress={handleSearch}
             isActive
             activeBgColor={colors.primaryColor}
             activeTextColor={colors.chipActiveText}
+            style={styles.button}
           />
         </>
       )}
@@ -120,5 +124,13 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     marginVertical: 10,
+    textAlign: "center",
+  },
+  button: {
+    marginTop: 12,
+    minWidth: 200,
+  },
+  menuButton: {
+    marginLeft: 16,
   },
 });

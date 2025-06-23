@@ -10,7 +10,7 @@ export default function CustomButton({
   style,
   textStyle,
 }) {
-  const { isLight, primaryColor, backgroundColor, textColor, cardColor } =
+  const { isLight, primaryColor, backgroundColor, textColor } =
     useThemeColors();
 
   const computedBg = isActive

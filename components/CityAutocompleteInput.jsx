@@ -16,7 +16,7 @@ export default function CityAutocompleteInput({ onCitySelect }) {
   const [suggestions, setSuggestions] = useState([]);
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
-  const { isLight, textColor, placeholderColor, borderColor, cardColor } =
+  const { textColor, placeholderColor, borderColor, cardColor, isLight } =
     useThemeColors();
 
   const { strings } = useStrings();

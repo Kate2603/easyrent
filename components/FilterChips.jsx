@@ -27,7 +27,7 @@ export default function FilterChips() {
 
   const labels = SORT_LABELS[locale] || SORT_LABELS["uk"];
 
-  // Використовуємо кольори із палітри COLORS, замість хардкоду
+  // Використовуємо кольори із палітри, без жодної логіки перемикання теми
   const chipInactiveBg = isLight ? "#eee" : "#444";
   const chipInactiveText = isLight ? "#333" : "#eee";
 

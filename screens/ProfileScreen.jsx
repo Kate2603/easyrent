@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { View, Text, Image, StyleSheet, FlatList, Alert } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
@@ -28,24 +28,20 @@ export default function ProfileScreen() {
   };
 
   const handleLogout = () => {
-    Alert.alert(
-      strings.logoutConfirmTitle || "Вийти з акаунту?",
-      strings.logoutConfirmMessage || "Ви впевнені?",
-      [
-        {
-          text: strings.cancel || "Скасувати",
-          style: "cancel",
+    Alert.alert(strings.logoutConfirmTitle, strings.logoutConfirmMessage, [
+      {
+        text: strings.cancel,
+        style: "cancel",
+      },
+      {
+        text: strings.logout,
+        onPress: () => {
+          dispatch(logout());
+          navigation.navigate(ROUTES.LANDING);
         },
-        {
-          text: strings.logout || "Вийти",
-          onPress: () => {
-            dispatch(logout());
-            navigation.navigate(ROUTES.LANDING);
-          },
-          style: "destructive",
-        },
-      ]
-    );
+        style: "destructive",
+      },
+    ]);
   };
 
   const data = [
@@ -69,20 +65,13 @@ export default function ProfileScreen() {
     {
       key: "edit",
       render: () => (
-        <CustomButton
-          title={strings.editProfile || "Редагувати профіль"}
-          onPress={handleEditProfile}
-        />
+        <CustomButton title={strings.editProfile} onPress={handleEditProfile} />
       ),
     },
     {
       key: "logout",
       render: () => (
-        <CustomButton
-          title={strings.logout || "Вийти"}
-          onPress={handleLogout}
-          isActive
-        />
+        <CustomButton title={strings.logout} onPress={handleLogout} isActive />
       ),
     },
   ];
@@ -95,6 +84,7 @@ export default function ProfileScreen() {
           contentContainerStyle={[styles.container, { backgroundColor }]}
           data={data}
           renderItem={({ item }) => item.render()}
+          keyExtractor={(item) => item.key}
         />
       </SafeAreaView>
     </LoginRequiredWrapper>

@@ -9,17 +9,19 @@ import {
   Platform,
   UIManager,
 } from "react-native";
-import ApartmentCard from "../components/ApartmentCard";
-import SectionTitle from "../components/SectionTitle";
 import { useSelector, useDispatch } from "react-redux";
+
 import { selectFilters } from "../redux/filtersSlice";
 import {
   fetchApartments,
   selectApartments,
   selectLoading,
 } from "../redux/apartmentsSlice";
+
 import { useThemeColors } from "../hooks/useThemeColors";
 import FiltersScreen from "./FiltersScreen";
+import ApartmentCard from "../components/ApartmentCard";
+import SectionTitle from "../components/SectionTitle";
 
 export default function SearchScreen() {
   const dispatch = useDispatch();
@@ -28,7 +30,6 @@ export default function SearchScreen() {
   const loading = useSelector(selectLoading);
 
   const { backgroundColor, textColor, primaryColor } = useThemeColors();
-
   const [filtersVisible, setFiltersVisible] = useState(false);
 
   useEffect(() => {
@@ -51,7 +52,7 @@ export default function SearchScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.loadingContainer, { backgroundColor }]}>
+      <View style={[styles.centered, { backgroundColor }]}>
         <Text style={{ color: textColor }}>Завантаження...</Text>
       </View>
     );
@@ -59,8 +60,11 @@ export default function SearchScreen() {
 
   if (apartments.length === 0) {
     return (
-      <View style={[styles.emptyContainer, { backgroundColor }]}>
-        <Text style={{ color: textColor }}>Квартири не знайдені</Text>
+      <View style={[styles.centered, { backgroundColor }]}>
+        <Text style={{ color: textColor, fontSize: 16 }}>
+          Квартири не знайдені
+        </Text>
+
         <TouchableOpacity
           onPress={toggleFilters}
           style={[styles.toggleBtn, { backgroundColor: primaryColor }]}
@@ -69,6 +73,7 @@ export default function SearchScreen() {
             {filtersVisible ? "Сховати фільтри" : "Показати фільтри"}
           </Text>
         </TouchableOpacity>
+
         {filtersVisible && <FiltersScreen />}
       </View>
     );
@@ -107,27 +112,24 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
   },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 16,
+  },
   listContainer: {
     paddingBottom: 16,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   toggleBtn: {
     marginVertical: 12,
-    padding: 8,
-    borderRadius: 6,
+    padding: 10,
+    borderRadius: 8,
   },
   toggleBtnText: {
     color: "#fff",
-    fontWeight: "bold",
+    fontWeight: "600",
     textAlign: "center",
+    fontSize: 16,
   },
 });

@@ -2,15 +2,17 @@ import React from "react";
 import { View, StyleSheet, Text, TextInput } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import CustomButton from "../components/CustomButton";
-import SectionTitle from "../components/SectionTitle";
 import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
+
 import { loginSuccess } from "../redux/userSlice";
 import { ROUTES } from "../constants/ROUTES";
-import { useNavigation } from "@react-navigation/native";
 import { useThemeColors } from "../hooks/useThemeColors";
 import { useStrings } from "../hooks/useStrings";
 import { loginUser } from "../services/authService";
+
+import CustomButton from "../components/CustomButton";
+import SectionTitle from "../components/SectionTitle";
 
 export default function LoginScreen() {
   const dispatch = useDispatch();
@@ -18,7 +20,6 @@ export default function LoginScreen() {
   const colors = useThemeColors();
   const { strings } = useStrings();
   const t = strings.loginScreen;
-  const errorColor = "#FF3B30";
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -32,24 +33,17 @@ export default function LoginScreen() {
   const handleLogin = async (values, { setErrors, setSubmitting }) => {
     try {
       const normalizedEmail = values.email.trim().toLowerCase();
-      console.log("handleLogin - normalizedEmail:", normalizedEmail);
-      console.log(
-        "handleLogin - password received:",
-        values.password ? "****" : "(empty)"
-      );
-
       const user = await loginUser({
         email: normalizedEmail,
         password: values.password,
       });
-      console.log("handleLogin - user found:", user);
 
       dispatch(
         loginSuccess({
           user: {
             fullName: user.fullName,
             email: user.email,
-            avatar: "https://i.pravatar.cc/150?u=" + user.email,
+            avatar: `https://i.pravatar.cc/150?u=${user.email}`,
           },
           token: "mock-token",
         })
@@ -57,7 +51,6 @@ export default function LoginScreen() {
 
       navigation.navigate(ROUTES.HOME_TAB);
     } catch (error) {
-      console.log("handleLogin - login error:", error.message);
       setErrors({ password: error.message });
       setSubmitting(false);
     }
@@ -68,6 +61,7 @@ export default function LoginScreen() {
       style={[styles.container, { backgroundColor: colors.backgroundColor }]}
     >
       <SectionTitle style={{ color: colors.textColor }}>{t.title}</SectionTitle>
+
       <Formik
         initialValues={{ email: "", password: "" }}
         validationSchema={validationSchema}
@@ -100,11 +94,15 @@ export default function LoginScreen() {
               value={values.email}
               keyboardType="email-address"
               autoCapitalize="none"
-              autoComplete="email"
               returnKeyType="next"
             />
             {touched.email && errors.email && (
-              <Text style={[styles.error, { color: errorColor }]}>
+              <Text
+                style={[
+                  styles.error,
+                  { color: colors.errorColor || "#FF3B30" },
+                ]}
+              >
                 {errors.email}
               </Text>
             )}
@@ -128,7 +126,12 @@ export default function LoginScreen() {
               onSubmitEditing={() => handleSubmit()}
             />
             {touched.password && errors.password && (
-              <Text style={[styles.error, { color: errorColor }]}>
+              <Text
+                style={[
+                  styles.error,
+                  { color: colors.errorColor || "#FF3B30" },
+                ]}
+              >
                 {errors.password}
               </Text>
             )}

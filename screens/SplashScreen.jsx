@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { View, StyleSheet, Animated } from "react-native";
+import { View, StyleSheet, Animated, Text, Image } from "react-native";
 import { useThemeColors } from "../hooks/useThemeColors";
 import logo from "../assets/logo.png";
 

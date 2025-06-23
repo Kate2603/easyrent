@@ -1,29 +1,53 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Appearance } from "react-native";
 
-const defaultTheme = Appearance.getColorScheme() || "light";
-export const ThemeContext = createContext({
+const ThemeContext = createContext({
   theme: "light",
+  setTheme: () => {},
   toggleTheme: () => {},
 });
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(defaultTheme);
+  const systemTheme = Appearance.getColorScheme() || "light";
+  const [theme, setThemeState] = useState(systemTheme);
 
-  // Автоматичне оновлення теми, якщо зміниться системна тема
+  // Завантаження теми з AsyncStorage
+  useEffect(() => {
+    (async () => {
+      const storedTheme = await AsyncStorage.getItem("APP_THEME");
+      if (storedTheme) {
+        setThemeState(storedTheme);
+      } else {
+        setThemeState(systemTheme);
+      }
+    })();
+  }, []);
+
+  // Слухаємо зміну системної теми тільки якщо користувач ще не вибрав власну
   useEffect(() => {
     const listener = Appearance.addChangeListener(({ colorScheme }) => {
-      setTheme(colorScheme || "light");
+      AsyncStorage.getItem("APP_THEME").then((storedTheme) => {
+        if (!storedTheme) {
+          setThemeState(colorScheme || "light");
+        }
+      });
     });
     return () => listener.remove();
   }, []);
 
+  const setTheme = async (value) => {
+    await AsyncStorage.setItem("APP_THEME", value);
+    setThemeState(value);
+  };
+
   const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );

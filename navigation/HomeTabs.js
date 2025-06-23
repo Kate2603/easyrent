@@ -1,14 +1,19 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+
 import HomeStack from "./HomeStack";
 import ProfileStack from "./ProfileStack";
 import SearchScreen from "../screens/SearchScreen";
+
 import { ROUTES } from "../constants/ROUTES";
+import { useStrings } from "../hooks/useStrings";
 
 const Tab = createBottomTabNavigator();
 
 export default function HomeTabs() {
+  const { strings } = useStrings();
+
   return (
     <Tab.Navigator
       initialRouteName={ROUTES.HOME_STACK}
@@ -32,17 +37,17 @@ export default function HomeTabs() {
       <Tab.Screen
         name={ROUTES.HOME_STACK}
         component={HomeStack}
-        options={{ title: "Головна" }}
+        options={{ title: strings.home }}
       />
       <Tab.Screen
         name={ROUTES.SEARCH}
         component={SearchScreen}
-        options={{ title: "Пошук" }}
+        options={{ title: strings.searchApartments }}
       />
       <Tab.Screen
         name={ROUTES.PROFILE_TAB}
         component={ProfileStack}
-        options={{ title: "Профіль" }}
+        options={{ title: strings.profile }}
       />
     </Tab.Navigator>
   );

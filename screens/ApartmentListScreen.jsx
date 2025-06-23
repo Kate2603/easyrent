@@ -23,7 +23,7 @@ import {
   selectApartments,
   selectApartmentsLoading,
   selectApartmentsHasMore,
-  resetApartments, // <--- added action to reset apartments on refresh (make sure you implement this in apartmentsSlice)
+  resetApartments,
 } from "../redux/apartmentsSlice";
 
 import {
@@ -31,7 +31,7 @@ import {
   incrementPage,
   setCity,
   setStateCode,
-  resetPage, // <--- added action to reset page to 1 on filter change or refresh (implement in filtersSlice)
+  resetPage,
 } from "../redux/filtersSlice";
 
 import { useThemeColors } from "../hooks/useThemeColors";
@@ -60,12 +60,11 @@ export default function ApartmentListScreen() {
   const filters = useSelector(selectFilters);
 
   const { backgroundColor, textColor, chipActiveText } = useThemeColors();
-  const secondaryTextColor = textColor + "CC"; // 80% opacity for secondary text
+  const secondaryTextColor = textColor + "CC";
 
   const { locale } = useLocale();
   const strings = STRINGS[locale] || STRINGS.uk;
 
-  // Fetch apartments when filters.page, filters.city or filters.propertyType change
   useEffect(() => {
     dispatch(
       fetchApartments({
@@ -76,17 +75,15 @@ export default function ApartmentListScreen() {
     );
   }, [dispatch, filters.page, filters.city, filters.propertyType]);
 
-  // Load more apartments (pagination)
   const handleLoadMore = useCallback(() => {
     if (!isLoading && hasMore) {
       dispatch(incrementPage());
     }
   }, [dispatch, isLoading, hasMore]);
 
-  // Refresh list: reset page, clear apartments, then fetch page 1
   const handleRefresh = useCallback(() => {
-    dispatch(resetPage()); // reset page to 1 in filtersSlice
-    dispatch(resetApartments()); // clear apartments list in apartmentsSlice
+    dispatch(resetPage());
+    dispatch(resetApartments());
     dispatch(
       fetchApartments({
         page: 1,
@@ -96,7 +93,6 @@ export default function ApartmentListScreen() {
     );
   }, [dispatch, filters.city, filters.propertyType]);
 
-  // When city changes, set city and state code and reset page & apartments
   const handleCitySelect = useCallback(
     (cityObj) => {
       dispatch(setCity(cityObj.name));
@@ -168,7 +164,7 @@ export default function ApartmentListScreen() {
         initialNumToRender={10}
         maxToRenderPerBatch={10}
         windowSize={21}
-        removeClippedSubviews={false} // <-- set false to avoid animation issues
+        removeClippedSubviews={false}
       />
 
       {!hasMore && apartments.length > 0 && (
@@ -177,7 +173,7 @@ export default function ApartmentListScreen() {
             title={strings.allLoaded}
             disabled
             accessibilityLabel={strings.allLoaded}
-            style={{ minWidth: 150, paddingVertical: 14 }} // Add minWidth & padding to improve button size
+            style={{ minWidth: 150, paddingVertical: 14 }}
             textStyle={{ fontSize: 16, fontWeight: "700" }}
           />
         </View>

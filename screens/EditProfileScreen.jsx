@@ -74,7 +74,7 @@ export default function EditProfileScreen() {
               <View style={styles.avatarContainer}>
                 <Image
                   source={{ uri: values.avatar }}
-                  style={[styles.avatar, { borderColor: colors.avatarBorder }]}
+                  style={[styles.avatar, { borderColor: colors.borderColor }]}
                 />
               </View>
 

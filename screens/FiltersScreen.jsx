@@ -1,14 +1,24 @@
 import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+
 import CityAutocompleteInput from "../components/CityAutocompleteInput";
 import SectionTitle from "../components/SectionTitle";
 import CustomButton from "../components/CustomButton";
-import { useDispatch, useSelector } from "react-redux";
+
 import {
   setFilters,
   selectFilters,
   FILTER_SORT_OPTIONS,
 } from "../redux/filtersSlice";
+
 import { useThemeColors } from "../hooks/useThemeColors";
 import { useLocale } from "../contexts/LocaleContext";
 
@@ -40,53 +50,75 @@ export default function FiltersScreen() {
   };
 
   return (
-    <View style={[styles.wrapper, { backgroundColor: colors.backgroundColor }]}>
-      <SectionTitle style={{ color: colors.textColor }}>
-        Оберіть місто
-      </SectionTitle>
-      <CityAutocompleteInput />
+    <KeyboardAvoidingView
+      style={[styles.container, { backgroundColor: colors.backgroundColor }]}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        <SectionTitle style={{ color: colors.textColor }}>
+          {locale === "uk" ? "Оберіть місто" : "Select a city"}
+        </SectionTitle>
+        <View style={styles.inputWrapper}>
+          <CityAutocompleteInput />
+        </View>
 
-      <SectionTitle style={{ color: colors.textColor }}>
-        Фільтрувати за:
-      </SectionTitle>
+        <SectionTitle style={{ color: colors.textColor }}>
+          {locale === "uk" ? "Фільтрувати за:" : "Filter by:"}
+        </SectionTitle>
 
-      <FlatList
-        data={FILTER_SORT_OPTIONS}
-        keyExtractor={(item) => item}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <View style={styles.chipWrapper}>
-            <CustomButton
-              title={labels[item] || item}
-              onPress={() => handleSelect(item)}
-              isActive={item === filterSort}
-              // Передаємо кольори в CustomButton для адаптивності
-              activeBgColor={colors.chipActiveBg}
-              activeTextColor={colors.chipActiveText}
-              inactiveBgColor={colors.cardColor}
-              inactiveTextColor={colors.textColor}
-              style={{
-                borderColor: colors.borderColor,
-              }}
-            />
-          </View>
-        )}
-      />
-    </View>
+        <FlatList
+          data={FILTER_SORT_OPTIONS}
+          keyExtractor={(item) => item}
+          contentContainerStyle={styles.listContainer}
+          showsVerticalScrollIndicator={false}
+          scrollEnabled={false}
+          renderItem={({ item }) => (
+            <View style={styles.chipWrapper}>
+              <CustomButton
+                title={labels[item] || item}
+                onPress={() => handleSelect(item)}
+                isActive={item === filterSort}
+                activeBgColor={colors.chipActiveBg}
+                activeTextColor={colors.chipActiveText}
+                inactiveBgColor={colors.cardColor}
+                inactiveTextColor={colors.textColor}
+                style={{
+                  borderColor: colors.borderColor,
+                  paddingVertical: 12,
+                  borderRadius: 12,
+                }}
+                textStyle={{
+                  fontSize: 16,
+                  fontWeight: "600",
+                }}
+              />
+            </View>
+          )}
+        />
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
+  container: {
     flex: 1,
-    paddingHorizontal: 16,
-    marginBottom: 16,
+  },
+  scrollContent: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+  inputWrapper: {
+    marginBottom: 24,
   },
   listContainer: {
-    paddingVertical: 10,
+    paddingTop: 8,
+    paddingBottom: 24,
   },
   chipWrapper: {
-    marginBottom: 10,
+    marginBottom: 12,
   },
 });

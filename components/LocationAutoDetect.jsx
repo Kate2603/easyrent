@@ -8,11 +8,11 @@ export default function LocationAutoDetect() {
   const { city, state } = useSelector(selectFilters);
 
   useEffect(() => {
-    if (city && state) return;
+    if (city && state) return; // Якщо вже є місто та штат - не робимо запит
 
     (async () => {
       try {
-        let { status } = await Location.requestForegroundPermissionsAsync();
+        const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") throw new Error("Permission denied");
 
         const location = await Location.getCurrentPositionAsync({});
@@ -40,16 +40,16 @@ export default function LocationAutoDetect() {
           return;
         }
 
-        // fallback
+        // Фолбек, якщо не знайшли
         dispatch(setCity("New York"));
         dispatch(setStateCode("NY"));
-      } catch (error) {
-        // Optional: console.warn("LocationAutoDetect error:", error);
+      } catch {
+        // У випадку помилки теж фолбек
         dispatch(setCity("New York"));
         dispatch(setStateCode("NY"));
       }
     })();
   }, [city, state, dispatch]);
 
-  return null; // без UI, тому кольори не застосовуються
+  return null; // Без UI, без теми
 }

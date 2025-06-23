@@ -22,10 +22,16 @@ export default function RegisterScreen() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { strings } = useStrings();
-  const { backgroundColor, textColor, placeholderColor, borderColor } =
-    useThemeColors();
+  const {
+    backgroundColor,
+    textColor,
+    placeholderColor,
+    borderColor,
+    primaryColor,
+    chipActiveText,
+  } = useThemeColors();
   const errorColor = "#FF3B30";
-  const linkColor = "#007AFF";
+  const linkColor = primaryColor;
 
   const validationSchema = Yup.object().shape({
     fullName: Yup.string().required(strings.errors.required),
@@ -94,7 +100,10 @@ export default function RegisterScreen() {
             <TextInput
               placeholder={strings.name}
               placeholderTextColor={placeholderColor}
-              style={[styles.input, { color: textColor, borderColor }]}
+              style={[
+                styles.input,
+                { color: textColor, borderColor, backgroundColor: "#fff1" },
+              ]}
               onChangeText={handleChange("fullName")}
               onBlur={handleBlur("fullName")}
               value={values.fullName}
@@ -112,7 +121,10 @@ export default function RegisterScreen() {
               placeholderTextColor={placeholderColor}
               keyboardType="email-address"
               autoCapitalize="none"
-              style={[styles.input, { color: textColor, borderColor }]}
+              style={[
+                styles.input,
+                { color: textColor, borderColor, backgroundColor: "#fff1" },
+              ]}
               onChangeText={handleChange("email")}
               onBlur={handleBlur("email")}
               value={values.email}
@@ -125,14 +137,17 @@ export default function RegisterScreen() {
             )}
 
             <TextInput
-              placeholder={strings.password || "Пароль"}
+              placeholder={strings.password}
               placeholderTextColor={placeholderColor}
               secureTextEntry
-              style={[styles.input, { color: textColor, borderColor }]}
+              style={[
+                styles.input,
+                { color: textColor, borderColor, backgroundColor: "#fff1" },
+              ]}
               onChangeText={handleChange("password")}
               onBlur={handleBlur("password")}
               value={values.password}
-              accessibilityLabel={strings.password || "Пароль"}
+              accessibilityLabel={strings.password}
             />
             {touched.password && errors.password && (
               <Text style={[styles.error, { color: errorColor }]}>
@@ -145,9 +160,14 @@ export default function RegisterScreen() {
               onPress={handleSubmit}
               isActive={dirty && isValid}
               accessibilityLabel={strings.register}
+              activeBgColor={primaryColor}
+              activeTextColor={chipActiveText}
             />
 
-            <TouchableOpacity onPress={() => navigation.navigate(ROUTES.LOGIN)}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate(ROUTES.LOGIN)}
+              accessibilityRole="button"
+            >
               <Text style={[styles.link, { color: linkColor }]}>
                 {strings.login}
               </Text>
@@ -180,5 +200,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 16,
     textDecorationLine: "underline",
+    fontWeight: "500",
   },
 });

@@ -31,8 +31,13 @@ export default function BookingForm({ onSubmit }) {
   const dispatch = useDispatch();
   const { strings } = useStrings();
 
-  const { backgroundColor, cardColor, textColor, placeholderColor, isLight } =
-    useThemeColors();
+  const {
+    backgroundColor,
+    cardColor,
+    textColor,
+    placeholderColor,
+    primaryColor,
+  } = useThemeColors();
 
   const validationSchema = Yup.object().shape({
     city: Yup.string().required(strings.errors.required),

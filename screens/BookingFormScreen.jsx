@@ -13,6 +13,7 @@ import SectionTitle from "../components/SectionTitle";
 import { ROUTES } from "../constants/ROUTES";
 import { useThemeColors } from "../hooks/useThemeColors";
 import { useLocale } from "../contexts/LocaleContext";
+import LoginRequiredWrapper from "../components/LoginRequiredWrapper";
 
 const STRINGS = {
   uk: {
@@ -55,20 +56,22 @@ export default function BookingFormScreen() {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor }]}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <ScrollView
-        contentContainerStyle={[styles.scroll, { backgroundColor }]}
-        keyboardShouldPersistTaps="handled"
+    <LoginRequiredWrapper>
+      <KeyboardAvoidingView
+        style={[styles.container, { backgroundColor }]}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <SectionTitle style={{ color: textColor }} accessibilityRole="header">
-          {strings.bookingFormTitle(id)}
-        </SectionTitle>
-        <BookingForm onSubmit={handleBookingSubmit} />
-      </ScrollView>
-    </KeyboardAvoidingView>
+        <ScrollView
+          contentContainerStyle={[styles.scroll, { backgroundColor }]}
+          keyboardShouldPersistTaps="handled"
+        >
+          <SectionTitle style={{ color: textColor }} accessibilityRole="header">
+            {strings.bookingFormTitle(id)}
+          </SectionTitle>
+          <BookingForm onSubmit={handleBookingSubmit} />
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </LoginRequiredWrapper>
   );
 }
 

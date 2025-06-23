@@ -18,11 +18,11 @@ import { useThemeColors } from "../hooks/useThemeColors";
 
 export default function PaymentScreen() {
   const { backgroundColor, textColor } = useThemeColors();
-
-  const route = useRoute();
   const navigation = useNavigation();
-  const bookingData = useSelector(selectBookingData);
+  const route = useRoute();
   const { apartmentId, title } = route.params;
+
+  const bookingData = useSelector(selectBookingData);
 
   const handlePaymentSubmit = (paymentData) => {
     console.log("✅ Оплата:", paymentData);
@@ -37,7 +37,10 @@ export default function PaymentScreen() {
         style={styles.container}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ScrollView
+          contentContainerStyle={[styles.scrollContent, { backgroundColor }]}
+          keyboardShouldPersistTaps="handled"
+        >
           <SectionTitle style={{ color: textColor }}>{title}</SectionTitle>
           <PaymentForm
             onSubmit={handlePaymentSubmit}
@@ -58,6 +61,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    padding: 16,
+    padding: 20,
   },
 });

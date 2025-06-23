@@ -12,13 +12,12 @@ export default function PaymentForm({ onSubmit }) {
 
   const cvvRef = useRef(null);
 
-  const formatCardNumber = (text) => {
-    return text
+  const formatCardNumber = (text) =>
+    text
       .replace(/\D/g, "")
       .slice(0, 16)
       .replace(/(.{4})/g, "$1 ")
       .trim();
-  };
 
   const formatExpiry = (text) => {
     const cleaned = text.replace(/\D/g, "").slice(0, 4);
@@ -65,9 +64,9 @@ export default function PaymentForm({ onSubmit }) {
           </Text>
           <TextInput
             value={formatCardNumber(values.cardNumber)}
-            onChangeText={(text) => {
-              setFieldValue("cardNumber", text.replace(/\D/g, ""));
-            }}
+            onChangeText={(text) =>
+              setFieldValue("cardNumber", text.replace(/\D/g, ""))
+            }
             onBlur={handleBlur("cardNumber")}
             style={[
               styles.input,

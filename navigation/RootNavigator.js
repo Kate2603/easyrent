@@ -13,10 +13,14 @@ import HomeTabs from "./HomeTabs";
 import ProfileStack from "./ProfileStack";
 
 import { ROUTES } from "../constants/ROUTES";
+import { useStrings } from "../hooks/useStrings";
 
 const Drawer = createDrawerNavigator();
 
 function CustomDrawerContent(props) {
+  const { strings } = useStrings();
+
+  // Замініть на реальний user із redux або контексту
   const user = {
     name: "Катерина Величко",
     avatar: "https://i.pravatar.cc/150?img=47",
@@ -31,6 +35,8 @@ function CustomDrawerContent(props) {
               screen: ROUTES.PROFILE,
             })
           }
+          accessibilityRole="button"
+          accessibilityLabel={strings.editProfile}
         >
           <Image source={{ uri: user.avatar }} style={styles.avatar} />
           <Text style={styles.username}>{user.name}</Text>
@@ -38,7 +44,7 @@ function CustomDrawerContent(props) {
       </View>
       <DrawerItemList {...props} />
       <DrawerItem
-        label="Вийти"
+        label={strings.logout || "Вийти"}
         onPress={() => props.navigation.navigate(ROUTES.LANDING)}
         labelStyle={{ fontWeight: "700", color: "#FF3B30" }}
       />
@@ -47,6 +53,8 @@ function CustomDrawerContent(props) {
 }
 
 export default function RootNavigator() {
+  const { strings } = useStrings();
+
   return (
     <Drawer.Navigator
       initialRouteName={ROUTES.HOME_TAB}
@@ -56,28 +64,28 @@ export default function RootNavigator() {
         drawerInactiveTintColor: "#AFAFAF",
         drawerLabelStyle: { fontSize: 16, fontWeight: "700", color: "#000" },
         drawerStyle: { backgroundColor: "#F6F6F6" },
-        headerShown: false,
+        headerShown: false, // Хедер в стек навігаторах
       }}
     >
       <Drawer.Screen
         name={ROUTES.HOME_TAB}
         component={HomeTabs}
-        options={{ drawerLabel: "Головна" }}
+        options={{ drawerLabel: strings.home }}
       />
       <Drawer.Screen
         name={ROUTES.FILTERS}
         component={FiltersScreen}
-        options={{ drawerLabel: "Фільтри" }}
+        options={{ drawerLabel: strings.filters }}
       />
       <Drawer.Screen
         name={ROUTES.PROFILE_TAB}
         component={ProfileStack}
-        options={{ drawerLabel: "Профіль" }}
+        options={{ drawerLabel: strings.profile }}
       />
       <Drawer.Screen
         name={ROUTES.LANDING}
         component={LandingScreen}
-        options={{ drawerLabel: "Вітаємо" }}
+        options={{ drawerLabel: strings.welcome }}
       />
     </Drawer.Navigator>
   );

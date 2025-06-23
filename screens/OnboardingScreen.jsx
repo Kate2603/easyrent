@@ -14,26 +14,21 @@ export default function OnboardingScreen({ navigation }) {
 
   const handleStart = async () => {
     await dispatch(markOnboardingSeen());
-
-    if (isRegistered) {
-      navigation.replace("Login"); // Якщо акаунт є — на логін
-    } else {
-      navigation.replace("Register"); // Інакше — на реєстрацію
-    }
+    navigation.replace(isRegistered ? "Login" : "Register");
   };
 
   const handleGuest = async () => {
     await dispatch(markOnboardingSeen());
     await dispatch(setGuestUser());
-    navigation.replace("Home"); // Або потрібний гостевий екран
+    navigation.replace("Home");
   };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.primaryColor }]}>
-      <Text style={[styles.title, { color: colors.textColor }]}>
+      <Text style={[styles.title, { color: colors.chipActiveText }]}>
         Ласкаво просимо до EasyRent!
       </Text>
-      <Text style={[styles.subtitle, { color: colors.textColor }]}>
+      <Text style={[styles.subtitle, { color: colors.chipActiveText }]}>
         Знаходь житло за кілька кліків.
       </Text>
 
@@ -52,7 +47,7 @@ export default function OnboardingScreen({ navigation }) {
         onPress={handleGuest}
         accessibilityRole="button"
       >
-        <Text style={[styles.linkText, { color: colors.textColor }]}>
+        <Text style={[styles.linkText, { color: colors.chipActiveText }]}>
           Продовжити як гість
         </Text>
       </TouchableOpacity>
@@ -92,5 +87,6 @@ const styles = StyleSheet.create({
   },
   linkText: {
     textDecorationLine: "underline",
+    fontSize: 16,
   },
 });
