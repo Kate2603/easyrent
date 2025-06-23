@@ -2,26 +2,24 @@ import React from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../contexts/ThemeContext";
 import { useThemeColors } from "../hooks/useThemeColors";
 
 export default function HeaderRightControls() {
-  const navigation = useNavigation();
   const { toggleTheme, theme } = useTheme();
   const colors = useThemeColors();
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => navigation.openDrawer()}
-        style={[styles.icon, styles.iconMargin]}
-        accessibilityLabel="Відкрити меню"
-        accessibilityRole="button"
-        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-      >
-        <Icon name="menu" size={24} color={colors.primaryColor} />
-      </TouchableOpacity>
-
+    <View
+      style={[
+        styles.container,
+        {
+          paddingRight: insets.right > 0 ? insets.right : 10,
+        },
+      ]}
+    >
       <TouchableOpacity
         onPress={toggleTheme}
         style={styles.icon}
@@ -44,12 +42,9 @@ export default function HeaderRightControls() {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    marginRight: 8,
+    alignItems: "center",
   },
   icon: {
     padding: 8,
-  },
-  iconMargin: {
-    marginRight: 16,
   },
 });

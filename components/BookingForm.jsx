@@ -14,7 +14,7 @@ import * as Yup from "yup";
 
 import { setBookingData } from "../redux/bookingFormSlice";
 import CustomButton from "./CustomButton";
-import SectionTitle from "./SectionTitle";
+
 import { useStrings } from "../hooks/useStrings";
 import { useThemeColors } from "../hooks/useThemeColors";
 
@@ -67,10 +67,6 @@ export default function BookingForm({ onSubmit }) {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView contentContainerStyle={styles.scroll}>
-        <SectionTitle accessibilityRole="header" style={{ color: textColor }}>
-          {strings.formTitle}
-        </SectionTitle>
-
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}

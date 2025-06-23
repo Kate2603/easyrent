@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import { View, Text, Image, StyleSheet, FlatList, Alert } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
@@ -18,8 +18,14 @@ export default function ProfileScreen() {
   const { strings } = useStrings();
   const { backgroundColor, textColor, placeholderColor, avatarBorder } =
     useThemeColors();
-
   const { user } = useSelector((state) => state.user);
+
+  // 🔧 Встановлюємо заголовок
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: strings.profile,
+    });
+  }, [navigation, strings.profile]);
 
   const handleEditProfile = () => {
     navigation.navigate(ROUTES.PROFILE_TAB, {

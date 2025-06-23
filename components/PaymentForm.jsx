@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { View, TextInput, Text, StyleSheet, Switch } from "react-native";
+import { View, Text, TextInput, StyleSheet, Switch } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import CustomButton from "./CustomButton";
@@ -9,7 +9,6 @@ import { useThemeColors } from "../hooks/useThemeColors";
 export default function PaymentForm({ onSubmit }) {
   const { strings } = useStrings();
   const { textColor, cardColor, primaryColor, warningText } = useThemeColors();
-
   const cvvRef = useRef(null);
 
   const formatCardNumber = (text) =>
@@ -59,7 +58,8 @@ export default function PaymentForm({ onSubmit }) {
         setFieldValue,
       }) => (
         <View style={styles.container}>
-          <Text style={[styles.label, { color: textColor, marginBottom: 4 }]}>
+          {/* Номер картки */}
+          <Text style={[styles.label, { color: textColor }]}>
             {strings.cardNumber}
           </Text>
           <TextInput
@@ -68,29 +68,30 @@ export default function PaymentForm({ onSubmit }) {
               setFieldValue("cardNumber", text.replace(/\D/g, ""))
             }
             onBlur={handleBlur("cardNumber")}
-            style={[
-              styles.input,
-              {
-                borderColor: cardColor,
-                backgroundColor: cardColor,
-                color: textColor,
-                marginBottom: touched.cardNumber && errors.cardNumber ? 0 : 14,
-              },
-            ]}
             placeholder="0000 0000 0000 0000"
             placeholderTextColor={primaryColor}
             keyboardType="number-pad"
             maxLength={19}
+            style={[
+              styles.input,
+              {
+                backgroundColor: cardColor,
+                color: textColor,
+                borderColor:
+                  touched.cardNumber && errors.cardNumber
+                    ? warningText
+                    : cardColor,
+              },
+            ]}
           />
           {touched.cardNumber && errors.cardNumber && (
-            <Text
-              style={[styles.error, { color: warningText, marginBottom: 14 }]}
-            >
+            <Text style={[styles.error, { color: warningText }]}>
               {errors.cardNumber}
             </Text>
           )}
 
-          <Text style={[styles.label, { color: textColor, marginBottom: 4 }]}>
+          {/* Expiry */}
+          <Text style={[styles.label, { color: textColor }]}>
             {strings.expiry}
           </Text>
           <TextInput
@@ -98,67 +99,63 @@ export default function PaymentForm({ onSubmit }) {
             onChangeText={(text) => {
               const formatted = formatExpiry(text);
               setFieldValue("expiry", formatted);
-              if (formatted.length === 5 && cvvRef.current) {
+              if (formatted.length === 5 && cvvRef.current)
                 cvvRef.current.focus();
-              }
             }}
             onBlur={handleBlur("expiry")}
-            style={[
-              styles.input,
-              {
-                borderColor: cardColor,
-                backgroundColor: cardColor,
-                color: textColor,
-                marginBottom: touched.expiry && errors.expiry ? 0 : 14,
-              },
-            ]}
             placeholder="MM/YY"
             placeholderTextColor={primaryColor}
             keyboardType="number-pad"
             maxLength={5}
+            style={[
+              styles.input,
+              {
+                backgroundColor: cardColor,
+                color: textColor,
+                borderColor:
+                  touched.expiry && errors.expiry ? warningText : cardColor,
+              },
+            ]}
           />
           {touched.expiry && errors.expiry && (
-            <Text
-              style={[styles.error, { color: warningText, marginBottom: 14 }]}
-            >
+            <Text style={[styles.error, { color: warningText }]}>
               {errors.expiry}
             </Text>
           )}
 
-          <Text style={[styles.label, { color: textColor, marginBottom: 4 }]}>
+          {/* CVV */}
+          <Text style={[styles.label, { color: textColor }]}>
             {strings.cvv}
           </Text>
           <TextInput
             ref={cvvRef}
             value={values.cvv}
-            onChangeText={(text) => {
-              const clean = text.replace(/\D/g, "").slice(0, 3);
-              setFieldValue("cvv", clean);
-            }}
+            onChangeText={(text) =>
+              setFieldValue("cvv", text.replace(/\D/g, "").slice(0, 3))
+            }
             onBlur={handleBlur("cvv")}
-            style={[
-              styles.input,
-              {
-                borderColor: cardColor,
-                backgroundColor: cardColor,
-                color: textColor,
-                marginBottom: touched.cvv && errors.cvv ? 0 : 14,
-              },
-            ]}
             placeholder="***"
             placeholderTextColor={primaryColor}
             keyboardType="number-pad"
             maxLength={3}
             secureTextEntry
+            style={[
+              styles.input,
+              {
+                backgroundColor: cardColor,
+                color: textColor,
+                borderColor:
+                  touched.cvv && errors.cvv ? warningText : cardColor,
+              },
+            ]}
           />
           {touched.cvv && errors.cvv && (
-            <Text
-              style={[styles.error, { color: warningText, marginBottom: 14 }]}
-            >
+            <Text style={[styles.error, { color: warningText }]}>
               {errors.cvv}
             </Text>
           )}
 
+          {/* Switch */}
           <View style={styles.switchContainer}>
             <Text style={[styles.switchLabel, { color: textColor }]}>
               {strings.securePayment}
@@ -171,6 +168,7 @@ export default function PaymentForm({ onSubmit }) {
             />
           </View>
 
+          {/* Submit */}
           <CustomButton title={strings.pay} onPress={handleSubmit} isActive />
         </View>
       )}
@@ -179,16 +177,20 @@ export default function PaymentForm({ onSubmit }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  label: { fontSize: 14, fontWeight: "600" },
+  container: { flex: 1, paddingBottom: 30 },
+  label: { fontSize: 14, fontWeight: "600", marginBottom: 4 },
   input: {
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: 10,
     borderWidth: 1,
     fontSize: 16,
+    marginBottom: 14,
   },
-  error: { fontSize: 12 },
+  error: {
+    fontSize: 12,
+    marginBottom: 14,
+  },
   switchContainer: {
     flexDirection: "row",
     justifyContent: "space-between",

@@ -36,9 +36,10 @@ export default function HomeStack() {
           color: theme === "light" ? "#000" : "#fff",
         },
         headerTintColor: theme === "light" ? "#006FFD" : "#4CAF50",
+        headerShown: false,
         headerLeft: () => (
           <TouchableOpacity
-            onPress={() => navigation.openDrawer()}
+            onPress={() => navigation.getParent()?.openDrawer()}
             style={{ paddingHorizontal: 16 }}
             accessibilityLabel="Відкрити меню"
           >

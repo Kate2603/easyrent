@@ -1,33 +1,70 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaView, TouchableOpacity, StyleSheet } from "react-native";
+import { useTheme } from "../contexts/ThemeContext";
+import { useNavigation } from "@react-navigation/native";
+import { useStrings } from "../hooks/useStrings";
+
+import Icon from "react-native-vector-icons/MaterialIcons";
+import HeaderRightControls from "../components/HeaderRightControls";
 
 import HomeStack from "./HomeStack";
 import ProfileStack from "./ProfileStack";
 import SearchScreen from "../screens/SearchScreen";
 
 import { ROUTES } from "../constants/ROUTES";
-import { useStrings } from "../hooks/useStrings";
 
 const Tab = createBottomTabNavigator();
 
 export default function HomeTabs() {
+  const { theme } = useTheme();
+  const navigation = useNavigation();
   const { strings } = useStrings();
+
+  const getHeaderLeft = () => (
+    <SafeAreaView style={{ paddingLeft: 8 }}>
+      <TouchableOpacity
+        onPress={() => navigation.openDrawer()}
+        style={styles.iconWrapper}
+        accessibilityLabel="Відкрити меню"
+      >
+        <Icon
+          name="menu"
+          size={24}
+          color={theme === "light" ? "#006FFD" : "#4CAF50"}
+        />
+      </TouchableOpacity>
+    </SafeAreaView>
+  );
+
+  const getHeaderRight = () => (
+    <SafeAreaView style={{ paddingRight: 8 }}>
+      <HeaderRightControls />
+    </SafeAreaView>
+  );
 
   return (
     <Tab.Navigator
       initialRouteName={ROUTES.HOME_STACK}
       screenOptions={({ route }) => ({
-        headerShown: false,
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: theme === "light" ? "#fff" : "#121212",
+        },
+        headerTitleStyle: {
+          color: theme === "light" ? "#000" : "#fff",
+        },
+        headerTintColor: theme === "light" ? "#006FFD" : "#4CAF50",
+        headerLeft: getHeaderLeft,
+        headerRight: getHeaderRight,
         tabBarIcon: ({ color, size }) => {
           let iconName;
-
           if (route.name === ROUTES.HOME_STACK) iconName = "home-outline";
           else if (route.name === ROUTES.SEARCH) iconName = "search-outline";
           else if (route.name === ROUTES.PROFILE_TAB)
             iconName = "person-outline";
           else iconName = "ellipse";
-
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#007AFF",
@@ -52,3 +89,10 @@ export default function HomeTabs() {
     </Tab.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  iconWrapper: {
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+  },
+});

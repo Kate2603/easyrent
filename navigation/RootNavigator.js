@@ -5,10 +5,17 @@ import {
   DrawerItemList,
   DrawerItem,
 } from "@react-navigation/drawer";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+} from "react-native";
 
 import LandingScreen from "../screens/LandingScreen";
-import FiltersScreen from "../screens/FiltersScreen";
+import SearchScreen from "../screens/SearchScreen";
 import HomeTabs from "./HomeTabs";
 import ProfileStack from "./ProfileStack";
 
@@ -20,7 +27,6 @@ const Drawer = createDrawerNavigator();
 function CustomDrawerContent(props) {
   const { strings } = useStrings();
 
-  // Замініть на реальний user із redux або контексту
   const user = {
     name: "Катерина Величко",
     avatar: "https://i.pravatar.cc/150?img=47",
@@ -28,20 +34,22 @@ function CustomDrawerContent(props) {
 
   return (
     <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1 }}>
-      <View style={styles.userInfoSection}>
-        <TouchableOpacity
-          onPress={() =>
-            props.navigation.navigate(ROUTES.PROFILE_TAB, {
-              screen: ROUTES.PROFILE,
-            })
-          }
-          accessibilityRole="button"
-          accessibilityLabel={strings.editProfile}
-        >
-          <Image source={{ uri: user.avatar }} style={styles.avatar} />
-          <Text style={styles.username}>{user.name}</Text>
-        </TouchableOpacity>
-      </View>
+      <SafeAreaView>
+        <View style={styles.userInfoSection}>
+          <TouchableOpacity
+            onPress={() =>
+              props.navigation.navigate(ROUTES.PROFILE_TAB, {
+                screen: ROUTES.PROFILE,
+              })
+            }
+            accessibilityRole="button"
+            accessibilityLabel={strings.editProfile}
+          >
+            <Image source={{ uri: user.avatar }} style={styles.avatar} />
+            <Text style={styles.username}>{user.name}</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
       <DrawerItemList {...props} />
       <DrawerItem
         label={strings.logout || "Вийти"}
@@ -62,9 +70,13 @@ export default function RootNavigator() {
       screenOptions={{
         drawerActiveTintColor: "#006FFD",
         drawerInactiveTintColor: "#AFAFAF",
-        drawerLabelStyle: { fontSize: 16, fontWeight: "700", color: "#000" },
+        drawerLabelStyle: {
+          fontSize: 16,
+          fontWeight: "700",
+          color: "#000",
+        },
         drawerStyle: { backgroundColor: "#F6F6F6" },
-        headerShown: false, // Хедер в стек навігаторах
+        headerShown: false,
       }}
     >
       <Drawer.Screen
@@ -73,9 +85,9 @@ export default function RootNavigator() {
         options={{ drawerLabel: strings.home }}
       />
       <Drawer.Screen
-        name={ROUTES.FILTERS}
-        component={FiltersScreen}
-        options={{ drawerLabel: strings.filters }}
+        name={ROUTES.SEARCH}
+        component={SearchScreen}
+        options={{ drawerLabel: strings.searchApartments }}
       />
       <Drawer.Screen
         name={ROUTES.PROFILE_TAB}

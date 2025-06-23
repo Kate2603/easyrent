@@ -1,19 +1,17 @@
-// src/redux/userSlice.js
-
 import { createSlice } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { persistReducer } from "redux-persist";
+import { persistor } from "./store"; // ⚠️ обовʼязково імпортуй
 
-// --- Конфіг для redux-persist ---
 const persistConfig = {
   key: "user",
   storage: AsyncStorage,
-  whitelist: ["user", "token", "hasSeenOnboarding"], // що зберігаємо
+  whitelist: ["user", "token", "hasSeenOnboarding"],
 };
 
 const initialState = {
-  user: null, // обʼєкт користувача або null
-  token: null, // токен або null
+  user: null,
+  token: null,
   isLoading: false,
   hasLoaded: false,
   error: null,
@@ -33,6 +31,7 @@ const userSlice = createSlice({
       state.user = null;
       state.token = null;
       state.error = null;
+      state.hasSeenOnboarding = false;
     },
     updateUser: (state, action) => {
       state.user = { ...state.user, ...action.payload };
@@ -50,19 +49,17 @@ const userSlice = createSlice({
       state.hasSeenOnboarding = action.payload;
     },
     setGuestUser: (state) => {
-      state.user = { role: "guest" }; // Обʼєкт з роллю гостя
+      state.user = { role: "guest" };
       state.token = null;
     },
   },
 });
 
-// Експортуємо reducer з persist
 export const persistedUserReducer = persistReducer(
   persistConfig,
   userSlice.reducer
 );
 
-// Експортуємо actions
 export const {
   loginSuccess,
   logout,
@@ -79,60 +76,33 @@ export const {
 export const loadUserProfile = () => async (dispatch) => {
   dispatch(setLoading(true));
   try {
-    const jsonValue = await AsyncStorage.getItem("userData");
-    const onboardingValue = await AsyncStorage.getItem("hasSeenOnboarding");
-
-    if (jsonValue != null) {
-      const { user, token } = JSON.parse(jsonValue);
-      dispatch(loginSuccess({ user, token }));
-    }
-
-    if (onboardingValue === "true") {
-      dispatch(setHasSeenOnboarding(true));
-    }
+    dispatch(setHasLoaded(true)); // усе завантажиться через persist
   } catch (e) {
     dispatch(setError("Помилка завантаження профілю"));
-    console.error("AsyncStorage load error:", e);
   } finally {
     dispatch(setLoading(false));
-    dispatch(setHasLoaded(true));
   }
 };
 
 export const markOnboardingSeen = () => async (dispatch) => {
-  try {
-    await AsyncStorage.setItem("hasSeenOnboarding", "true");
-    dispatch(setHasSeenOnboarding(true));
-  } catch (e) {
-    console.error("AsyncStorage onboarding error:", e);
-  }
+  dispatch(setHasSeenOnboarding(true)); // Persist бере з редьюсера
 };
 
 export const performLogin = (userData) => async (dispatch) => {
   dispatch(loginSuccess(userData));
-  try {
-    await AsyncStorage.setItem("userData", JSON.stringify(userData));
-  } catch (e) {
-    console.error("AsyncStorage login save error:", e);
-  }
+  // Persist автоматично зберігає user + token
 };
 
 export const performLogout = () => async (dispatch) => {
   dispatch(logout());
   try {
-    await AsyncStorage.removeItem("userData");
+    await persistor.purge(); // ⚠️ очищає усе, включно з hasSeenOnboarding
   } catch (e) {
-    console.error("AsyncStorage logout error:", e);
+    console.error("Persistor purge error:", e);
   }
 };
 
 export const updateProfile = (updatedFields) => async (dispatch, getState) => {
   dispatch(updateUser(updatedFields));
-  try {
-    const { user, token } = getState().user;
-    await AsyncStorage.setItem("userData", JSON.stringify({ user, token }));
-  } catch (e) {
-    console.error("AsyncStorage update error:", e);
-    dispatch(setError("Не вдалося зберегти зміни"));
-  }
+  // Persist автоматично оновлює user
 };

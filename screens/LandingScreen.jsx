@@ -1,22 +1,45 @@
-import React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import React, { useLayoutEffect, useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "react-redux";
+import { Ionicons } from "@expo/vector-icons";
+import { useDispatch, useSelector } from "react-redux";
 
+import { loadUserProfile } from "../redux/userSlice";
 import { ROUTES } from "../constants/ROUTES";
+
 import { useThemeColors } from "../hooks/useThemeColors";
 import { useStrings } from "../hooks/useStrings";
 
-import CustomButton from "../components/CustomButton";
 import SectionTitle from "../components/SectionTitle";
+import LocationAutoDetect from "../components/LocationAutoDetect";
+import CustomButton from "../components/CustomButton";
 
 export default function LandingScreen() {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const colors = useThemeColors();
   const { strings } = useStrings();
 
-  const handleRegister = () => {
+  useEffect(() => {
+    dispatch(loadUserProfile());
+  }, [dispatch]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: strings.landingTitle,
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={() => navigation.openDrawer()}
+          style={styles.menuButton}
+        >
+          <Ionicons name="menu" size={24} color={colors.textColor} />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, colors.textColor, strings.landingTitle]);
+
+  const handleGoToRegister = () => {
     navigation.navigate(ROUTES.HOME_TAB, {
       screen: ROUTES.HOME_STACK,
       params: { screen: ROUTES.REGISTER },
@@ -30,7 +53,7 @@ export default function LandingScreen() {
     });
   };
 
-  const goToApartmentsList = () => {
+  const handleSearch = () => {
     navigation.navigate(ROUTES.HOME_TAB, {
       screen: ROUTES.HOME_STACK,
       params: { screen: ROUTES.APARTMENT_LIST },
@@ -42,22 +65,24 @@ export default function LandingScreen() {
       style={[styles.container, { backgroundColor: colors.backgroundColor }]}
     >
       <SectionTitle style={{ color: colors.textColor }}>
-        {strings.welcome}
+        {strings.landingTitle}
       </SectionTitle>
 
       {!user ? (
         <>
           <Text style={[styles.text, { color: colors.textColor }]}>
-            {strings.prompt}
+            {strings.notLoggedIn}
           </Text>
+
           <CustomButton
             title={strings.register}
-            onPress={handleRegister}
+            onPress={handleGoToRegister}
             isActive
             activeBgColor={colors.primaryColor}
             activeTextColor={colors.chipActiveText}
             style={styles.button}
           />
+
           <CustomButton
             title={strings.login}
             onPress={handleLogin}
@@ -68,14 +93,22 @@ export default function LandingScreen() {
           />
         </>
       ) : (
-        <CustomButton
-          title={strings.viewApartments}
-          onPress={goToApartmentsList}
-          isActive
-          activeBgColor={colors.primaryColor}
-          activeTextColor={colors.chipActiveText}
-          style={styles.button}
-        />
+        <>
+          <Text style={[styles.text, { color: colors.textColor }]}>
+            {strings.hello} {user.fullName || strings.unknownUser}
+          </Text>
+
+          <LocationAutoDetect />
+
+          <CustomButton
+            title={strings.searchApartments}
+            onPress={handleSearch}
+            isActive
+            activeBgColor={colors.primaryColor}
+            activeTextColor={colors.chipActiveText}
+            style={styles.button}
+          />
+        </>
       )}
     </View>
   );
@@ -84,17 +117,20 @@ export default function LandingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingHorizontal: 20,
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
   },
   text: {
-    fontSize: 16,
-    marginVertical: 16,
+    fontSize: 18,
+    marginVertical: 10,
     textAlign: "center",
   },
   button: {
     marginTop: 12,
     minWidth: 200,
+  },
+  menuButton: {
+    marginLeft: 16,
   },
 });

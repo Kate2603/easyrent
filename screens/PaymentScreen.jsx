@@ -9,7 +9,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-
 import { selectBookingData } from "../redux/bookingFormSlice";
 import PaymentForm from "../components/PaymentForm";
 import { ROUTES } from "../constants/ROUTES";
@@ -21,7 +20,6 @@ export default function PaymentScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const { apartmentId, title } = route.params;
-
   const bookingData = useSelector(selectBookingData);
 
   const handlePaymentSubmit = (paymentData) => {
@@ -36,6 +34,7 @@ export default function PaymentScreen() {
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={100}
       >
         <ScrollView
           contentContainerStyle={[styles.scrollContent, { backgroundColor }]}

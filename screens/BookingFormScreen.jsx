@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import {
   View,
   StyleSheet,
@@ -14,19 +14,7 @@ import { ROUTES } from "../constants/ROUTES";
 import { useThemeColors } from "../hooks/useThemeColors";
 import { useLocale } from "../contexts/LocaleContext";
 import LoginRequiredWrapper from "../components/LoginRequiredWrapper";
-
-const STRINGS = {
-  uk: {
-    apartmentNotFound: "Квартира не знайдена",
-    bookingFormTitle: (id) => `Форма бронювання №${id}`,
-    paymentTitle: (id) => `Оплата за квартиру №${id}`,
-  },
-  en: {
-    apartmentNotFound: "Apartment not found",
-    bookingFormTitle: (id) => `Booking form №${id}`,
-    paymentTitle: (id) => `Payment for apartment №${id}`,
-  },
-};
+import { STRINGS } from "../locales/strings";
 
 export default function BookingFormScreen() {
   const { backgroundColor, textColor } = useThemeColors();
@@ -34,14 +22,14 @@ export default function BookingFormScreen() {
   const navigation = useNavigation();
   const route = useRoute();
 
-  const strings = useMemo(() => STRINGS[locale] || STRINGS.uk, [locale]);
+  const strings = STRINGS[locale] || STRINGS.uk;
 
   const id = route?.params?.id;
 
   const handleBookingSubmit = (formData) => {
     navigation.navigate(ROUTES.PAYMENT, {
       apartmentId: id,
-      title: strings.paymentTitle(id),
+      title: strings.paymentTitle,
     });
   };
 
@@ -59,14 +47,17 @@ export default function BookingFormScreen() {
     <LoginRequiredWrapper>
       <KeyboardAvoidingView
         style={[styles.container, { backgroundColor }]}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // Можна підкоригувати під свій header
       >
         <ScrollView
+          style={{ flex: 1 }}
           contentContainerStyle={[styles.scroll, { backgroundColor }]}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
           <SectionTitle style={{ color: textColor }} accessibilityRole="header">
-            {strings.bookingFormTitle(id)}
+            {strings.bookingFormTitle}
           </SectionTitle>
           <BookingForm onSubmit={handleBookingSubmit} />
         </ScrollView>
@@ -80,7 +71,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scroll: {
-    flexGrow: 1,
     padding: 20,
+    flexGrow: 1,
   },
 });

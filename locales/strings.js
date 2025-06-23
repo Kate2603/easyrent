@@ -12,6 +12,7 @@ export const STRINGS = {
     apartmentNotFound: "Квартира не знайдена",
     filterBy: "Фільтрувати за:",
     chooseCity: "Оберіть місто",
+    landingTitle: "🏠 EasyRent — твій комфорт починається тут",
 
     // ApartmentCard
     noAddress: "Без адреси",
@@ -70,6 +71,7 @@ export const STRINGS = {
     themeDark: "темна",
 
     // ProfileScreen additions
+    profile: "👤 Профіль",
     logoutConfirmTitle: "Вийти з акаунту?",
     logoutConfirmMessage: "Ви впевнені?",
     cancel: "Скасувати",
@@ -98,6 +100,7 @@ export const STRINGS = {
     apartmentNotFound: "Apartment not found",
     filterBy: "Filter by:",
     chooseCity: "Choose city",
+    landingTitle: "🏠 EasyRent — your comfort starts here",
 
     // ApartmentCard
     noAddress: "No address",
@@ -156,6 +159,7 @@ export const STRINGS = {
     themeDark: "dark",
 
     // ProfileScreen additions
+    profile: "👤 Profile",
     logoutConfirmTitle: "Log out?",
     logoutConfirmMessage: "Are you sure?",
     cancel: "Cancel",
